@@ -224,7 +224,7 @@ input[type=number]{text-align:right}
   <div class="card">
     <h3>持仓异动扫描 <span class="r" id="scSrc">openInterestHist 1d 快照</span></h3>
     <div class="row" style="margin-bottom:8px">
-      <div class="seg" id="scWin"><button data-w="3">3天</button><button data-w="5" class="on">5天</button><button data-w="10">10天</button></div>
+      <div class="seg" id="scWin"><button data-w="1">1天</button><button data-w="2">2天</button><button data-w="3" class="on">3天</button></div>
       <div class="seg" id="scUni"><button data-u="50">Top50</button><button data-u="100" class="on">Top100</button><button data-u="0">全部</button></div>
     </div>
     <div class="row" style="margin-bottom:8px">
@@ -363,7 +363,7 @@ const S={
   fav:new Set(store.get(LSK.fav,[])),
   ov:{page:1,size:store.get('oif_ovsize',20),sort:'vol',dir:-1,q:'',favOnly:false,ready:false,list:[]},
   dt:{sym:store.get(LSK.sym,'BTCUSDT'),rows:null,day:null,miss:[],px:{},tab:'day',mp:1,msize:300,loading:false,src:'archive',fh:null,fhLoading:false},
-  sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:5,U:100,filter:'all',sort:'net',dir:-1,params:null},
+  sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:3,U:100,filter:'all',sort:'net',dir:-1,params:null},
   mg:{rows:null,time:null,tried:false},
   fd:{rows:null,time:0,sort:'fr',onlyTracked:false,loading:false},
   rt:{on:false,timer:null,win:6,thresh:3,int:60,rows:[],last:new Map(),hist:new Map(),snapT:0},
@@ -1145,7 +1145,7 @@ function init(){
   /* 恢复上次扫描 + T+1 验证 */
   const last=store.get('oif_lastscan',null);
   if(last&&last.rows){
-    S.sc.rows=last.rows;S.sc.W=last.W||5;S.sc.U=last.U||100;
+    S.sc.rows=last.rows;S.sc.W=Math.min(3,Math.max(1,last.W||3));S.sc.U=last.U||100;
     if(last.mode)S.sc.mode=last.mode;
     if(last.params)S.sc.params=last.params;
     $$('#scWin button').forEach(b=>b.classList.toggle('on',+b.dataset.d===S.sc.W));
