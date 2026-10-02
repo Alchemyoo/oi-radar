@@ -230,6 +230,7 @@ input[type=number]{text-align:right}
     <div class="row" style="margin-bottom:8px">
       <div class="seg" id="scMode"><button data-m="pct" class="on">%</button><button data-m="z">σ</button></div>
       <span class="mut" id="scOiLbl">OI净增≥</span><input id="scOiPct" type="number" value="30" style="width:56px"><span class="mut" id="scOiUnit">%</span>
+      <span class="mut">净流口径：期末OI值−期初OI值</span>
       <span class="mut">|价格|≤</span><input id="scPxPct" type="number" value="10" style="width:56px"><span class="mut">%</span>
       <span class="mut">期初OI≥</span><input id="scMinOi" type="number" value="1000000" style="width:88px"><span class="mut">USDT</span>
     </div>
@@ -242,11 +243,11 @@ input[type=number]{text-align:right}
     <div class="chips" id="scChips" style="display:none"></div>
     <div class="banner" id="scBan"></div>
     <div class="row" style="margin:8px 0">
-      <div class="seg" id="scFilter"><button data-f="all" class="on">全部</button><button data-f="up">净增</button><button data-f="down">净减</button><button data-f="pick">入选</button></div>
+      <div class="seg" id="scFilter"><button data-f="all" class="on">全部</button><button data-f="up">净增</button><button data-f="down">净减</button><button data-f="in">净流入</button><button data-f="out">净流出</button><button data-f="pick">入选</button></div>
       <button class="btn mini" id="scCsv">导出CSV</button>
     </div>
     <div class="tblwrap"><table class="tbl" id="scTbl">
-      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="net">净变%</th><th data-k="z">z值</th><th data-k="px">价格%</th><th data-k="next">T+1%</th><th>标记</th></tr></thead>
+      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="flow">资金净流</th><th data-k="net">净变%</th><th data-k="z">z值</th><th data-k="px">价格%</th><th data-k="next">T+1%</th><th>标记</th></tr></thead>
       <tbody></tbody></table></div>
   </div>
 </section>
@@ -819,7 +820,8 @@ async function scGo(){
       else{
         const net=(oiE/oiS-1)*100;
         const netOk=S.sc.mode==='z'?(z!=null&&z>=p.oiPct):(net>=p.oiPct);
-        S.sc.rows.push({sym:r.sym,oiS,oiE,net,px,z,
+        const flow=oiE-oiS;
+        S.sc.rows.push({sym:r.sym,oiS,oiE,flow,net,px,z,
           pick:netOk&&px!=null&&Math.abs(px)<=p.pxPct&&oiS>=p.minOi});
       }
     }catch(e){S.sc.err++}
@@ -891,7 +893,8 @@ function scNextChips(){
 }
 function scFiltered(){
   const f=S.sc.filter;
-  let l=S.sc.rows.filter(r=>f==='all'?true:(f==='up'?r.net>=0:(f==='down'?r.net<0:r.pick)));
+  S.sc.rows.forEach(r=>{if(r.flow==null)r.flow=r.oiE-r.oiS});
+  let l=S.sc.rows.filter(r=>f==='all'?true:(f==='up'?r.net>=0:(f==='down'?r.net<0:(f==='in'?r.flow>0:(f==='out'?r.flow<0:r.pick)))));
   const k=S.sc.sort,d=S.sc.dir;
   l.sort((a,b)=>k==='sym'?d*a.sym.localeCompare(b.sym):d*((a[k]??-Infinity)-(b[k]??-Infinity)));
   return l;
@@ -902,27 +905,33 @@ function scRender(){
   tb.innerHTML=scFiltered().map(r=>
     `<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td>`+
     `<td>${fC(r.oiS)}</td><td>${fC(r.oiE)}</td>`+
+    `<td class="${clsP(r.flow)}">${r.flow>=0?'+':''}${fC(r.flow)}</td>`+
     `<td class="${clsP(r.net)}">${fP(r.net/100)}</td>`+
     `<td class="${r.z==null?'':(Math.abs(r.z)>=2?(r.z>0?'up':'down'):'')}">${r.z==null?'—':(r.z>0?'+':'')+r.z.toFixed(2)+'σ'}</td>`+
     `<td class="${clsP(r.px)}">${r.px==null?'—':fP(r.px/100)}</td>`+
     `<td class="${clsP(r.next)}">${r.next==null?'—':nx(r.next)}</td>`+
     `<td>${r.pick?'<span class="bdg pick">入选</span>':''}</td></tr>`
-  ).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
+  ).join('')||`<tr><td colspan="9" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
 }
 function scMeta(){
   const c=$('#scChips');
   c.style.display='flex';
+  S.sc.rows.forEach(r=>{if(r.flow==null)r.flow=r.oiE-r.oiS});
+  const inflow=S.sc.rows.filter(r=>r.flow>0),outflow=S.sc.rows.filter(r=>r.flow<0);
+  const inSum=inflow.reduce((a,r)=>a+r.flow,0),outSum=outflow.reduce((a,r)=>a+r.flow,0);
   c.innerHTML=`<span class="chip">样本 <b>${S.sc.rows.length}</b></span>`+
     `<span class="chip">净增 <b>${S.sc.rows.filter(r=>r.net>=0).length}</b></span>`+
     `<span class="chip">净减 <b>${S.sc.rows.filter(r=>r.net<0).length}</b></span>`+
+    `<span class="chip up">流入 <b>${fC(inSum)}</b> (${inflow.length})</span>`+
+    `<span class="chip down">流出 <b>${fC(Math.abs(outSum))}</b> (${outflow.length})</span>`+
     `<span class="chip">入选 <b>${S.sc.rows.filter(r=>r.pick).length}</b></span>`+
     (S.sc.noHist?`<span class="chip">数据源：归档 zip</span>`:``);
 }
 function scCsv(){
   if(!S.sc.rows.length){toast('无可导出数据');return}
   csvDown(`OI异动扫描_${S.sc.W}d.csv`,
-    ['币种','OI期初USDT','OI期末USDT','净变%','z值','价格%','入选'],
-    scFiltered().map(r=>[r.sym,r.oiS,r.oiE,+r.net.toFixed(2),r.z!=null?+r.z.toFixed(2):'',r.px!=null?+r.px.toFixed(2):'',r.pick?'是':'']));
+    ['币种','OI期初USDT','OI期末USDT','资金净流USDT','净变%','z值','价格%','入选'],
+    scFiltered().map(r=>[r.sym,r.oiS,r.oiE,r.flow,+r.net.toFixed(2),r.z!=null?+r.z.toFixed(2):'',r.px!=null?+r.px.toFixed(2):'',r.pick?'是':'']));
 }
 
 /* ================= 热度 ================= */
