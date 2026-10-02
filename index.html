@@ -276,15 +276,18 @@ input[type=number]{text-align:right}
       <button class="btn mini" id="qdCsv">导出CSV</button>
     </div>
     <div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px">
-      <h3>日内信号 · 5m执行 <span class="r" id="idTime"></span></h3>
+      <h3>交易工作台 · 5m执行 <span class="r" id="idTime"></span></h3>
+      <div class="chips" id="idMarket" style="display:flex;margin:6px 0"></div>
+      <div class="banner" id="idPlan"></div>
+      <p class="mut" id="idMethod" style="margin:4px 0 8px">多因子评分：市场环境20 · 动量15 · OI20 · 成交量15 · 费率10 · 入场结构10</p>
       <div class="row" style="margin-bottom:8px">
         <button class="btn mini pri" id="idToggle">开启日内</button>
         <div class="seg" id="idWin"><button data-w="15">15m</button><button data-w="30" class="on">30m</button><button data-w="60">60m</button></div>
-        <div class="seg" id="idScore"><button data-s="4">≥4分</button><button data-s="5" class="on">≥5分</button></div>
+        <div class="seg" id="idScore"><button data-s="60">≥60分</button><button data-s="75" class="on">≥75分</button></div>
       </div>
-      <p class="mut" style="margin:3px 0 8px">Top30监测 · OI逐币轮询 · 5m成交量确认 · 仅作观察/复核，不替代执行纪律</p>
+      <p class="mut" style="margin:3px 0 8px">Top30监测 · 5m VWAP/ATR · OI/价格/成交量/费率多因子 · 评分≥75进入候选，状态确认后才执行</p>
       <div class="tblwrap"><table class="tbl" id="idTbl">
-        <thead><tr><th>币种</th><th>状态</th><th>ΔOI</th><th>ΔP</th><th>量比</th><th>评分</th></tr></thead>
+        <thead><tr><th>币种</th><th>剧本/状态</th><th>综合分</th><th>ΔOI</th><th>ΔP</th><th>量比</th><th>VWAP</th><th>ATR止损</th></tr></thead>
         <tbody><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后等待首轮快照</td></tr></tbody>
       </table></div>
     </div>
@@ -384,7 +387,8 @@ const S={
   dt2:{chartRes:'day',chartMode:'oi'},
   qd:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:3,U:100,filter:'squeeze',agg:null},
   ws:{on:false,sock:null,retry:0,dirty:0},
-  id:{on:false,timer:null,win:30,score:5,hist:new Map(),rows:[],loading:false}
+  id:{on:false,timer:null,win:30,score:75,hist:new Map(),rows:[],loading:false},
+  market:{state:'未知',score:0,bias:0,updated:0},
 };
 function saveFav(){store.set(LSK.fav,[...S.fav])}
 
@@ -1694,28 +1698,55 @@ function fhRender(){
 }
 
 /* ================= 日内信号 · 5m执行层 ================= */
+function idMarketBias(){
+  const b=S.tick.BTCUSDT?.chg||0,e=S.tick.ETHUSDT?.chg||0;
+  const bias=(b+e)/2;
+  const state=Math.abs(bias)<1?'震荡':(bias>0?'偏多趋势':'偏空趋势');
+  const risk=Math.abs(bias)>4?'高':Math.abs(bias)>2?'中':'低';
+  S.market={state,score:Math.max(0,Math.min(20,10+bias*3)),bias,updated:Date.now(),risk};
+  return S.market;
+}
+function idMarketRender(){
+  const m=idMarketBias(),el=$('#idMarket');if(!el)return;
+  el.innerHTML=`<span class="chip">市场 <b>${m.state}</b></span><span class="chip">BTC <b class="${clsP(S.tick.BTCUSDT?.chg)}">${S.tick.BTCUSDT?fP(S.tick.BTCUSDT.chg/100):'—'}</b></span><span class="chip">ETH <b class="${clsP(S.tick.ETHUSDT?.chg)}">${S.tick.ETHUSDT?fP(S.tick.ETHUSDT.chg/100):'—'}</b></span><span class="chip">风险 <b>${m.risk}</b></span>`;
+  $('#idPlan').className='banner on '+(m.state==='震荡'?'warn':'ok');
+  $('#idPlan').textContent=m.state==='震荡'?'建议：降低频率，只做评分≥85且有明确5m结构的币':'建议：'+(m.bias>0?'优先回踩多，禁止高位追多':'优先反弹空，谨慎抄底');
+}
 async function idPoll(){
   if(!S.id.on||S.id.loading)return;
   if(!S.ov.ready||!S.ov.list.length)return;
-  S.id.loading=true;
+  S.id.loading=true;idMarketRender();
   const list=[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,30),rows=[];
+  const fm=new Map((S.fd.rows||[]).map(x=>[x.sym,x]));
   await pool(list,6,async r=>{
     try{
       const [oi,ks]=await Promise.all([loadOiOne(r.sym),loadKlines5(r.sym,40)]);
-      if(!ks||ks.length<8)return;
+      if(!ks||ks.length<12)return;
       const n=Math.min(Math.ceil(S.id.win/5),ks.length-1),old=ks[ks.length-1-n],last=ks[ks.length-1];
-      const dP=(last.c/old.c-1)*100,prev=S.id.hist.get(r.sym),dOi=prev&&prev.v?(oi/prev.v-1)*100:0;
-      const vols=ks.slice(Math.max(0,ks.length-21),ks.length-1).map(x=>x.v),av=vols.reduce((a,b)=>a+b,0)/(vols.length||1),vr=av?last.v/av:0,q=quadOf(dOi,dP);
+      const prev=S.id.hist.get(r.sym),dOi=prev&&prev.v?(oi/prev.v-1)*100:null,dP=(last.c/old.c-1)*100;
+      const recent=ks.slice(-20),pv=recent.map(x=>(x.h+x.l+x.c)/3*x.v),vv=recent.reduce((a,x)=>a+x.v,0),vwap=vv?pv.reduce((a,b)=>a+b,0)/vv:last.c;
+      const trs=ks.slice(-15).map((x,i,a)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),atr=trs.reduce((a,b)=>a+b,0)/(trs.length||1);
+      const vols=ks.slice(-21,-1).map(x=>x.v),av=vols.reduce((a,b)=>a+b,0)/(vols.length||1),vr=av?last.v/av:0,q=dOi==null?null:quadOf(dOi,dP),f=fm.get(r.sym),fr=f?.fr||0;
+      if(dOi==null){S.id.hist.set(r.sym,{v:oi,t:Date.now()});return}
       let score=0;
-      if(Math.abs(dOi)>=2)score+=2;else if(Math.abs(dOi)>=1)score++;
-      if(Math.abs(dP)>=.8)score+=2;else if(Math.abs(dP)>=.5)score++;
-      if(vr>=1.5)score++;
-      const state=q==='squeeze'?'等待收回VWAP':q==='trend'?'等待回踩确认':q==='flush'?'等待止跌反弹':q==='cover'?'不追涨':'观察';
-      rows.push({sym:r.sym,dOi,dP,vr,score,q,state,oi,px:last.c,t:last.t});S.id.hist.set(r.sym,{v:oi,t:Date.now()});
+      const mb=S.market.bias||0;
+      score+=(dP*mb>0?20:(Math.abs(mb)<1?10:5));
+      score+=Math.abs(dP)>=1.2?15:(Math.abs(dP)>=.8?12:(Math.abs(dP)>=.5?8:3));
+      score+=Math.abs(dOi)>=5?20:(Math.abs(dOi)>=3?16:(Math.abs(dOi)>=1.5?10:3));
+      score+=vr>=2?15:(vr>=1.5?12:(vr>=1.1?7:2));
+      score+=(Math.abs(fr)<.03?10:(Math.abs(fr)<.08?6:2));
+      const aligned=(q==='trend'&&last.c>=vwap)||(q==='squeeze'&&last.c>=vwap)||(q==='flush'&&last.c<vwap)||(q==='cover'&&last.c>vwap);
+      score+=aligned?20:8;
+      score=Math.round(Math.min(100,score));
+      const script=q==='trend'?'趋势回踩多':q==='squeeze'?'轧空反转多':q==='flush'?'清算反弹多':q==='cover'?'空头回补风险':'观察';
+      const ready=(q==='trend'||q==='squeeze')&&last.c>=vwap&&score>=75;
+      const state=ready?'可执行':q==='cover'?'禁止追涨':q==='flush'?'等待止跌反弹':q==='squeeze'?'等待收回VWAP':'等待回踩确认';
+      rows.push({sym:r.sym,dOi,dP,vr,score,q,state,script,oi,px:last.c,vwap,atr,fr,t:last.t});
+      S.id.hist.set(r.sym,{v:oi,t:Date.now()});
     }catch(e){}
   });
   S.id.rows=rows.filter(r=>r.score>=S.id.score).sort((a,b)=>b.score-a.score||Math.abs(b.dP)-Math.abs(a.dP));
-  S.id.loading=false;S.idTime=Date.now();idRender();
+  S.id.loading=false;S.idTime=Date.now();idMarketRender();idRender();
 }
 function loadKlines5(sym,limit){
   return jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=5m&limit=${Math.min(150,limit)}`,20000).then(d=>d.map(k=>({t:k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]})));
@@ -1723,7 +1754,7 @@ function loadKlines5(sym,limit){
 function idRender(){
   const tb=$('#idTbl tbody');if(!tb)return;const rows=S.id.rows||[];
   $('#idTime').textContent=S.idTime?new Date(S.idTime).toISOString().slice(11,16)+' UTC':'';
-  tb.innerHTML=rows.map(r=>`<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td><td>${r.state}</td><td class="${clsP(r.dOi)}">${fP(r.dOi/100)}</td><td class="${clsP(r.dP)}">${fP(r.dP/100)}</td><td>${r.vr.toFixed(1)}x</td><td><span class="bdg pick">${r.score}/5</span></td></tr>`).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">${S.id.on?'暂无达到评分阈值的信号':'开启后等待首轮快照'}</td></tr>`;
+  tb.innerHTML=rows.map(r=>`<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td><td><b>${r.script}</b><br><span class="mut">${r.state}</span></td><td><span class="bdg pick">${r.score}/100</span></td><td class="${clsP(r.dOi)}">${fP(r.dOi/100)}</td><td class="${clsP(r.dP)}">${fP(r.dP/100)}</td><td>${r.vr.toFixed(1)}x</td><td>${fPrice(r.vwap)}</td><td>${fPrice(r.atr)} (${r.px?((r.atr/r.px)*100).toFixed(2):'—'}%)</td></tr>`).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:14px">${S.id.on?'暂无达到评分阈值的候选':'开启后等待首轮快照'}</td></tr>`;
 }
 function idToggle(on){
   S.id.on=on;const b=$('#idToggle');b.textContent=on?'暂停日内':'开启日内';b.classList.toggle('pri',on);
