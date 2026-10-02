@@ -130,6 +130,21 @@ input[type=number]{text-align:right}
 
 <!-- ========== 总览 ========== -->
 <section class="view on" id="v-overview">
+  <div class="card" id="rtCard" style="display:none">
+    <h3>实时 OI 雷达 <span class="r" id="rtSince"></span></h3>
+    <div class="row" style="margin-bottom:8px">
+      <button class="btn mini" id="rtToggle">📡 开启雷达</button>
+      <button class="btn mini" id="rtLoadFav">装载收藏</button>
+      <span class="mut">窗口</span>
+      <select id="rtWin" style="background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:12px;color:var(--txt)"><option value="1">1h</option><option value="4">4h</option><option value="6" selected>6h</option></select>
+      <span class="mut">阈值</span>
+      <input id="rtThresh" type="number" value="3" step="0.5" style="width:52px;text-align:right">
+      <span class="mut">%</span>
+    </div>
+    <div class="tblwrap"><table class="tbl" id="rtTbl">
+      <thead><tr><th>币种</th><th>窗口ΔOI%</th><th>24h%</th><th>价格</th><th>OI值</th><th>采样</th></tr></thead>
+      <tbody id="rtRows"></tbody></table></div>
+  </div>
   <div class="card">
     <h3>USDT 永续总览 <span class="r" id="ovCount">加载中…</span></h3>
     <div class="row" style="margin-bottom:8px">
@@ -175,6 +190,15 @@ input[type=number]{text-align:right}
     <div class="banner" id="dtBan"></div>
     <div class="pbar" id="dtBar"><i></i></div>
     <div class="seg" id="dtTab" style="margin:8px 0"><button data-t="day" class="on">日汇总</button><button data-t="min">5分钟明细</button></div>
+    <div id="dtChartWrap" style="margin:8px 0">
+      <div class="row" style="margin-bottom:6px">
+        <span class="mut">图表</span>
+        <div class="seg" id="dtChartSeg"><button data-c="oi" class="on">OI值</button><button data-c="oiCoin">OI币</button></div>
+        <div class="seg" id="dtChartRes"><button data-r="day" class="on">日线</button><button data-r="min">5m</button></div>
+      </div>
+      <canvas id="dtChart" style="width:100%;height:220px;border:1px solid var(--line);border-radius:10px;background:var(--card2)"></canvas>
+      <p class="mut" style="margin-top:4px">柱=OI，线=收盘价，双轴。长按/悬停显示数值。</p>
+    </div>
     <div class="tblwrap" id="dtDayWrap"><table class="tbl" id="dtDayTbl">
       <thead><tr><th>日期UTC</th><th>OI值开</th><th>最高</th><th>最低</th><th>收盘</th><th>环比%</th><th>OI币(收)</th><th>收盘价</th><th>价日%</th><th>大户多空</th><th>主动买卖</th></tr></thead>
       <tbody></tbody></table></div>
@@ -214,7 +238,7 @@ input[type=number]{text-align:right}
       <button class="btn mini" id="scCsv">导出CSV</button>
     </div>
     <div class="tblwrap"><table class="tbl" id="scTbl">
-      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="net">净变%</th><th data-k="px">价格%</th><th>标记</th></tr></thead>
+      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="net">净变%</th><th data-k="px">价格%</th><th data-k="next">T+1%</th><th>标记</th></tr></thead>
       <tbody></tbody></table></div>
   </div>
 </section>
@@ -229,8 +253,29 @@ input[type=number]{text-align:right}
     </div>
     <div class="banner" id="mgBan"></div>
     <div class="tblwrap"><table class="tbl" id="mgTbl">
-      <thead><tr><th>币种</th><th>价格</th><th>24h%</th><th>OI</th><th>OI 24h%</th><th>市值</th><th>OI/市值</th><th>量/市值</th></tr></thead>
+      <thead><tr><th>币种</th><th>价格</th><th>24h%</th><th>OI</th><th>OI 24h%</th><th>清算24h</th><th>多/空清算</th><th>市值</th><th>OI/市值</th><th>量/市值</th></tr></thead>
       <tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- ========== 费率 ========== -->
+<section class="view" id="v-fund">
+  <div class="card">
+    <h3>资金费率全市场 <span class="r" id="fdTime"></span></h3>
+    <div class="row" style="margin-bottom:8px">
+      <button class="btn mini pri" id="fdGo">刷新</button>
+      <div class="seg" id="fdSort">
+        <button data-s="fr" class="on">费率高→低</button><button data-s="fr-">费率低→高</button><button data-s="oi">OI 排序</button>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:8px">
+      <span class="mut" id="fdStat"></span>
+      <button class="btn mini" id="fdOnlyTracked">只看监测</button>
+    </div>
+    <div class="tblwrap"><table class="tbl" id="fdTbl">
+      <thead><tr><th>币种</th><th>费率/8h</th><th>年化%</th><th>基差%</th><th>下次结算</th><th>24h%</th><th>OI值</th><th>OI 24h</th></tr></thead>
+      <tbody></tbody></table></div>
+    <p class="mut" style="margin-top:8px">基差=(标记价/指数价-1)。费率极端+OI暴增=拥挤见顶，费率深负+暴跌=空头拥挤。</p>
   </div>
 </section>
 
@@ -240,6 +285,7 @@ input[type=number]{text-align:right}
   <button data-v="detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>详情</button>
   <button data-v="scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>异动</button>
   <button data-v="heat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.5 3.5 5.5 5 5.5 9.5A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.5C6.5 9 9 8 9 5.5c1.2 1 3 2.5 3-2.5z"/></svg>热度</button>
+  <button data-v="fund"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>费率</button>
 </nav>
 <div id="toast"></div>
 <script>
@@ -280,7 +326,10 @@ const S={
   ov:{page:1,size:store.get('oif_ovsize',20),sort:'vol',dir:-1,q:'',favOnly:false,ready:false,list:[]},
   dt:{sym:store.get(LSK.sym,'BTCUSDT'),rows:null,day:null,miss:[],px:{},tab:'day',mp:1,msize:300,loading:false,src:'archive'},
   sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:5,U:100,filter:'all',sort:'net',dir:-1,params:null},
-  mg:{rows:null,time:null,tried:false}
+  mg:{rows:null,time:null,tried:false},
+  fd:{rows:null,time:0,sort:'fr',onlyTracked:false,loading:false},
+  rt:{on:false,timer:null,win:6,thresh:3,int:60,rows:[],last:new Map(),hist:new Map(),snapT:0},
+  dt2:{chartRes:'day',chartMode:'oi'}
 };
 function saveFav(){store.set(LSK.fav,[...S.fav])}
 
@@ -588,6 +637,7 @@ async function dtLoad(){
     dtChips(S.dt.miss);
     dtDayBuild();
     dtDayRender();dtMinRender();dtTab(S.dt.tab);
+    setTimeout(dtChartRender,50);
     if(!S.dt.rows.length){
       ban('#dtBan','warn','该范围无归档数据（新上市或未收录）');
       $('#dtCap').textContent=`${sym} · 无数据`;
@@ -679,6 +729,60 @@ async function scGo(){
   scRender();scMeta();
   $('#scStat').textContent=`完成 ${S.sc.done} · 失败 ${S.sc.err}`+(S.sc.noHist?' · 归档源':'');
   if(S.sc.stop)toast('扫描已停止');
+  scSave();
+}
+function scSave(){
+  store.set('oif_lastscan',{
+    t:Date.now(),W:S.sc.W,U:S.sc.U,params:S.sc.params,
+    days:scDays(),rows:S.sc.rows,noHist:S.sc.noHist
+  });
+}
+async function scNextCheck(){
+  const last=store.get('oif_lastscan',null);
+  if(!last||!last.rows||!last.rows.length)return;
+  const nextDay=dstr(utcToday0());
+  const checked=store.get('oif_scanchecked',{day:'',done:{}});
+  if(checked.day===nextDay){scApplyNext(checked.done);return}
+  const need=last.rows.filter(r=>!checked.done[r.sym]);
+  if(!need.length)return;
+  ban('#scBan','ok',`<span class="spin"></span> 验证上次扫描(${last.days[0]}→${last.days[last.days.length-1]}) T+1 表现…`);
+  const done={...checked.done};
+  let n=0;
+  await pool(need,8,async r=>{
+    try{
+      const k=await loadKlines(r.sym,3);
+      const today=k.find(x=>dstr(x.t)===nextDay);
+      if(today)done[r.sym]=((today.c/(S.tick[r.sym]&&S.tick[r.sym].px)||today.c)-1)*100;
+      else if(k.length)done[r.sym]=null;
+    }catch(e){}
+    n++;
+  });
+  store.set('oif_scanchecked',{day:nextDay,done});
+  ban('#scBan','',null);
+  scApplyNext(done);
+}
+function scApplyNext(done){
+  S.sc.next=done;
+  let hit=0,n=0,win=0;
+  for(const r of S.sc.rows){
+    const v=done[r.sym];
+    r.next=v;
+    if(v!=null){n++;if(v>0){win++;if(r.pick)hit++}}
+  }
+  const pk=S.sc.rows.filter(r=>r.pick);
+  const pn=pk.filter(r=>r.next!=null).length;
+  const pw=pk.filter(r=>r.next>0).length;
+  S.sc.nextStat=n?{n,win,pn,pw}:null;
+  scRender();scNextChips();
+}
+function scNextChips(){
+  const c=$('#scChips');
+  const st=S.sc.nextStat;
+  if(!st){return}
+  const cur=scMeta;
+  const html=`<span class="chip">T+1 已验 <b>${st.n}</b> · 胜 <b>${st.win}</b> (${st.n?Math.round(st.win/st.n*100):0}%)</span>`+
+    (st.pn?`<span class="chip">入选 T+1 <b>${st.pw}/${st.pn}</b> (${Math.round(st.pw/st.pn*100)}%)</span>`:'');
+  c.insertAdjacentHTML('beforeend',html);
 }
 function scFiltered(){
   const f=S.sc.filter;
@@ -689,13 +793,15 @@ function scFiltered(){
 }
 function scRender(){
   const tb=$('#scTbl tbody');
+  const nx=v=>v==null?'—':(v>0?'+':'')+v.toFixed(2)+'%';
   tb.innerHTML=scFiltered().map(r=>
     `<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td>`+
     `<td>${fC(r.oiS)}</td><td>${fC(r.oiE)}</td>`+
     `<td class="${clsP(r.net)}">${fP(r.net/100)}</td>`+
     `<td class="${clsP(r.px)}">${r.px==null?'—':fP(r.px/100)}</td>`+
+    `<td class="${clsP(r.next)}">${r.next==null?'—':nx(r.next)}</td>`+
     `<td>${r.pick?'<span class="bdg pick">入选</span>':''}</td></tr>`
-  ).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
+  ).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
 }
 function scMeta(){
   const c=$('#scChips');
@@ -743,10 +849,21 @@ function mgRender(){
     `<td class="${clsP(r.price_change_percent_24h)}">${r.price_change_percent_24h!=null?fP(r.price_change_percent_24h/100):'—'}</td>`+
     `<td>${fC(r.open_interest_usd)}</td>`+
     `<td class="${clsP(r.open_interest_change_percent_24h)}">${r.open_interest_change_percent_24h!=null?fP(r.open_interest_change_percent_24h/100):'—'}</td>`+
+    `<td>${r.liquidation_usd_24h!=null?fC(r.liquidation_usd_24h):'—'}</td>`+
+    `<td class="${(r.long_liquidation_usd_24h||0)>(r.short_liquidation_usd_24h||0)?'down':'up'}">${liqRatio(r)}</td>`+
     `<td>${fC(r.market_cap_usd)}</td>`+
     `<td>${r.open_interest_market_cap_ratio!=null?(+r.open_interest_market_cap_ratio).toFixed(2):'—'}</td>`+
     `<td>${r.futures_volume_market_cap_ratio!=null?(+r.futures_volume_market_cap_ratio).toFixed(2):'—'}</td></tr>`;
-  }).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
+  }).join('')||`<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
+}
+function liqRatio(r){
+  const L=r.long_liquidation_usd_24h,Ss=r.short_liquidation_usd_24h;
+  if(L==null&&Ss==null)return '—';
+  if(!L&&!Ss)return '$0';
+  if(!Ss)return '多$'+fC(L);
+  if(!L)return '空$'+fC(Ss);
+  const pct=L/(L+Ss)*100;
+  return `<span class="down">${pct.toFixed(0)}%</span>/<span class="up">${(100-pct).toFixed(0)}%</span>`;
 }
 
 /* ================= init ================= */
@@ -754,6 +871,8 @@ function showView(v){
   $$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   $$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   if(v==='heat')mgLoad();
+  if(v==='fund')fdLoad();
+  if(v==='overview')setTimeout(dtChartRender,60);
   $('#main').scrollTop=0;
 }
 function jumpSym(sym){
@@ -848,6 +967,47 @@ function bind(){
     const a=e.target.closest('a[data-sym]');
     if(a)jumpSym(a.dataset.sym);
   });
+  /* 费率 */
+  $('#fdGo').onclick=()=>fdLoad(true);
+  $$('#fdSort button').forEach(b=>b.onclick=()=>{
+    S.fd.sort=b.dataset.s;
+    $$('#fdSort button').forEach(x=>x.classList.toggle('on',x===b));
+    fdRender();
+  });
+  $('#fdOnlyTracked').onclick=()=>{
+    S.fd.onlyTracked=!S.fd.onlyTracked;
+    $('#fdOnlyTracked').classList.toggle('pri',S.fd.onlyTracked);
+    $('#fdOnlyTracked').textContent=S.fd.onlyTracked?'只看监测 ✓':'只看监测';
+    fdRender();
+  };
+  $('#fdTbl').addEventListener('click',e=>{
+    const st=e.target.closest('.star');
+    if(st){
+      const s=st.dataset.fav;
+      if(S.fav.has(s))S.fav.delete(s);else S.fav.add(s);
+      saveFav();fdRender();
+    }else{
+      const a=e.target.closest('a[data-sym]');
+      if(a)jumpSym(a.dataset.sym);
+    }
+  });
+  /* 雷达 */
+  $('#rtToggle').onclick=()=>rtToggle(!S.rt.on);
+  $('#rtLoadFav').onclick=rtTrackFromFav;
+  $('#rtWin').onchange=e=>{S.rt.win=+e.target.value;rtBuild()};
+  $('#rtThresh').onchange=e=>{S.rt.thresh=+e.target.value||3};
+  /* 图表 */
+  $$('#dtChartSeg button').forEach(b=>b.onclick=()=>{
+    S.dt2.chartMode=b.dataset.c;
+    $$('#dtChartSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    dtChartRender();
+  });
+  $$('#dtChartRes button').forEach(b=>b.onclick=()=>{
+    S.dt2.chartRes=b.dataset.r;
+    $$('#dtChartRes button').forEach(x=>x.classList.toggle('on',x===b));
+    dtChartRender();
+  });
+  dtChartResize();
 }
 function init(){
   bind();
@@ -858,8 +1018,268 @@ function init(){
   dtSetSym(store.get(LSK.sym,'BTCUSDT'));
   stamp();setInterval(stamp,30000);
   bootOverview();
+  /* 恢复上次扫描 + T+1 验证 */
+  const last=store.get('oif_lastscan',null);
+  if(last&&last.rows){
+    S.sc.rows=last.rows;S.sc.W=last.W||5;S.sc.U=last.U||100;
+    if(last.params)S.sc.params=last.params;
+    $$('#scWin button').forEach(b=>b.classList.toggle('on',+b.dataset.d===S.sc.W));
+    scRender();
+    setTimeout(scNextCheck,2500);
+  }
 }
 init();
+
+/* ================= 费率 ================= */
+async function fdLoad(force){
+  if(S.fd.loading)return;
+  if(S.fd.rows&&!force){fdRender();return}
+  S.fd.loading=true;
+  $('#fdGo').disabled=true;
+  $('#fdStat').innerHTML='<span class="spin"></span> 加载中…';
+  try{
+    const d=await jget(API+'/fapi/v1/premiumIndex',30000);
+    const m={};
+    for(const r of d)m[r.symbol]=r;
+    S.fd.rows=S.ov.list.filter(r=>{
+      const p=m[r.sym];
+      return p&&isFinite(+p.lastFundingRate)&&isFinite(+p.markPrice)&&+p.markPrice>0;
+    }).map(r=>{
+      const p=m[r.sym];
+      return {
+        sym:r.sym,fr:+p.lastFundingRate,mark:+p.markPrice,index:+p.indexPrice,
+        next:+p.nextFundingTime,
+        basis:+p.indexPrice>0?(+p.markPrice/+p.indexPrice-1)*100:null,
+        chg:r.chg,vol:r.vol,
+        oiv:(S.oi.get(r.sym)||0)*r.px,px:r.px
+      };
+    });
+    S.fd.time=Date.now();
+    fdRender();fdMeta();
+  }catch(e){
+    ban('#mgBan','err','费率加载失败：'+e.message);
+  }finally{
+    S.fd.loading=false;$('#fdGo').disabled=false;
+  }
+}
+function fdRender(){
+  const tb=$('#fdTbl tbody');
+  let rows=S.fd.rows||[];
+  if(S.fd.onlyTracked)rows=rows.filter(r=>S.fav.has(r.sym));
+  const k=S.fd.sort;
+  const cmp={
+    'fr':(a,b)=>b.fr-a.fr,
+    'fr-':(a,b)=>a.fr-b.fr,
+    'oi':(a,b)=>b.oiv-a.oiv
+  }[k];
+  rows=[...rows].sort(cmp);
+  $('#fdTime').textContent=S.fd.time?new Date(S.fd.time).toISOString().slice(11,16)+' UTC':'';
+  tb.innerHTML=rows.slice(0,150).map(r=>{
+    const ann=r.fr*3*365*100;
+    const nxt=r.next?Math.max(0,r.next-Date.now()):null;
+    const hh=Math.floor(nxt/3600000),mm=Math.floor(nxt%3600000/60000);
+    const frCls=r.fr>0.0005?'up':(r.fr<-0.0005?'down':'');
+    return `<tr><td><div class="c-sym"><button class="star${S.fav.has(r.sym)?' on':''}" data-fav="${r.sym}">${S.fav.has(r.sym)?'★':'☆'}</button><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></div></td>`+
+    `<td class="${frCls}">${(r.fr*100).toFixed(4)}%</td>`+
+    `<td class="${clsP(ann)}">${fN(ann,0)}%</td>`+
+    `<td class="${clsP(r.basis)}">${r.basis==null?'—':(r.basis>=0?'+':'')+r.basis.toFixed(3)}</td>`+
+    `<td>${nxt==null?'—':(hh>0?hh+'h':mm+'m')}</td>`+
+    `<td class="${clsP(r.chg)}">${fP(r.chg/100)}</td>`+
+    `<td>${fC(r.oiv)}</td>`+
+    `<td class="${clsP(S.rt.rows.find(x=>x.sym===r.sym)?.d1)}">${(v=>v!=null?fP(v):'—')(S.rt.rows.find(x=>x.sym===r.sym)?.d1/100)}</td></tr>`;
+  }).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:18px">无数据，请先刷新</td></tr>`;
+}
+function fdMeta(){
+  const rows=S.fd.rows||[];
+  if(!rows.length){$('#fdStat').textContent='';return}
+  const frs=rows.map(r=>r.fr).sort((a,b)=>a-b);
+  const q=p=>frs[Math.floor(p*(frs.length-1))];
+  const hi=rows.filter(r=>r.fr>=q(.95)).length,lo=rows.filter(r=>r.fr<=q(.05)).length;
+  $('#fdStat').textContent=` ${rows.length}个 · 中位${(q(.5)*100).toFixed(3)}% · P95≥${(q(.95)*100).toFixed(2)}%(${hi}) · P05≤${(q(.05)*100).toFixed(2)}%(${lo})`;
+}
+
+/* ================= 实时 OI 雷达 ================= */
+function rtView(){return S.rt.on}
+async function rtPoll(){
+  if(!S.rt.on)return;
+  const now=Date.now();
+  const tracked=[...S.rt.last.keys()];
+  if(!tracked.length)return;
+  const m={};
+  let err=0;
+  await pool(tracked,8,async s=>{
+    try{
+      const d=await jget(API+'/fapi/v1/openInterest?symbol='+s,12000);
+      m[s]=+d.openInterest;
+    }catch(e){err++}
+  });
+  if(!Object.keys(m).length)return;
+  if(S.rt.last.size){
+    for(const [s,v] of S.rt.last){
+      const cur=m[s];
+      if(cur==null||!v)continue;
+      const pct=(cur/v-1)*100;
+      if(Math.abs(pct)>=S.rt.thresh&&S.rt.on){
+        const prev=S.rt.hist.get(s)||[];
+        const lastAgo=prev.length?now-prev[prev.length-1].t:0;
+        if(now-lastAgo>25*60*1000){            /* 同币 25 分钟内不重复响 */
+          const px=S.tick[s]?S.tick[s].px:null;
+          toast(`${s.replace('USDT','')} OI ${pct>0?'激增':'骤降'} ${Math.abs(pct).toFixed(1)}%${px?' · $'+fPrice(px):''}`);
+        }
+      }
+    }
+  }
+  tracked.forEach(s=>{
+    if(!S.rt.hist.has(s)){
+      const base=m[s]!=null?m[s]:S.rt.last.get(s);
+      if(base)S.rt.hist.set(s,[{t:now,v:base}]);
+    }else{
+      const a=S.rt.hist.get(s);
+      if(m[s]!=null)a.push({t:now,v:m[s]});
+      while(a.length>1&&now-a[0].t>S.rt.win*3600000)a.shift();
+    }
+  });
+  S.rt.last.clear();
+  for(const s of tracked)if(m[s]!=null)S.rt.last.set(s,m[s]);
+  S.rt.snapT=now;
+  rtBuild();
+}
+function rtBuild(){
+  const rows=[];
+  S.rt.hist.forEach((arr,s)=>{
+    if(arr.length<2)return;
+    const last=arr[arr.length-1],first=arr[0];
+    if(!first.v)return;
+    const d1=(last.v/first.v-1)*100;
+    const px=S.tick[s]?S.tick[s].px:null;
+    const chg=S.tick[s]?S.tick[s].chg:null;
+    let maxD=0;
+    for(let i=1;i<arr.length;i++){const p=(arr[i].v/arr[i-1].v-1)*100;if(Math.abs(p)>Math.abs(maxD))maxD=p}
+    rows.push({sym:s,d1,maxD,n:arr.length,px,chg,oiv:px?last.v*px:null});
+  });
+  rows.sort((a,b)=>Math.abs(b.d1)-Math.abs(a.d1));
+  S.rt.rows=rows;
+  rtRender();
+}
+function rtRender(){
+  const el=$('#rtRows');
+  if(!el)return;
+  const rows=S.rt.rows.slice(0,30);
+  el.innerHTML=rows.map(r=>
+    `<tr><td><div class="c-sym"><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></div></td>`+
+    `<td class="${clsP(r.d1)}">${fP(r.d1/100)}</td>`+
+    `<td class="${clsP(r.chg)}">${r.chg!=null?fP(r.chg/100):'—'}</td>`+
+    `<td>${r.px?fPrice(r.px):'—'}</td>`+
+    `<td>${r.oiv!=null?fC(r.oiv):'—'}</td>`+
+    `<td class="mut">${r.n}点</td></tr>`
+  ).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后 60s 出首屏数据</td></tr>`;
+  $('#rtSince').textContent=S.rt.snapT?`窗口内 ${S.rt.win}h · ${new Date(S.rt.snapT).toISOString().slice(11,16)} UTC`:'';
+}
+function rtToggle(on){
+  S.rt.on=on;
+  const btn=$('#rtToggle');
+  btn.textContent=on?'⏸ 暂停雷达':'📡 开启雷达';
+  btn.classList.toggle('pri',on);
+  if(on){
+    toast('雷达开启，每 60s 扫描监测币种');
+    rtPoll();
+    S.rt.timer=setInterval(rtPoll,S.rt.int*1000);
+  }else{
+    clearInterval(S.rt.timer);S.rt.timer=null;
+  }
+}
+function rtTrackFromFav(){
+  if(!S.fav.size){toast('收藏夹为空，先在总览/详情收藏币种');return}
+  S.rt.last.clear();S.rt.hist.clear();S.rt.rows=[];
+  S.fav.forEach(s=>{
+    const v=S.oi.get(s);
+    if(v)S.rt.last.set(s,v);
+  });
+  [...S.fav].forEach(s=>{if(!S.rt.last.has(s)&&S.tick[s])S.rt.last.set(s,0)});
+  toast(`已装载 ${S.rt.last.size} 个监测币种`);
+  rtBuild();
+}
+function rtShowCard(){
+  $('#rtCard').style.display='';
+}
+
+/* ================= OI×价格双轴图 ================= */
+function dtChartRender(){
+  const cv=$('#dtChart');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth,H=cv.clientHeight;
+  if(!W)return;
+  cv.width=W*dpr;cv.height=H*dpr;
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+  const res=S.dt2.chartRes,mode=S.dt2.chartMode;
+  let data=[];
+  if(res==='day'&&S.dt.day)data=[...S.dt.day].reverse();
+  else if(res==='min'&&S.dt.rows)data=S.dt.rows.slice(-576);   /* 最近48h */
+  if(data.length<2){ctx.fillStyle='#5c6579';ctx.font='12px -apple-system';ctx.textAlign='center';ctx.fillText('无数据',W/2,H/2);return}
+  const oik=res==='day'?(mode==='oiCoin'?'oiC':'close'):(mode==='oiCoin'?'oi':'oiv');
+  const priceOf=d=>{
+    if(res==='day')return d.px;
+    return d.oi>0?d.oiv/d.oi:null;
+  };
+  const PL=52,PR=56,PT=10,PB=22;
+  const cw=W-PL-PR,ch=H-PT-PB;
+  const ois=data.map(d=>d[oik]).filter(v=>v!=null&&isFinite(v));
+  const pxs=data.map(priceOf).filter(v=>v!=null&&isFinite(v));
+  if(!ois.length||!pxs.length){ctx.fillStyle='#5c6579';ctx.font='12px -apple-system';ctx.textAlign='center';ctx.fillText('数据不全',W/2,H/2);return}
+  const oMin=Math.min(...ois),oMax=Math.max(...ois);
+  const pMin=Math.min(...pxs),pMax=Math.max(...pxs);
+  const oR=oMax-oMin||oMax||1,pR=pMax-pMin||pMax||1;
+  const X=i=>PL+i/(data.length-1)*cw;
+  const YO=v=>PT+ch-(v-oMin)/oR*ch;
+  const YP=v=>PT+(1-(v-pMin)/pR)*ch;
+  /* 网格 */
+  ctx.strokeStyle='#232c3f';ctx.lineWidth=1;
+  ctx.font='10px -apple-system';ctx.fillStyle='#5c6579';
+  for(let i=0;i<=4;i++){
+    const y=PT+ch*i/4;
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
+    ctx.textAlign='right';
+    ctx.fillText(fC(oMin+oR*(1-i/4)),PL-6,y+3);
+    ctx.textAlign='left';
+    ctx.fillText(fPrice(pMin+pR*i/4),W-PR+6,y+3);
+  }
+  /* OI 柱 */
+  const bw=Math.max(1,cw/data.length*.7);
+  ctx.fillStyle='rgba(167,139,250,.55)';
+  data.forEach((d,i)=>{
+    const v=d[oik];if(v==null||!isFinite(v))return;
+    const y=YO(v);
+    ctx.fillRect(X(i)-bw/2,y,bw,PT+ch-y);
+  });
+  /* 价格线 */
+  ctx.strokeStyle='#f0b90b';ctx.lineWidth=1.6;
+  ctx.beginPath();
+  let started=false;
+  data.forEach((d,i)=>{
+    const v=priceOf(d);
+    if(v==null||!isFinite(v)){started=false;return}
+    const x=X(i),y=YP(v);
+    if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  /* X 轴标签 */
+  ctx.fillStyle='#5c6579';ctx.textAlign='center';ctx.font='10px -apple-system';
+  const step=Math.max(1,Math.floor(data.length/5));
+  for(let i=0;i<data.length;i+=step){
+    const d=data[i];
+    const lbl=res==='day'?d.d.slice(5):new Date(d.t).toISOString().slice(11,16);
+    ctx.fillText(lbl,X(i),H-8);
+  }
+}
+function dtChartResize(){
+  let raf=null;
+  window.addEventListener('resize',()=>{
+    if(raf)cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(dtChartRender);
+  });
+}
 </script>
 </body>
 </html>
