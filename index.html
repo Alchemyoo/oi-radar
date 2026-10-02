@@ -256,7 +256,7 @@ input[type=number]{text-align:right}
   <div class="card">
     <h3>象限信号 · ΔOI × Δ价格 <span class="r" id="qdTime"></span></h3>
     <div class="row" style="margin-bottom:8px">
-      <div class="seg" id="qdWin"><button data-w="30">30天</button><button data-w="60" class="on">60天</button><button data-w="90">90天</button></div>
+      <div class="seg" id="qdWin"><button data-w="1">1天</button><button data-w="2">2天</button><button data-w="3" class="on">3天</button></div>
       <div class="seg" id="qdUni"><button data-u="50">Top50</button><button data-u="100" class="on">Top100</button></div>
     </div>
     <div class="row" style="margin-bottom:8px">
@@ -274,8 +274,21 @@ input[type=number]{text-align:right}
       </div>
       <button class="btn mini" id="qdCsv">导出CSV</button>
     </div>
+    <div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px">
+      <h3>日内信号 · 5m执行 <span class="r" id="idTime"></span></h3>
+      <div class="row" style="margin-bottom:8px">
+        <button class="btn mini pri" id="idToggle">开启日内</button>
+        <div class="seg" id="idWin"><button data-w="15">15m</button><button data-w="30" class="on">30m</button><button data-w="60">60m</button></div>
+        <div class="seg" id="idScore"><button data-s="4">≥4分</button><button data-s="5" class="on">≥5分</button></div>
+      </div>
+      <p class="mut" style="margin:3px 0 8px">Top30监测 · OI逐币轮询 · 5m成交量确认 · 仅作观察/复核，不替代执行纪律</p>
+      <div class="tblwrap"><table class="tbl" id="idTbl">
+        <thead><tr><th>币种</th><th>状态</th><th>ΔOI</th><th>ΔP</th><th>量比</th><th>评分</th></tr></thead>
+        <tbody><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后等待首轮快照</td></tr></tbody>
+      </table></div>
+    </div>
     <div class="tblwrap"><table class="tbl" id="qdTbl">
-      <thead><tr><th>币种</th><th>当前象限</th><th>昨日ΔOI</th><th>昨日ΔP</th><th>该象限近90d次数</th><th>该象限次日均</th><th>胜率</th></tr></thead>
+      <thead><tr><th>币种</th><th>当前象限</th><th>窗口ΔOI</th><th>窗口ΔP</th><th>该象限近30d次数</th><th>该象限次日均</th><th>胜率</th></tr></thead>
       <tbody></tbody></table></div>
   </div>
 </section>
@@ -368,8 +381,9 @@ const S={
   fd:{rows:null,time:0,sort:'fr',onlyTracked:false,loading:false},
   rt:{on:false,timer:null,win:6,thresh:3,int:60,rows:[],last:new Map(),hist:new Map(),snapT:0},
   dt2:{chartRes:'day',chartMode:'oi'},
-  qd:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:60,U:100,filter:'squeeze',agg:null},
-  ws:{on:false,sock:null,retry:0,dirty:0}
+  qd:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:3,U:100,filter:'squeeze',agg:null},
+  ws:{on:false,sock:null,retry:0,dirty:0},
+  id:{on:false,timer:null,win:30,score:5,hist:new Map(),rows:[],loading:false}
 };
 function saveFav(){store.set(LSK.fav,[...S.fav])}
 
@@ -1132,6 +1146,18 @@ function bind(){
   });
   /* WS 实时 */
   $('#wsToggle').onclick=()=>wsToggle(!S.ws.on);
+  /* 日内信号 */
+  $$('#idWin button').forEach(b=>b.onclick=()=>{
+    S.id.win=+b.dataset.w;
+    $$('#idWin button').forEach(x=>x.classList.toggle('on',x===b));
+    if(S.id.on)idPoll();
+  });
+  $$('#idScore button').forEach(b=>b.onclick=()=>{
+    S.id.score=+b.dataset.s;
+    $$('#idScore button').forEach(x=>x.classList.toggle('on',x===b));
+    idRender();
+  });
+  $('#idToggle').onclick=()=>idToggle(!S.id.on);
 }
 function init(){
   bind();
@@ -1424,47 +1450,53 @@ function quadOf(dOi,dP){
   return 'cover';
 }
 async function qdOne(sym,win){
+  /* 当前信号窗口 1/2/3 天；历史统计固定取近 30 个完整日 */
+  const histDays=30, end=utcToday0()-DAY;
+  const days=[];
+  for(let i=histDays+win;i>=0;i--)days.push(dstr(end-i*DAY));
   let seq=null;
   if(!S.sc.noHist){
     try{
-      const h=await loadOiHist(sym,win+2);
+      const h=await loadOiHist(sym,histDays+win+3);
       const hh=h.filter(x=>x.t<utcToday0());
-      if(hh.length>=win*0.6)seq=hh.map(x=>({t:x.t,oiv:x.oiv}));
+      if(hh.length>=Math.max(5,win+2))seq=hh.map(x=>({t:x.t,oiv:x.oiv}));
     }catch(e){if(e&&e.name==='TypeError')S.sc.noHist=true}
   }
   if(!seq){
-    const days=[],end=utcToday0()-DAY;
-    for(let i=win-1;i>=0;i--)days.push(dstr(end-i*DAY));
     const rs=[];
     await pool(days,4,async d=>{try{const dd=await fetchDay(sym,d);rs.push(...dd)}catch(e){}});
     if(!rs.length)return null;
-    rs.sort((a,b)=>a.t-b.t);
-    seq=dailyEnd(rs);
+    rs.sort((a,b)=>a.t-b.t);seq=dailyEnd(rs);
   }
-  if(!seq||seq.length<8)return null;
+  if(!seq||seq.length<Math.max(5,win+2))return null;
   let ks;
-  try{ks=await loadKlines(sym,win+2)}catch(e){return null}
+  try{ks=await loadKlines(sym,histDays+win+3)}catch(e){return null}
   const px=new Map(ks.map(k=>[dstr(k.t),k.c]));
-  const days=[];
+  const daily=[];
   for(let i=1;i<seq.length;i++){
     if(!seq[i-1].oiv)continue;
     const d=dstr(seq[i].t),pd=dstr(seq[i-1].t);
-    const dOi=(seq[i].oiv/seq[i-1].oiv-1)*100;
     const c=px.get(d),pc=px.get(pd);
     if(c==null||pc==null||!pc)continue;
+    const dOi=(seq[i].oiv/seq[i-1].oiv-1)*100;
     const dP=(c/pc-1)*100;
-    days.push({d,dOi,dP,quad:quadOf(dOi,dP)});
+    daily.push({d,dOi,dP,quad:quadOf(dOi,dP),oiv:seq[i].oiv});
   }
-  if(days.length<5)return null;
+  if(daily.length<Math.max(4,win+1))return null;
   const stats={};
-  for(let i=0;i<days.length-1;i++){
-    const q=days[i].quad;
-    if(!q)continue;
-    const ret=days[i+1].dP;
+  for(let i=0;i<daily.length-1;i++){
+    const q=daily[i].quad;if(!q)continue;
+    const ret=daily[i+1].dP;
     const st=stats[q]=stats[q]||{n:0,win:0,sum:0};
     st.n++;st.sum+=ret;if(ret>0)st.win++;
   }
-  return {sym,days,stats,last:days[days.length-1]};
+  /* 用最近 win 个日变化合成当前窗口信号 */
+  const cur=daily.slice(-win);
+  const first=cur[0],last=cur[cur.length-1];
+  const oiBase=first.oiv/(1+first.dOi/100);
+  const dOi=oiBase>0?(last.oiv/oiBase-1)*100:first.dOi;
+  const dP=cur.reduce((a,b)=>a+b.dP,0);
+  return {sym,daily,stats,last:{d:dstr(last.d),dOi,dP,quad:quadOf(dOi,dP)}};
 }
 async function qdGo(){
   if(S.qd.run)return;
@@ -1651,6 +1683,45 @@ function fhRender(){
       `<span class="chip">年化 <b class="${clsP(ann)}">${ann.toFixed(1)}%</b></span>`;
   }
 }
+
+/* ================= 日内信号 · 5m执行层 ================= */
+async function idPoll(){
+  if(!S.id.on||S.id.loading)return;
+  if(!S.ov.ready||!S.ov.list.length)return;
+  S.id.loading=true;
+  const list=[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,30),rows=[];
+  await pool(list,6,async r=>{
+    try{
+      const [oi,ks]=await Promise.all([loadOiOne(r.sym),loadKlines5(r.sym,40)]);
+      if(!ks||ks.length<8)return;
+      const n=Math.min(Math.ceil(S.id.win/5),ks.length-1),old=ks[ks.length-1-n],last=ks[ks.length-1];
+      const dP=(last.c/old.c-1)*100,prev=S.id.hist.get(r.sym),dOi=prev&&prev.v?(oi/prev.v-1)*100:0;
+      const vols=ks.slice(Math.max(0,ks.length-21),ks.length-1).map(x=>x.v),av=vols.reduce((a,b)=>a+b,0)/(vols.length||1),vr=av?last.v/av:0,q=quadOf(dOi,dP);
+      let score=0;
+      if(Math.abs(dOi)>=2)score+=2;else if(Math.abs(dOi)>=1)score++;
+      if(Math.abs(dP)>=.8)score+=2;else if(Math.abs(dP)>=.5)score++;
+      if(vr>=1.5)score++;
+      const state=q==='squeeze'?'等待收回VWAP':q==='trend'?'等待回踩确认':q==='flush'?'等待止跌反弹':q==='cover'?'不追涨':'观察';
+      rows.push({sym:r.sym,dOi,dP,vr,score,q,state,oi,px:last.c,t:last.t});S.id.hist.set(r.sym,{v:oi,t:Date.now()});
+    }catch(e){}
+  });
+  S.id.rows=rows.filter(r=>r.score>=S.id.score).sort((a,b)=>b.score-a.score||Math.abs(b.dP)-Math.abs(a.dP));
+  S.id.loading=false;S.idTime=Date.now();idRender();
+}
+function loadKlines5(sym,limit){
+  return jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=5m&limit=${Math.min(150,limit)}`,20000).then(d=>d.map(k=>({t:k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]})));
+}
+function idRender(){
+  const tb=$('#idTbl tbody');if(!tb)return;const rows=S.id.rows||[];
+  $('#idTime').textContent=S.idTime?new Date(S.idTime).toISOString().slice(11,16)+' UTC':'';
+  tb.innerHTML=rows.map(r=>`<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td><td>${r.state}</td><td class="${clsP(r.dOi)}">${fP(r.dOi/100)}</td><td class="${clsP(r.dP)}">${fP(r.dP/100)}</td><td>${r.vr.toFixed(1)}x</td><td><span class="bdg pick">${r.score}/5</span></td></tr>`).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">${S.id.on?'暂无达到评分阈值的信号':'开启后等待首轮快照'}</td></tr>`;
+}
+function idToggle(on){
+  S.id.on=on;const b=$('#idToggle');b.textContent=on?'暂停日内':'开启日内';b.classList.toggle('pri',on);
+  if(on){S.id.hist.clear();S.id.rows=[];idRender();idPoll();S.id.timer=setInterval(idPoll,60000);toast('日内信号开启：Top30，每60秒更新')}
+  else{clearInterval(S.id.timer);S.id.timer=null}
+}
+$('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 </body>
 </html>
