@@ -116,6 +116,11 @@ input[type=number]{text-align:right}
 #tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;color:var(--dim);font-size:9.8px;font-weight:600}
 #tabbar button.on{color:var(--acc)}
 #tabbar svg{width:20px;height:20px}
+#stTbl th:nth-child(2),#stTbl td:nth-child(2){position:sticky;left:0;text-align:left;background:var(--card);border-right:1px solid var(--line)}
+#stTbl th:nth-child(2){z-index:3;background:#161c2a}
+#stTbl td:nth-child(2){z-index:1}
+#v-strong h3{flex-wrap:wrap}
+#stTime{overflow-wrap:anywhere;max-width:100%}
 #toast{position:fixed;left:50%;bottom:calc(78px + var(--safe-b));transform:translateX(-50%) translateY(12px);background:#1e2638;border:1px solid var(--line);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:86vw}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
@@ -333,12 +338,51 @@ input[type=number]{text-align:right}
   </div>
 </section>
 
+<section class="view" id="v-strong">
+  <div class="card">
+    <h3>强势币种 · TOP30 <span class="r" id="stTime">待扫描</span></h3>
+    <div class="row" style="margin-bottom:8px">
+      <div class="seg" id="stWin" aria-label="排名周期">
+        <button data-d="1" class="on">1天</button><button data-d="3">3天</button><button data-d="5">5天</button><button data-d="7">7天</button>
+      </div>
+      <button class="btn mini pri" id="stGo">扫描全市场</button>
+      <button class="btn mini" id="stStop" disabled>停止</button>
+    </div>
+    <div class="chips" id="stBtc"><span class="chip">BTC 1 / 3 / 5 / 7天 <b>待扫描</b></span></div>
+    <div class="chip" id="stEnv" style="margin-top:8px;display:inline-block">BTC环境：待扫描</div>
+    <div class="row" style="margin-top:10px">
+      <span class="row" style="flex-wrap:nowrap"><label class="mut" for="stThreshold">BTC震荡 ±</label><input id="stThreshold" type="number" min="0" max="20" step="0.1" value="1" style="width:60px" aria-label="BTC震荡阈值百分比"><span class="mut">%</span></span>
+      <span class="row" style="flex-wrap:nowrap"><label class="mut" for="stMinVol">24h成交额 ≥</label><input id="stMinVol" type="number" min="0" max="100000" step="1" value="0" style="width:65px" aria-label="最低24小时成交额百万USDT"><span class="mut">M USDT</span></span>
+    </div>
+    <div id="stBan" class="banner"></div>
+    <p class="mut" style="margin-top:10px">BTC跌或震荡时关注逆势上涨 / 抗跌币；上涨背景仍展示排名。</p>
+    <div class="row" style="margin-top:10px">
+      <div class="seg" id="stMode"><button data-m="strong" class="on">逆势上涨</button><button data-m="relative">跑赢BTC</button><button data-m="all">全部币种</button></div>
+      <div class="seg" id="stOrder"><button data-o="desc" class="on">涨幅前30</button><button data-o="asc">跌幅前30</button></div>
+    </div>
+    <details class="mut" style="margin-top:8px"><summary style="cursor:pointer;color:var(--sub)">筛选规则与超额口径</summary><p style="margin-top:6px">逆势上涨＝所选周期涨幅 &gt; 0 且跑赢BTC；跑赢BTC包含抗跌币。点击跌幅榜自动切换「全部币种」，再选筛选可查看筛选内排名。排名按币种自身涨跌幅，超额＝币种涨跌幅−BTC涨跌幅（百分点）。BTC震荡按净涨跌幅判断，不代表区间波动低。</p></details>
+    <div class="pbar" id="stBar"><i></i></div>
+    <div class="mut" id="stStat" style="margin-top:8px">点击「扫描全市场」，统计币安 USDT 永续（不含BTC）。</div>
+    <div class="chips" id="stMeta"></div>
+  </div>
+  <div class="card">
+    <h3>涨跌幅排名 <span class="r">点周期列可切换排名</span></h3>
+    <div class="tblwrap"><table class="tbl" id="stTbl">
+      <thead><tr><th>#</th><th>币种</th><th>快照价</th><th data-d="1" class="sd">1天%</th><th data-d="3">3天%</th><th data-d="5">5天%</th><th data-d="7">7天%</th><th>超额/百分点</th><th>24h成交額</th></tr></thead>
+      <tbody><tr><td colspan="9" style="text-align:center;color:var(--dim);padding:22px">扫描后显示前30名，左右滑动查看全部周期。</td></tr></tbody>
+    </table></div>
+    <div class="row" style="margin-top:10px"><button class="btn mini" id="stCsv" disabled>导出前30 CSV</button></div>
+    <p class="mut" style="margin-top:8px">口径：截至最近完成的整点，使用已收盘1小时K线，计算滚动24 / 72 / 120 / 168小时涨跌幅；所有币种与BTC使用同一时点。不是今日开盘至今，也不是BTC弱势日的历史回测。上市不足或缺失对应历史数据标「—」，不以0补齐；成交额为扫描时的滚动24h数据。</p>
+  </div>
+</section>
+
 </main>
 <nav id="tabbar">
   <button data-v="overview" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>总览</button>
   <button data-v="detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>详情</button>
   <button data-v="scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>异动</button>
   <button data-v="signal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M7 14l4-6 3 4 4-7"/></svg>信号</button>
+  <button data-v="strong"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9m6 10V5m6 14v-7M3 7l6-4 6 4 6-5"/><path d="M17 2h4v4"/></svg>强势</button>
   <button data-v="heat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.5 3.5 5.5 5 5.5 9.5A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.5C6.5 9 9 8 9 5.5c1.2 1 3 2.5 3-2.5z"/></svg>热度</button>
   <button data-v="fund"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>费率</button>
 </nav>
@@ -991,6 +1035,7 @@ function showView(v){
   $$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   if(v==='heat')mgLoad();
   if(v==='fund')fdLoad();
+  if(v==='strong'&&typeof stRender==='function')stRender();
   if(v==='overview')setTimeout(dtChartRender,60);
   $('#main').scrollTop=0;
 }
@@ -1763,5 +1808,7 @@ function idToggle(on){
 }
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
+<script src="strong.js?v=20261003-1"></script>
+<script>stBind();</script>
 </body>
 </html>
