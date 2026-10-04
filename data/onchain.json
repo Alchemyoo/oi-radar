@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T17:57:18Z",
+  "generatedAt": "2026-10-04T20:52:17Z",
   "status": "partial",
   "collectionMode": "actions",
   "source": "DexScreener token-pairs/v1",
@@ -18,7 +18,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -58,7 +58,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -98,7 +98,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -138,7 +138,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -178,7 +178,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -218,7 +218,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -258,7 +258,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -298,7 +298,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -338,7 +338,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -378,7 +378,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -418,7 +418,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -458,7 +458,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -498,7 +498,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -538,7 +538,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -578,7 +578,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -618,7 +618,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -658,7 +658,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -698,7 +698,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -738,7 +738,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -778,7 +778,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -818,7 +818,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -858,7 +858,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -898,7 +898,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -938,7 +938,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -978,7 +978,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -1018,7 +1018,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -1058,7 +1058,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1098,7 +1098,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1138,7 +1138,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1178,7 +1178,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -1218,7 +1218,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -1258,7 +1258,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1298,7 +1298,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1338,7 +1338,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -1378,7 +1378,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1418,7 +1418,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1458,7 +1458,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -1498,7 +1498,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1538,7 +1538,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -1578,7 +1578,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1618,7 +1618,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1658,7 +1658,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1698,7 +1698,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1738,7 +1738,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1778,7 +1778,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1818,7 +1818,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -1858,7 +1858,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1898,7 +1898,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -1938,7 +1938,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -1978,7 +1978,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -2018,7 +2018,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2058,7 +2058,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -2098,7 +2098,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2138,7 +2138,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2178,7 +2178,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2218,7 +2218,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2258,7 +2258,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2298,7 +2298,7 @@
         "adapterSupported": false
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "unsupported_chain_adapter",
       "coverage": {
         "chain": "sui",
@@ -2339,7 +2339,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2379,7 +2379,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2419,7 +2419,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2459,7 +2459,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2499,7 +2499,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2539,7 +2539,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2579,7 +2579,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2619,7 +2619,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2659,7 +2659,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2699,7 +2699,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2739,7 +2739,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -2779,7 +2779,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2819,7 +2819,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2859,7 +2859,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2899,7 +2899,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2939,7 +2939,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -2979,7 +2979,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3019,7 +3019,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -3059,7 +3059,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3099,7 +3099,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3139,7 +3139,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3179,7 +3179,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3219,7 +3219,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3259,7 +3259,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3299,7 +3299,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3339,7 +3339,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3379,7 +3379,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3419,7 +3419,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3459,7 +3459,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3499,7 +3499,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3539,7 +3539,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3579,7 +3579,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3619,7 +3619,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -3659,7 +3659,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3699,7 +3699,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3739,7 +3739,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -3779,7 +3779,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -3819,7 +3819,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3859,7 +3859,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -3899,7 +3899,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -3939,7 +3939,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -3979,7 +3979,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4019,7 +4019,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "arbitrum",
@@ -4059,7 +4059,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -4099,7 +4099,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -4139,7 +4139,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -4179,7 +4179,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4219,7 +4219,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4258,8 +4258,8 @@
         "verifiedAt": null,
         "adapterSupported": true
       },
-      "fetchedAt": "2026-10-04T17:57:18Z",
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "fetchedAt": "2026-10-04T20:52:17Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "coverage": {
         "chain": "avalanche",
         "returnedPools": 6,
@@ -4308,45 +4308,45 @@
           }
         }
       },
-      "liquidityUsd": 22753.16,
+      "liquidityUsd": 22719.11,
       "volumeUsd": {
-        "h1": 1143.37,
-        "h24": 5401.76
+        "h1": 0.0,
+        "h24": 5265.09
       },
       "txns": {
         "h1": {
-          "buys": 30,
-          "sells": 39
+          "buys": 0,
+          "sells": 0
         },
         "h24": {
-          "buys": 216,
-          "sells": 194
+          "buys": 211,
+          "sells": 188
         }
       },
       "primaryPairAddress": "0xbd26e663281fb35d4757219eb180f02e8a065c09",
       "priceUsd": 0.003359,
       "buySellUsd": null,
-      "liquidityChangePct": null,
-      "liquidityBaselineAt": null,
+      "liquidityChangePct": -0.149649543184327,
+      "liquidityBaselineAt": "2026-10-04T17:57:18Z",
       "liquidityChangeKind": "snapshot_difference_including_price_effects_not_net_flow",
       "poolFingerprint": "dfb72f008c2523bad05d0ad6ecf21267319f3348e54fe5c5f86e6cc2f13dfc62",
       "pools": [
         {
           "pairAddress": "0xbd26e663281fb35d4757219eb180f02e8a065c09",
           "dexId": "traderjoe",
-          "liquidityUsd": 11735.56,
+          "liquidityUsd": 11735.78,
           "volumeUsd": {
-            "h1": 909.14,
-            "h24": 4309.13
+            "h1": 0.0,
+            "h24": 4174.06
           },
           "txns": {
             "h1": {
-              "buys": 27,
-              "sells": 32
+              "buys": 0,
+              "sells": 0
             },
             "h24": {
-              "buys": 176,
-              "sells": 158
+              "buys": 173,
+              "sells": 151
             }
           },
           "priceUsd": 0.003359,
@@ -4355,22 +4355,22 @@
         {
           "pairAddress": "0x6d75a6fa7c7d95051b62f2858113634e63420ba0",
           "dexId": "blackhole",
-          "liquidityUsd": 10213.31,
+          "liquidityUsd": 10179.04,
           "volumeUsd": {
-            "h1": 234.23,
-            "h24": 1050.3
+            "h1": 0.0,
+            "h24": 1050.05
           },
           "txns": {
             "h1": {
-              "buys": 3,
-              "sells": 7
+              "buys": 0,
+              "sells": 0
             },
             "h24": {
-              "buys": 28,
-              "sells": 31
+              "buys": 27,
+              "sells": 32
             }
           },
-          "priceUsd": 0.003379,
+          "priceUsd": 0.003356,
           "url": "https://dexscreener.com/avalanche/0x6d75a6fa7c7d95051b62f2858113634e63420ba0"
         },
         {
@@ -4379,7 +4379,7 @@
           "liquidityUsd": 378.56,
           "volumeUsd": {
             "h1": 0.0,
-            "h24": 4.32
+            "h24": 2.97
           },
           "txns": {
             "h1": {
@@ -4387,7 +4387,7 @@
               "sells": 0
             },
             "h24": {
-              "buys": 4,
+              "buys": 3,
               "sells": 1
             }
           },
@@ -4471,7 +4471,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -4511,7 +4511,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4551,7 +4551,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4591,7 +4591,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -4631,7 +4631,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -4671,7 +4671,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4711,7 +4711,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -4751,7 +4751,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4791,7 +4791,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4831,7 +4831,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4871,7 +4871,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4911,7 +4911,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -4951,7 +4951,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -4991,7 +4991,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5031,7 +5031,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5071,7 +5071,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5111,7 +5111,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5151,7 +5151,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5191,7 +5191,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5231,7 +5231,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -5271,7 +5271,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -5311,7 +5311,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -5351,7 +5351,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -5391,7 +5391,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5431,7 +5431,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -5471,7 +5471,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5511,7 +5511,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5551,7 +5551,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -5591,7 +5591,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5631,7 +5631,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5671,7 +5671,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5711,7 +5711,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5751,7 +5751,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5791,7 +5791,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5831,7 +5831,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5871,7 +5871,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5911,7 +5911,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5951,7 +5951,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -5991,7 +5991,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6031,7 +6031,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -6071,7 +6071,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6111,7 +6111,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6151,7 +6151,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6191,7 +6191,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -6231,7 +6231,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -6271,7 +6271,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -6311,7 +6311,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -6351,7 +6351,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -6391,7 +6391,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -6431,7 +6431,7 @@
         "adapterSupported": false
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "unsupported_chain_adapter",
       "coverage": {
         "chain": "sui",
@@ -6472,7 +6472,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -6512,7 +6512,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6552,7 +6552,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -6592,7 +6592,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -6632,7 +6632,7 @@
         "adapterSupported": true
       },
       "fetchedAt": "2026-10-04T13:36:40Z",
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "coverage": {
         "chain": "bsc",
         "returnedPools": 16,
@@ -6950,7 +6950,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -6990,7 +6990,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7030,7 +7030,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -7070,7 +7070,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7110,7 +7110,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7150,7 +7150,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7190,7 +7190,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -7230,7 +7230,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -7270,7 +7270,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7310,7 +7310,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7350,7 +7350,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -7390,7 +7390,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -7429,8 +7429,8 @@
         "verifiedAt": null,
         "adapterSupported": true
       },
-      "fetchedAt": "2026-10-04T17:57:18Z",
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "fetchedAt": "2026-10-04T20:52:17Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "coverage": {
         "chain": "optimism",
         "returnedPools": 30,
@@ -7479,447 +7479,447 @@
           }
         }
       },
-      "liquidityUsd": 1599271.3699999999,
+      "liquidityUsd": 1619575.43,
       "volumeUsd": {
-        "h1": 53333.13,
-        "h24": 1253858.35
+        "h1": 53783.020000000004,
+        "h24": 1211416.16
       },
       "txns": {
         "h1": {
-          "buys": 752,
-          "sells": 559
+          "buys": 776,
+          "sells": 827
         },
         "h24": {
-          "buys": 21361,
-          "sells": 16541
+          "buys": 21242,
+          "sells": 16796
         }
       },
       "primaryPairAddress": "0x4dc22588ade05c40338a9d95a6da9dcee68bcd60",
-      "priceUsd": 0.1327,
+      "priceUsd": 0.1348,
       "buySellUsd": null,
-      "liquidityChangePct": null,
-      "liquidityBaselineAt": null,
+      "liquidityChangePct": 1.2695819096667726,
+      "liquidityBaselineAt": "2026-10-04T17:57:18Z",
       "liquidityChangeKind": "snapshot_difference_including_price_effects_not_net_flow",
       "poolFingerprint": "89a278f42335d969b8698292018138f9e24d9373714ab31302f7ffca71bf772a",
       "pools": [
         {
           "pairAddress": "0x4dc22588ade05c40338a9d95a6da9dcee68bcd60",
           "dexId": "velodrome",
-          "liquidityUsd": 545147.59,
+          "liquidityUsd": 546899.95,
           "volumeUsd": {
-            "h1": 786.35,
-            "h24": 15934.62
+            "h1": 507.88,
+            "h24": 14783.06
           },
           "txns": {
             "h1": {
-              "buys": 103,
-              "sells": 70
+              "buys": 34,
+              "sells": 95
             },
             "h24": {
-              "buys": 2173,
-              "sells": 1875
+              "buys": 1961,
+              "sells": 1941
             }
           },
-          "priceUsd": 0.1327,
+          "priceUsd": 0.1348,
           "url": "https://dexscreener.com/optimism/0x4dc22588ade05c40338a9d95a6da9dcee68bcd60"
         },
         {
           "pairAddress": "0x68f5c0a2de713a54991e01858fd27a3832401849",
           "dexId": "uniswap",
-          "liquidityUsd": 319385.25,
+          "liquidityUsd": 322459.46,
           "volumeUsd": {
-            "h1": 2979.35,
-            "h24": 133217.66
+            "h1": 3750.63,
+            "h24": 125341.8
           },
           "txns": {
             "h1": {
-              "buys": 3,
-              "sells": 18
+              "buys": 8,
+              "sells": 16
             },
             "h24": {
-              "buys": 335,
-              "sells": 478
+              "buys": 349,
+              "sells": 429
             }
           },
-          "priceUsd": 0.1329,
+          "priceUsd": 0.135,
           "url": "https://dexscreener.com/optimism/0x68f5c0a2de713a54991e01858fd27a3832401849"
         },
         {
           "pairAddress": "0xe9581d0f1a628b038fc8b2a7f5a7d904f0e2f937",
           "dexId": "velodrome",
-          "liquidityUsd": 187737.45,
+          "liquidityUsd": 188506.86,
           "volumeUsd": {
-            "h1": 1.42,
-            "h24": 4026.26
+            "h1": 46.48,
+            "h24": 3923.23
           },
           "txns": {
             "h1": {
-              "buys": 69,
+              "buys": 102,
               "sells": 0
             },
             "h24": {
-              "buys": 2952,
-              "sells": 63
+              "buys": 3129,
+              "sells": 52
             }
           },
-          "priceUsd": 0.1329,
+          "priceUsd": 0.1343,
           "url": "https://dexscreener.com/optimism/0xe9581d0f1a628b038fc8b2a7f5a7d904f0e2f937"
         },
         {
           "pairAddress": "0xd25711edfbf747efce181442cc1d8f5f8fc8a0d3",
           "dexId": "velodrome",
-          "liquidityUsd": 115587.26,
+          "liquidityUsd": 116635.49,
           "volumeUsd": {
-            "h1": 79.01,
-            "h24": 4689.62
+            "h1": 88.15,
+            "h24": 4404.15
           },
           "txns": {
             "h1": {
-              "buys": 15,
-              "sells": 2
+              "buys": 33,
+              "sells": 28
             },
             "h24": {
-              "buys": 647,
-              "sells": 304
+              "buys": 695,
+              "sells": 302
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.1353,
           "url": "https://dexscreener.com/optimism/0xd25711edfbf747efce181442cc1d8f5f8fc8a0d3"
         },
         {
           "pairAddress": "0x443055d94d119c46b6d74cd68a04c933f17b6a78",
           "dexId": "velodrome",
-          "liquidityUsd": 97008.23,
+          "liquidityUsd": 99491.97,
           "volumeUsd": {
-            "h1": 18153.91,
-            "h24": 482538.56
+            "h1": 17752.73,
+            "h24": 446220.39
           },
           "txns": {
             "h1": {
-              "buys": 110,
-              "sells": 81
+              "buys": 81,
+              "sells": 137
             },
             "h24": {
-              "buys": 3007,
-              "sells": 2547
+              "buys": 2871,
+              "sells": 2632
             }
           },
-          "priceUsd": 0.1327,
+          "priceUsd": 0.1347,
           "url": "https://dexscreener.com/optimism/0x443055d94d119c46b6d74cd68a04c933f17b6a78"
         },
         {
           "pairAddress": "0xb533c12fb4e7b53b5524eab9b47d93ff6c7a456f",
           "dexId": "uniswap",
-          "liquidityUsd": 95447.36,
+          "liquidityUsd": 96385.1,
           "volumeUsd": {
-            "h1": 903.31,
-            "h24": 31961.88
+            "h1": 1341.85,
+            "h24": 30814.21
           },
           "txns": {
             "h1": {
-              "buys": 3,
-              "sells": 6
+              "buys": 5,
+              "sells": 11
             },
             "h24": {
-              "buys": 184,
-              "sells": 208
+              "buys": 189,
+              "sells": 189
             }
           },
-          "priceUsd": 0.1332,
+          "priceUsd": 0.1352,
           "url": "https://dexscreener.com/optimism/0xb533c12fb4e7b53b5524eab9b47d93ff6c7a456f"
         },
         {
           "pairAddress": "0xebd5311bea1948e1441333976eadcfe5fbda777c",
           "dexId": "velodrome",
-          "liquidityUsd": 42038.88,
+          "liquidityUsd": 46665.67,
           "volumeUsd": {
-            "h1": 976.64,
-            "h24": 32842.29
+            "h1": 1479.06,
+            "h24": 32895.84
           },
           "txns": {
             "h1": {
-              "buys": 4,
-              "sells": 7
+              "buys": 6,
+              "sells": 14
             },
             "h24": {
-              "buys": 216,
-              "sells": 241
+              "buys": 222,
+              "sells": 233
             }
           },
-          "priceUsd": 0.1331,
+          "priceUsd": 0.1351,
           "url": "https://dexscreener.com/optimism/0xebd5311bea1948e1441333976eadcfe5fbda777c"
         },
         {
           "pairAddress": "0x069c637cc3dc68aab4cd785df4da7137c717cf3f",
           "dexId": "velodrome",
-          "liquidityUsd": 40813.87,
+          "liquidityUsd": 45131.13,
           "volumeUsd": {
-            "h1": 28729.48,
-            "h24": 527868.73
+            "h1": 28143.9,
+            "h24": 534060.13
           },
           "txns": {
             "h1": {
-              "buys": 274,
-              "sells": 196
+              "buys": 292,
+              "sells": 231
             },
             "h24": {
-              "buys": 5555,
-              "sells": 4809
+              "buys": 5526,
+              "sells": 4978
             }
           },
-          "priceUsd": 0.1329,
+          "priceUsd": 0.135,
           "url": "https://dexscreener.com/optimism/0x069c637cc3dc68aab4cd785df4da7137c717cf3f"
         },
         {
           "pairAddress": "0x0df083de449f75691fc5a36477a6f3284c269108",
           "dexId": "velodrome",
-          "liquidityUsd": 36834.98,
+          "liquidityUsd": 37090.88,
           "volumeUsd": {
-            "h1": 19.93,
-            "h24": 1448.69
+            "h1": 35.11,
+            "h24": 1385.26
           },
           "txns": {
             "h1": {
-              "buys": 2,
-              "sells": 52
+              "buys": 6,
+              "sells": 131
             },
             "h24": {
-              "buys": 204,
-              "sells": 2097
+              "buys": 210,
+              "sells": 2296
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.135,
           "url": "https://dexscreener.com/optimism/0x0df083de449f75691fc5a36477a6f3284c269108"
         },
         {
           "pairAddress": "0xfc1f3296458f9b2a27a0b91dd7681c4020e09d05",
           "dexId": "uniswap",
-          "liquidityUsd": 27369.85,
+          "liquidityUsd": 27699.38,
           "volumeUsd": {
-            "h1": 591.36,
-            "h24": 15494.0
+            "h1": 527.51,
+            "h24": 13887.48
           },
           "txns": {
             "h1": {
-              "buys": 86,
-              "sells": 47
+              "buys": 40,
+              "sells": 91
             },
             "h24": {
-              "buys": 2641,
-              "sells": 1608
+              "buys": 2396,
+              "sells": 1587
             }
           },
-          "priceUsd": 0.1327,
+          "priceUsd": 0.1348,
           "url": "https://dexscreener.com/optimism/0xfc1f3296458f9b2a27a0b91dd7681c4020e09d05"
         },
         {
           "pairAddress": "0xa5edb0ef932f7c2f37b8fc75cb01948f6258a4f8",
           "dexId": "velodrome",
-          "liquidityUsd": 22418.68,
+          "liquidityUsd": 22618.14,
           "volumeUsd": {
-            "h1": 9.7,
-            "h24": 756.86
+            "h1": 12.2,
+            "h24": 716.48
           },
           "txns": {
             "h1": {
-              "buys": 0,
-              "sells": 5
+              "buys": 5,
+              "sells": 3
             },
             "h24": {
-              "buys": 98,
-              "sells": 181
+              "buys": 103,
+              "sells": 166
             }
           },
-          "priceUsd": 0.1331,
+          "priceUsd": 0.1353,
           "url": "https://dexscreener.com/optimism/0xa5edb0ef932f7c2f37b8fc75cb01948f6258a4f8"
         },
         {
           "pairAddress": "0x1c3140ab59d6caf9fa7459c6f83d4b52ba881d36",
           "dexId": "uniswap",
-          "liquidityUsd": 15337.05,
+          "liquidityUsd": 15456.59,
           "volumeUsd": {
-            "h1": 6.15,
-            "h24": 426.85
+            "h1": 4.49,
+            "h24": 405.38
           },
           "txns": {
             "h1": {
-              "buys": 0,
-              "sells": 3
+              "buys": 4,
+              "sells": 2
             },
             "h24": {
-              "buys": 120,
-              "sells": 159
+              "buys": 119,
+              "sells": 144
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.135,
           "url": "https://dexscreener.com/optimism/0x1c3140ab59d6caf9fa7459c6f83d4b52ba881d36"
         },
         {
           "pairAddress": "0x47029bc8f5cbe3b464004e87ef9c9419a48018cd",
           "dexId": "velodrome",
-          "liquidityUsd": 11651.02,
+          "liquidityUsd": 11738.73,
           "volumeUsd": {
-            "h1": 52.71,
-            "h24": 1099.31
+            "h1": 49.99,
+            "h24": 1073.34
           },
           "txns": {
             "h1": {
-              "buys": 19,
-              "sells": 21
+              "buys": 16,
+              "sells": 20
             },
             "h24": {
-              "buys": 566,
-              "sells": 564
+              "buys": 567,
+              "sells": 527
             }
           },
-          "priceUsd": 0.1327,
+          "priceUsd": 0.1347,
           "url": "https://dexscreener.com/optimism/0x47029bc8f5cbe3b464004e87ef9c9419a48018cd"
         },
         {
           "pairAddress": "0xb2ac2e5a3684411254d58b1c5a542212b782114d",
           "dexId": "uniswap",
-          "liquidityUsd": 10733.51,
+          "liquidityUsd": 10823.37,
           "volumeUsd": {
-            "h1": 5.54,
-            "h24": 457.51
+            "h1": 4.74,
+            "h24": 438.5
           },
           "txns": {
             "h1": {
-              "buys": 0,
-              "sells": 5
+              "buys": 2,
+              "sells": 3
             },
             "h24": {
-              "buys": 82,
-              "sells": 192
+              "buys": 85,
+              "sells": 173
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.1351,
           "url": "https://dexscreener.com/optimism/0xb2ac2e5a3684411254d58b1c5a542212b782114d"
         },
         {
           "pairAddress": "0x730691cdac3cbd4d41fc5eb9d8abbb0cea795b94",
           "dexId": "uniswap",
-          "liquidityUsd": 8608.83,
+          "liquidityUsd": 8648.58,
           "volumeUsd": {
-            "h1": 0.0,
-            "h24": 3.24
+            "h1": 0.1,
+            "h24": 3.06
           },
           "txns": {
             "h1": {
-              "buys": 0,
+              "buys": 2,
               "sells": 0
             },
             "h24": {
-              "buys": 7,
-              "sells": 44
+              "buys": 18,
+              "sells": 34
             }
           },
-          "priceUsd": 0.1331,
+          "priceUsd": 0.1342,
           "url": "https://dexscreener.com/optimism/0x730691cdac3cbd4d41fc5eb9d8abbb0cea795b94"
         },
         {
           "pairAddress": "0xcdd41009e74bd1ae4f7b2eecf892e4bc718b9302",
           "dexId": "velodrome",
-          "liquidityUsd": 7832.12,
+          "liquidityUsd": 7892.44,
           "volumeUsd": {
-            "h1": 31.86,
-            "h24": 647.48
+            "h1": 29.28,
+            "h24": 632.98
           },
           "txns": {
             "h1": {
-              "buys": 64,
+              "buys": 122,
               "sells": 29
             },
             "h24": {
-              "buys": 2062,
-              "sells": 542
+              "buys": 2213,
+              "sells": 533
             }
           },
-          "priceUsd": 0.1328,
+          "priceUsd": 0.1348,
           "url": "https://dexscreener.com/optimism/0xcdd41009e74bd1ae4f7b2eecf892e4bc718b9302"
         },
         {
           "pairAddress": "0x67f56ac099f11ad5f65e2ec804f75f2cea6ab8c5",
           "dexId": "velodrome",
-          "liquidityUsd": 4596.95,
+          "liquidityUsd": 4631.49,
           "volumeUsd": {
-            "h1": 1.91,
-            "h24": 166.84
+            "h1": 2.71,
+            "h24": 160.04
           },
           "txns": {
             "h1": {
-              "buys": 0,
+              "buys": 2,
               "sells": 4
             },
             "h24": {
-              "buys": 115,
-              "sells": 221
+              "buys": 126,
+              "sells": 209
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.135,
           "url": "https://dexscreener.com/optimism/0x67f56ac099f11ad5f65e2ec804f75f2cea6ab8c5"
         },
         {
           "pairAddress": "0x167dc49c498729223d1565df3207771b4ee19853",
           "dexId": "zipswap",
-          "liquidityUsd": 3924.19,
+          "liquidityUsd": 3955.43,
           "volumeUsd": {
-            "h1": 2.45,
-            "h24": 134.42
+            "h1": 3.1,
+            "h24": 130.99
           },
           "txns": {
             "h1": {
-              "buys": 0,
-              "sells": 6
+              "buys": 8,
+              "sells": 4
             },
             "h24": {
-              "buys": 262,
-              "sells": 210
+              "buys": 297,
+              "sells": 192
             }
           },
-          "priceUsd": 0.133,
+          "priceUsd": 0.1351,
           "url": "https://dexscreener.com/optimism/0x167dc49c498729223d1565df3207771b4ee19853"
         },
         {
           "pairAddress": "0x787a828969391ce4bccd7fdc8a0743f9cc9470f5",
           "dexId": "kyberswap",
-          "liquidityUsd": 3789.24,
+          "liquidityUsd": 3808.63,
           "volumeUsd": {
-            "h1": 0.0,
-            "h24": 30.43
+            "h1": 0.68,
+            "h24": 28.86
           },
           "txns": {
             "h1": {
-              "buys": 0,
+              "buys": 2,
               "sells": 0
             },
             "h24": {
-              "buys": 14,
-              "sells": 45
+              "buys": 25,
+              "sells": 33
             }
           },
-          "priceUsd": 0.1331,
+          "priceUsd": 0.1342,
           "url": "https://dexscreener.com/optimism/0x787a828969391ce4bccd7fdc8a0743f9cc9470f5"
         },
         {
           "pairAddress": "0x7178f61694ba9109205b8d6f686282307625e62d",
           "dexId": "velodrome",
-          "liquidityUsd": 3009.06,
+          "liquidityUsd": 3036.14,
           "volumeUsd": {
-            "h1": 2.05,
-            "h24": 113.1
+            "h1": 2.43,
+            "h24": 110.98
           },
           "txns": {
             "h1": {
-              "buys": 0,
-              "sells": 7
+              "buys": 6,
+              "sells": 8
             },
             "h24": {
-              "buys": 121,
-              "sells": 153
+              "buys": 141,
+              "sells": 146
             }
           },
-          "priceUsd": 0.1331,
+          "priceUsd": 0.1353,
           "url": "https://dexscreener.com/optimism/0x7178f61694ba9109205b8d6f686282307625e62d"
         }
       ]
@@ -7936,7 +7936,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -7976,7 +7976,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8016,7 +8016,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8056,7 +8056,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -8096,7 +8096,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8136,7 +8136,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8176,7 +8176,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8216,7 +8216,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8256,7 +8256,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8296,7 +8296,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8336,7 +8336,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8376,7 +8376,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8416,7 +8416,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8456,7 +8456,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8496,7 +8496,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8536,7 +8536,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8576,7 +8576,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8616,7 +8616,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8656,7 +8656,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8696,7 +8696,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -8736,7 +8736,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8776,7 +8776,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8816,7 +8816,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8856,7 +8856,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8896,7 +8896,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8936,7 +8936,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -8976,7 +8976,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9016,7 +9016,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9056,7 +9056,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9096,7 +9096,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -9136,7 +9136,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9176,7 +9176,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9216,7 +9216,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9256,7 +9256,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9296,7 +9296,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -9336,7 +9336,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -9376,7 +9376,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9416,7 +9416,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9456,7 +9456,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9496,7 +9496,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9536,7 +9536,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -9576,7 +9576,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9616,7 +9616,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9656,7 +9656,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9696,7 +9696,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -9736,7 +9736,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -9776,7 +9776,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9816,7 +9816,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9856,7 +9856,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9896,7 +9896,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -9936,7 +9936,7 @@
         "adapterSupported": false
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "unsupported_chain_adapter",
       "coverage": {
         "chain": "sui",
@@ -9977,7 +9977,7 @@
         "adapterSupported": false
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "unsupported_chain_adapter",
       "coverage": {
         "chain": "sui",
@@ -10018,7 +10018,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10058,7 +10058,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10098,7 +10098,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10138,7 +10138,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10178,7 +10178,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10218,7 +10218,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -10258,7 +10258,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10298,7 +10298,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -10338,7 +10338,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10378,7 +10378,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10418,7 +10418,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -10458,7 +10458,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "solana",
@@ -10498,7 +10498,7 @@
         "adapterSupported": true
       },
       "fetchedAt": "2026-10-04T13:36:40Z",
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "coverage": {
         "chain": "bsc",
         "returnedPools": 16,
@@ -10732,7 +10732,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10772,7 +10772,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -10812,7 +10812,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -10852,7 +10852,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10892,7 +10892,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10932,7 +10932,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -10972,7 +10972,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11012,7 +11012,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11052,7 +11052,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11092,7 +11092,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11132,7 +11132,7 @@
         "adapterSupported": false
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "unsupported_chain_adapter",
       "coverage": {
         "chain": "sui",
@@ -11173,7 +11173,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11213,7 +11213,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11253,7 +11253,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11293,7 +11293,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11333,7 +11333,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11373,7 +11373,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11413,7 +11413,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11453,7 +11453,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "arbitrum",
@@ -11493,7 +11493,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11533,7 +11533,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -11573,7 +11573,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11613,7 +11613,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11653,7 +11653,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11693,7 +11693,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11733,7 +11733,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11773,7 +11773,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11813,7 +11813,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "base",
@@ -11853,7 +11853,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -11893,7 +11893,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11933,7 +11933,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -11973,7 +11973,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -12013,7 +12013,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "ethereum",
@@ -12053,7 +12053,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
@@ -12093,7 +12093,7 @@
         "adapterSupported": true
       },
       "fetchedAt": null,
-      "lastAttemptAt": "2026-10-04T17:57:18Z",
+      "lastAttemptAt": "2026-10-04T20:52:17Z",
       "error": "no_accepted_base_pools",
       "coverage": {
         "chain": "bsc",
