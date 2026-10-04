@@ -1,0 +1,37 @@
+/* Compact mobile-first information hierarchy. */
+[hidden]{display:none!important}
+.view.on{animation:none;opacity:1;transform:none}
+#main{padding-bottom:18px}
+#tabbar button{position:relative;min-height:60px;padding:9px 0 7px;gap:4px;font-size:12px;color:var(--sub)}
+#tabbar button.on{background:linear-gradient(180deg,rgba(240,185,11,.07),transparent)}
+#tabbar svg{width:22px;height:22px}
+.nav-count{position:absolute;left:calc(50% + 12px);top:7px;background:var(--acc);color:#171a22;border-radius:8px;min-width:16px;padding:0 4px;font-size:10px}
+.workspace-heading{padding:4px 3px 13px}
+.workspace-heading h2{font-size:23px;font-weight:750;line-height:1.3;letter-spacing:-.5px}
+.workspace-heading p{color:var(--sub);font-size:12px;margin-top:4px}
+.workspace-tabs{width:100%;margin:0 0 8px;position:sticky;top:-12px;z-index:8;background:var(--card2)}
+.workspace-tabs button{flex:1;min-height:39px;font-size:13px;padding:8px 5px}
+.workspace-help{font-size:12px;color:var(--sub);margin:7px 3px 13px;line-height:1.65}
+.fold{border:1px solid var(--line);background:var(--card);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.fold summary{list-style:none;cursor:pointer;padding:13px 12px;font-size:13px;font-weight:650;display:flex;align-items:center;gap:8px;min-height:46px}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::after{content:'＋';color:var(--sub);margin-left:auto}
+.fold[open]>summary::after{content:'−'}
+.fold summary span{font-size:11px;color:var(--sub);font-weight:400}
+.fold-body{padding:0 10px 2px}
+.tool-panel>.card{border:0;margin:0;padding-top:4px;border-radius:0}
+.empty-state{text-align:center;padding:28px 14px;margin:0 0 12px;border:1px dashed var(--line);border-radius:14px;color:var(--sub)}
+.empty-state b{font-size:15px;color:var(--txt)}
+.empty-state p{margin:7px 0 14px;font-size:12px}
+#v-watch:has(#watchEmpty:not([hidden])) #watchListHost{display:none}
+#signalEvidence{margin-top:16px}
+#signalEvidence>h3,#signalEvidence>.row,#signalEvidence>p,#signalEvidence>.pbar,#signalEvidence>.banner,#signalEvidence>#qdCards{margin-left:10px;margin-right:10px}
+#signalEvidence>.tblwrap{border-radius:0;border-left:0;border-right:0}
+#detailBack{flex:none;font-size:12px;padding:5px 8px}
+#ovTbl th:first-child,#ovTbl td:first-child{position:sticky;left:0;background:var(--card);border-right:1px solid var(--line);z-index:1}
+#ovTbl th:first-child{background:#161c2a;z-index:3}
+.seg{max-width:100%;overflow-x:auto}
+.seg button{white-space:nowrap;flex-shrink:0}
+#v-scan .row,#v-signal .row{min-width:0}
+#rtCard .row{gap:6px}
+@media(min-width:900px){#main{width:100%;max-width:1200px;align-self:center;padding:20px 24px}#tabbar{justify-content:center}#tabbar button{flex:0 1 200px}.workspace-heading h2{font-size:27px}.workspace-tabs{max-width:580px;top:-20px}}
