@@ -84,6 +84,8 @@
  function renderDetail(){
   const box=el('#ocDetail');if(!box)return;
   const sym=S.dt.sym,t=token(sym),r=row(sym),e=evidence(r);
+  const opened=box.dataset.renderedSym===sym&&box.querySelector('.oc-pools')?.open;
+  box.dataset.renderedSym=sym;
   el('#ocDetailTitle').textContent='链上证据 · '+(sym||'选择币种');
   el('#ocDetailStatus').textContent=!t?'未接入':e.state==='fresh'?'缓存快照':e.state==='stale'?'旧快照':'暂无数据';
   let html='';
@@ -109,6 +111,7 @@
   if(OC.error)html+='<p class="down">缓存读取失败：'+escape(OC.error)+'。现有旧快照不视作实时数据。</p>';
   html+='<p class="oc-method">口径：仅已核实合约的 API 返回 base 侧池；池间去重，但跨池路由成交可能重复计入。成交额不是独立资金流，池流动性不是可无滑点成交深度。刷新只重读缓存，不触发链上采集；'+(OC.collectionMode==='actions'?'采样由 Actions 执行，计划每 30 分钟，可能延迟。':'当前为手动快照版，定时更新尚未启用。')+'</p><button id="ocRefresh" class="btn mini" '+(OC.loading?'disabled':'')+'>'+(OC.loading?'读取缓存…':'↻ 重读链上缓存')+'</button>';
   el('#ocDetailBody').innerHTML=html;
+  const poolsDetails=box.querySelector('.oc-pools');if(poolsDetails)poolsDetails.open=!!opened;
   el('#ocRefresh').onclick=()=>load(true);
   el('#ocDetailBody').querySelectorAll('[data-oc-sym]').forEach(b=>b.onclick=()=>jumpSym(b.dataset.ocSym));
  }
