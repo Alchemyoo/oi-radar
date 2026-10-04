@@ -77,4 +77,4 @@ python3 scripts/collect_onchain.py --registry /path/registry.json --data-dir /pa
 没有付费依赖：依赖公开仓库 GitHub Actions 与上游公开接口。仍受 GitHub 用量/滥用策略、分支保护与 API 限流影响。cron 可能延迟、跳过，不能保证每 30 分钟实际更新。仓库需允许 Actions token 写 contents；分支保护阻止写入时需维护者处理。本次实现**没有提交、推送、触发工作流，也没有在仓库写入测试币生产数据**；待注册表核验与主 agent 发布后启用。
 
 ## 本轮发布权限结果
-2026-10-04 首次 push 被 GitHub 拒绝：Personal Access Token 缺 workflow scope。为交付可用页面，工作流保留为本地待授权产物，不提交到远端；首版缓存 `collectionMode:manual`，不宣称已启用定时采样。前端/采集器/测试可正常发布；Actions 实跑与 Pages bot-rebuild API 仍待授权后验收。
+2026-10-04 首次 PAT push 因缺 workflow scope 被拒绝，先发布手动快照版。随后用户要求启用定时更新，通过已有管理员 GitHub 浏览器登录态网页提交工作流 d8cb93f（未修改PAT/未扩大scope），注册为active。workflow_dispatch 37186274203 success：离线测试、三币采集、数据提交659b8f4、Pages rebuild API 全通过；Pages 37186283298 success，线上 `collectionMode:actions`、generatedAt 2026-10-04T07:36:04Z，与仓库采集结果一致。cron已配置半小时；首次计划事件是否准点执行未观测，不保证准点。

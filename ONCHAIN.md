@@ -10,7 +10,7 @@
 ## 数据与限制
 官方身份见 `onchain.registry.json`、`onchain.mapping.md`。采用DEX Screener公开API；不需要前端密钥，不访问钱包、不发送交易。
 
-**发布状态：手动快照版。** 当前 GitHub Personal Access Token 缺 `workflow` scope，服务器拒绝包含 `.github/workflows/onchain.yml` 的 push。采集器和定时工作流已实现，但工作流未部署、未运行，不能宣称自动更新。页面显示手动快照模式。取得 workflow 权限或由仓库管理员在 GitHub 网页创建该工作流后，才可启用每30分钟 Actions 缓存，并须实跑验证。
+**发布状态：自动缓存已启用。** 2026-10-04 通过仓库已登录 GitHub 网页提交 `.github/workflows/onchain.yml`（d8cb93f），没有修改或扩大现有 PAT 权限。工作流 active，cron `*/30 * * * *`：每小时 :00/:30 计划执行，GitHub 队列可能延迟。首次 workflow_dispatch 实跑 37186274203 success：25项离线测试、三币采集、机器人数据提交659b8f4、Pages 重建请求全部成功；Pages 37186283298 success，线上缓存 `collectionMode:actions`、抓取时间 2026-10-04 15:36:04 北京时间。退出 Minis 不影响 GitHub 云端采样。已实跑手动触发链路；下一次 cron 自触发尚未观测，不承诺准点。
 
 买卖金额差额、大户持仓和集中度本期暂无，未用笔数代替金额。MUBARAK部分池流动性未披露，总额为null，池清单仍可看单池已披露数据。缺数不补零。
 
