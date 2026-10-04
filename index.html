@@ -126,7 +126,6 @@ input[type=number]{text-align:right}
 </style>
 <link rel="stylesheet" href="layout.css?v=20261004-1">
 <link rel="stylesheet" href="onchain.css?v=20261004-1">
-<link rel="stylesheet" href="hyperliquid.css?v=20261004-1">
 </head>
 <body>
 <header id="hdr">
@@ -386,6 +385,7 @@ input[type=number]{text-align:right}
   <button data-v="watch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/></svg>自选<span class="nav-count" id="watchCount" hidden></span></button>
 </nav>
 <div id="toast"></div>
+<script src="chains.js?v=20261004-1"></script>
 <script src="radar.js?v=20261004-3"></script>
 <script>
 'use strict';
@@ -1460,8 +1460,8 @@ function dtChartResize(){
 
 /* ================= 象限信号 ================= */
 const QUADS={
-  squeeze:{name:'轧空候选',desc:'暴跌 + OI增',thr:'新空涌入'},
-  trend:{name:'趋势拥挤',desc:'暴涨 + OI增',thr:'追涨杠杆'},
+  squeeze:{name:'价格跌·OI增',desc:'价格跌 + OI增',thr:'统计观察'},
+  trend:{name:'价格涨·OI增',desc:'价格涨 + OI增',thr:'统计观察'},
   flush:{name:'OI减少·价格下跌',desc:'价格跌 + OI减',thr:'去杠杆观察'},
   cover:{name:'OI减少·价格上涨',desc:'价格涨 + OI减',thr:'减仓观察'}
 };
@@ -1790,7 +1790,6 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261003-1"></script>
-<script src="hyperliquid.js?v=20261004-1"></script>
 <script src="layout.js?v=20261004-3"></script>
 <script src="transfers.js?v=20261004-1"></script>
 <script src="onchain.js?v=20261004-3"></script>

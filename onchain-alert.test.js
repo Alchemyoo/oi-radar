@@ -5,7 +5,7 @@ const t={symbol:'MUBARAKUSDT',chain:'bsc',chainId:56,address:'0x'+'a'.repeat(40)
 const row=(overrides={})=>({identity:t,status:'ok',fetchedAt:new Date(now).toISOString(),txns:{h1:{buys:70,sells:30}},...overrides});
 const tag=r=>c.alertTag(t.symbol,[t],{[t.symbol]:r},now);
 test('unmapped symbols explicitly lack verified coverage',()=>{for(const s of ['BTCUSDT','ETHUSDT','mubarakusdt','MUBARAK'])assert.equal(c.alertTag(s,[t],{[t.symbol]:row()},now),' · 未接入可验证链上数据')});
-test('HYPE public market API never treated as chain evidence',()=>{for(const s of ['HYPE','HYPEUSDT']){const text=c.alertTag(s,[{...t,symbol:s}],{[s]:row()},now);assert.match(text,/行情 API 非链上证据/);assert.match(text,/未接入可验证链上数据/);assert.doesNotMatch(text,/链上异动证据:/)}});
+test('ordinary unmapped perpetual symbols fail closed',()=>{for(const s of ['BTCUSDT','ETHUSDT','SOLUSDT','UNKNOWNUSDT'])assert.equal(c.alertTag(s,[t],{[t.symbol]:row()},now),' · 未接入可验证链上数据')});
 test('count bias is not a large monetary anomaly',()=>{assert.match(tag(row()),/链上笔数偏向:买入笔数偏多/);assert.match(tag(row({txns:{h1:{buys:40,sells:60}}})),/链上笔数偏向:卖出笔数偏多/);assert.match(tag(row()),/不是大额资金异动/)});
 test('comparable liquidity drop threshold is reused',()=>{assert.match(tag(row({liquidityChangePct:-10,liquidityBaselineAt:'2026-10-04T07:00:00Z'})),/链上流动性下降证据/);assert.doesNotMatch(tag(row({liquidityChangePct:-9.99,liquidityBaselineAt:'2026-10-04T07:00:00Z'})),/池流动性下降/)});
 test('neutral insufficient missing or zero samples are not anomalies',()=>{for(const tx of [{buys:50,sells:50},{buys:7,sells:3},{buys:0,sells:0},{buys:null,sells:40},null]){const text=tag(row({txns:{h1:tx}}));assert.match(text,/链上暂无可验证异动/);assert.doesNotMatch(text,/链上异动证据:/)}});

@@ -10,13 +10,15 @@ from pathlib import Path
 import re
 import sys
 import tempfile
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 API = "https://api.dexscreener.com/token-pairs/v1"
-ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
+ADDRESS = re.compile(r"0[xX][0-9a-fA-F]{40}\Z")
 SYMBOL = re.compile(r"[A-Z0-9\u3400-\u9fff][A-Z0-9_\-\u3400-\u9fff]{0,31}\Z")
 DEX = re.compile(r"[a-zA-Z0-9_-]{1,64}\Z")
 MAX_POOLS = 20
@@ -26,6 +28,28 @@ MIN_BASELINE = timedelta(minutes=30)
 MAX_BASELINE = timedelta(hours=6)
 MAX_RESPONSE = 3 * 1024 * 1024
 MAX_FILE = 16 * 1024 * 1024
+MAX_TOKENS = 1000
+MAX_BATCH_ADDRESSES = 30
+MAX_WORKERS = 4
+REQUEST_INTERVAL = 0.20
+
+# DexScreener uses its chain slug in token-pairs/v1.  EVM addresses are
+# case-insensitive, while Solana public keys are case-sensitive.  Sui is
+# deliberately catalogued but has no collector adapter in this repository.
+CHAIN_SPECS = {
+    "ethereum": (1, "evm"),
+    "bsc": (56, "evm"),
+    "base": (8453, "evm"),
+    "arbitrum": (42161, "evm"),
+    "optimism": (10, "evm"),
+    "polygon": (137, "evm"),
+    "avalanche": (43114, "evm"),
+    "linea": (59144, "evm"),
+    "solana": ("CT_501", "solana"),
+    "sui": ("CT_784", "unsupported"),
+}
+BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+SUI_ADDRESS = re.compile(r"0x[0-9a-fA-F]{1,64}::[A-Za-z_][A-Za-z0-9_]*::[A-Za-z_][A-Za-z0-9_]*\Z")
 
 
 class CollectionError(Exception):
@@ -103,20 +127,57 @@ def load_json(path, default=None):
         raise CollectionError("invalid_local_json") from None
 
 
+def _valid_solana_address(address):
+    if not isinstance(address, str) or not 32 <= len(address) <= 44:
+        return False
+    if any(char not in BASE58 for char in address):
+        return False
+    value = 0
+    for char in address:
+        value = value * 58 + BASE58.index(char)
+    leading_zeroes = len(address) - len(address.lstrip("1"))
+    return leading_zeroes + (value.bit_length() + 7) // 8 == 32
+
+
+def _valid_sui_address(address):
+    return isinstance(address, str) and bool(SUI_ADDRESS.fullmatch(address)) and int(address.split("::", 1)[0][2:], 16) != 0
+
+
+def _address_kind(chain):
+    spec = CHAIN_SPECS.get(chain)
+    return spec[1] if spec else None
+
+
+def _valid_address(chain, address):
+    kind = _address_kind(chain)
+    if kind == "evm":
+        return isinstance(address, str) and bool(ADDRESS.fullmatch(address)) and int(address[2:], 16) != 0
+    if kind == "solana":
+        return _valid_solana_address(address)
+    if kind == "unsupported":
+        return _valid_sui_address(address)
+    return False
+
+
+def _canonical_address(chain, address):
+    return address.lower() if _address_kind(chain) == "evm" else address
+
+
 def registry_tokens(registry):
     tokens = registry.get("tokens")
-    if not isinstance(tokens, list) or not 1 <= len(tokens) <= 64:
+    if not isinstance(tokens, list) or not 1 <= len(tokens) <= MAX_TOKENS:
         raise CollectionError("invalid_registry")
     seen = set()
     result = []
     for token in tokens:
         if not isinstance(token, dict):
             raise CollectionError("invalid_registry")
-        symbol, address = token.get("symbol"), token.get("address")
-        if (not isinstance(symbol, str) or not SYMBOL.fullmatch(symbol)
-                or symbol in seen or token.get("chain") != "bsc"
-                or type(token.get("chainId")) is not int or token["chainId"] != 56
-                or not isinstance(address, str) or not ADDRESS.fullmatch(address)):
+        symbol, chain, chain_id, address = (token.get(key) for key in
+                                             ("symbol", "chain", "chainId", "address"))
+        spec = CHAIN_SPECS.get(chain)
+        if (not isinstance(symbol, str) or not SYMBOL.fullmatch(symbol) or symbol in seen
+                or spec is None or chain_id != spec[0]
+                or not _valid_address(chain, address)):
             raise CollectionError("invalid_registry")
         name = token.get("name")
         if name is not None and (not isinstance(name, str) or len(name) > 120
@@ -125,14 +186,14 @@ def registry_tokens(registry):
         if token.get("verifiedAt") is not None and parse_time(token["verifiedAt"]) is None:
             raise CollectionError("invalid_registry")
         seen.add(symbol)
-        result.append({"symbol": symbol, "chain": "bsc", "chainId": 56,
-                       "address": address.lower(), "name": name,
-                       "verifiedAt": token.get("verifiedAt")})
+        result.append({"symbol": symbol, "chain": chain, "chainId": chain_id,
+                       "address": _canonical_address(chain, address), "name": name,
+                       "verifiedAt": token.get("verifiedAt"),
+                       "adapterSupported": _address_kind(chain) != "unsupported"})
     return result
 
 
-def fetch_pairs(identity, opener=urlopen, pause=time.sleep):
-    url = f"{API}/{identity['chain']}/{identity['address']}"
+def _fetch_json(url, opener, pause):
     request = Request(url, headers={"Accept": "application/json", "User-Agent": "oi-radar-onchain/1"})
     for attempt in range(2):
         try:
@@ -158,17 +219,99 @@ def fetch_pairs(identity, opener=urlopen, pause=time.sleep):
     raise CollectionError("network_error")
 
 
+def fetch_pairs(identity, opener=urlopen, pause=time.sleep):
+    """Fetch one token, retained as the small/fixture-friendly API."""
+    return _fetch_json(f"{API}/{identity['chain']}/{identity['address']}", opener, pause)
+
+
+class _RateLimiter:
+    def __init__(self, interval=REQUEST_INTERVAL):
+        self.interval = max(0.0, float(interval))
+        self.lock = threading.Lock()
+        self.next_at = 0.0
+
+    def wait(self):
+        with self.lock:
+            now = time.monotonic()
+            delay = max(0.0, self.next_at - now)
+            self.next_at = max(now, self.next_at) + self.interval
+        if delay:
+            time.sleep(delay)
+
+
+def _batch_url(batch):
+    chain = batch[0]["chain"]
+    addresses = ",".join(identity["address"] for identity in batch)
+    return f"{API}/{chain}/{addresses}"
+
+
+def fetch_pairs_batched(identities, opener=urlopen, pause=time.sleep, workers=MAX_WORKERS,
+                        interval=REQUEST_INTERVAL):
+    """Fetch up to 30 same-chain addresses per DexScreener request.
+
+    The return value is (pairs-by-identity-key, error-by-identity-key).  A
+    failed request only affects its batch, allowing other chains/batches to
+    produce useful partial output.  Matching is repeated by snapshot(), which
+    is the strict base-side identity gate.
+    """
+    supported = [i for i in identities if i.get("adapterSupported", _address_kind(i.get("chain")) != "unsupported")]
+    batches = []
+    for chain in sorted({i["chain"] for i in supported}):
+        rows = [i for i in supported if i["chain"] == chain]
+        batches.extend(rows[offset:offset + MAX_BATCH_ADDRESSES]
+                       for offset in range(0, len(rows), MAX_BATCH_ADDRESSES))
+    results, errors = {}, {}
+    limiter = _RateLimiter(interval)
+    halted = threading.Event()
+
+    def request(batch):
+        if halted.is_set():
+            raise RateLimited("rate_limited")
+        limiter.wait()
+        try:
+            return _fetch_json(_batch_url(batch), opener, pause)
+        except RateLimited:
+            halted.set()
+            raise
+
+    if not batches:
+        return results, errors
+    with ThreadPoolExecutor(max_workers=max(1, min(int(workers), len(batches)))) as pool:
+        pending = {pool.submit(request, batch): batch for batch in batches}
+        for future in as_completed(pending):
+            batch = pending[future]
+            try:
+                pairs = future.result()
+                by_address = {}
+                for pair in pairs:
+                    if isinstance(pair, dict) and isinstance(pair.get("baseToken"), dict):
+                        address = pair["baseToken"].get("address")
+                        if isinstance(address, str):
+                            key = _canonical_address(batch[0]["chain"], address)
+                            by_address.setdefault(key, []).append(pair)
+                for identity in batch:
+                    results[identity["symbol"]] = by_address.get(identity["address"], [])
+            except (CollectionError, TimeoutError, URLError, OSError) as error:
+                code = str(error) if isinstance(error, CollectionError) else "network_error"
+                if not re.fullmatch(r"[a-z0-9_]{1,64}", code):
+                    code = "collection_error"
+                for identity in batch:
+                    errors[identity["symbol"]] = code
+    return results, errors
+
+
 def normalize_pool(pair, identity):
     if not isinstance(pair, dict) or pair.get("chainId") != identity["chain"]:
         return None
     base = pair.get("baseToken")
     if not isinstance(base, dict) or not isinstance(base.get("address"), str):
         return None
-    # Only this validated EVM chain is case-normalized; never flip quote-side pools.
-    if base["address"].lower() != identity["address"]:
+    # EVM matching is case-insensitive; Solana public keys are case-sensitive.
+    # This is intentionally baseToken-only: a quote-side match never flips.
+    if _canonical_address(identity["chain"], base["address"]) != identity["address"]:
         return None
     address, dex = pair.get("pairAddress"), pair.get("dexId")
-    if not isinstance(address, str) or not ADDRESS.fullmatch(address):
+    if not isinstance(address, str) or not _valid_address(identity["chain"], address):
         raise ValueError("invalid pair")
     if not isinstance(dex, str) or not DEX.fullmatch(dex):
         raise ValueError("invalid dex")
@@ -179,10 +322,11 @@ def normalize_pool(pair, identity):
     for interval in ("h1", "h24"):
         row = object_field(txns, interval)
         counts[interval] = {side: number(row.get(side), integer=True) for side in ("buys", "sells")}
-    return {"pairAddress": address.lower(), "dexId": dex, "liquidityUsd": liquidity,
+    pair_address = _canonical_address(identity["chain"], address)
+    return {"pairAddress": pair_address, "dexId": dex, "liquidityUsd": liquidity,
             "volumeUsd": {k: number(volume.get(k)) for k in ("h1", "h24")},
             "txns": counts, "priceUsd": number(pair.get("priceUsd")),
-            "url": f"https://dexscreener.com/{identity['chain']}/{address.lower()}"}
+            "url": f"https://dexscreener.com/{identity['chain']}/{pair_address}"}
 
 
 def aggregate(values):
@@ -292,6 +436,33 @@ def reusable(previous, identity):
             and isinstance(previous.get("pools"), list) and bool(previous["pools"]))
 
 
+def _error_token(identity, attempt, code, previous=None):
+    old = previous.get(identity["symbol"]) if isinstance(previous, dict) else None
+    if reusable(old, identity):
+        token = dict(old)
+        token.update(status="stale", identity=identity, lastAttemptAt=stamp(attempt), error=code)
+        return token
+    return {"status": "error", "identity": identity, "fetchedAt": None,
+            "lastAttemptAt": stamp(attempt), "error": code,
+            "coverage": {"chain": identity["chain"], "returnedPools": None,
+                         "acceptedPools": 0, "selectedPools": 0},
+            "liquidityUsd": None, "volumeUsd": {"h1": None, "h24": None},
+            "txns": {k: {"buys": None, "sells": None} for k in ("h1", "h24")},
+            "buySellUsd": None, "liquidityChangePct": None,
+            "liquidityBaselineAt": None, "pools": []}
+
+
+def _unsupported_token(identity, attempt):
+    return {"status": "unsupported", "identity": identity, "fetchedAt": None,
+            "lastAttemptAt": stamp(attempt), "error": "unsupported_chain_adapter",
+            "coverage": {"chain": identity["chain"], "adapterSupported": False,
+                         "returnedPools": None, "acceptedPools": 0, "selectedPools": 0},
+            "liquidityUsd": None, "volumeUsd": {"h1": None, "h24": None},
+            "txns": {k: {"buys": None, "sells": None} for k in ("h1", "h24")},
+            "buySellUsd": None, "liquidityChangePct": None,
+            "liquidityBaselineAt": None, "pools": []}
+
+
 def collect(registry, previous, history, fetcher=fetch_pairs, clock=utcnow):
     identities = registry_tokens(registry)
     prior = previous.get("tokens", {})
@@ -299,15 +470,29 @@ def collect(registry, previous, history, fetcher=fetch_pairs, clock=utcnow):
     if not isinstance(prior, dict) or not isinstance(historical, dict):
         raise CollectionError("invalid_cache_schema")
     tokens, histories = {}, {}
+    # The production/default path uses bounded same-chain batches.  Injected
+    # fetchers remain one-token calls so existing offline tests stay deterministic.
+    batched, batch_errors = ({}, {})
+    if fetcher is fetch_pairs:
+        batched, batch_errors = fetch_pairs_batched(identities)
     limited = False
     for identity in identities:
         symbol = identity["symbol"]
         attempt = clock()
         points = prune_points(historical.get(symbol, []), attempt)
+        if not identity["adapterSupported"]:
+            token = _unsupported_token(identity, attempt)
+            tokens[symbol], histories[symbol] = token, points
+            continue
         try:
             if limited:
                 raise RateLimited("rate_limited")
-            pairs = fetcher(identity)
+            if fetcher is fetch_pairs:
+                if symbol in batch_errors:
+                    raise CollectionError(batch_errors[symbol])
+                pairs = batched.get(symbol, [])
+            else:
+                pairs = fetcher(identity)
             fetched = clock()
             if not isinstance(pairs, list) or len(pairs) > 10000:
                 raise CollectionError("invalid_api_shape")
@@ -316,28 +501,21 @@ def collect(registry, previous, history, fetcher=fetch_pairs, clock=utcnow):
             points = add_baseline(token, points, fetched)
         except (CollectionError, TimeoutError, URLError, OSError) as error:
             limited = limited or isinstance(error, RateLimited)
-            # Only internally generated error codes reach cache/logs. Never echo API text.
             code = str(error) if isinstance(error, CollectionError) else "network_error"
             if not re.fullmatch(r"[a-z0-9_]{1,64}", code):
                 code = "collection_error"
-            old = prior.get(symbol)
-            if reusable(old, identity):
-                token = dict(old)
-                token.update(status="stale", identity=identity, lastAttemptAt=stamp(attempt), error=code)
-            else:
-                token = {"status": "error", "identity": identity, "fetchedAt": None,
-                         "lastAttemptAt": stamp(attempt), "error": code,
-                         "coverage": {"chain": identity["chain"], "returnedPools": None,
-                                      "acceptedPools": 0, "selectedPools": 0},
-                         "liquidityUsd": None, "volumeUsd": {"h1": None, "h24": None},
-                         "txns": {k: {"buys": None, "sells": None} for k in ("h1", "h24")},
-                         "buySellUsd": None, "liquidityChangePct": None,
-                         "liquidityBaselineAt": None, "pools": []}
+            token = _error_token(identity, attempt, code, prior)
         tokens[symbol], histories[symbol] = token, points
     now = clock()
     ok = sum(t["status"] == "ok" for t in tokens.values())
     stale = sum(t["status"] == "stale" for t in tokens.values())
-    status = "ok" if ok == len(tokens) else "partial" if ok else "stale" if stale else "error"
+    unsupported = sum(t["status"] == "unsupported" for t in tokens.values())
+    active = len(tokens) - unsupported
+    successful = ok + stale
+    status = ("ok" if ok == len(tokens) else
+              "stale" if stale == len(tokens) and stale else
+              "partial" if successful or unsupported else
+              "error")
     output = {"schemaVersion": 1, "generatedAt": stamp(now), "status": status,
               "collectionMode": "actions" if os.environ.get("GITHUB_ACTIONS") == "true" else "manual",
               "source": "DexScreener token-pairs/v1", "sourceTimestampAvailable": False,
@@ -345,7 +523,7 @@ def collect(registry, previous, history, fetcher=fetch_pairs, clock=utcnow):
     cache = {"schemaVersion": 1, "generatedAt": stamp(now), "retentionHours": HISTORY_HOURS,
              "maxPointsPerToken": MAX_POINTS,
              "tokens": {s: prune_points(p, now) for s, p in histories.items()}}
-    return output, cache, 0 if ok or stale else 1
+    return output, cache, 0 if successful or active == 0 else 1
 
 
 def atomic_json(path, value):

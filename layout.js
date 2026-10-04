@@ -18,17 +18,16 @@ function layoutList(k){
   if(typeof onchainRender==='function')onchainRender();
 }
 function layoutOp(k){
-  if(!['strong','scan','signal','hype'].includes(k))k='strong';
+  if(!['strong','scan','signal'].includes(k))k='strong';
   Layout.op=k;
-  for(const id of ['strong','scan','signal','hype'])$('#v-'+id).hidden=id!==k;
+  for(const id of ['strong','scan','signal'])$('#v-'+id).hidden=id!==k;
   $$('#opTabs button').forEach(b=>{const on=b.dataset.op===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))});
-  $('#opHelp').textContent={strong:'先找跑赢 BTC 的币，再点币种查看持仓。',scan:'寻找持仓变化异常、价格尚未明显跟随的币。',signal:'结合价格与持仓验证方向；日内监测默认关闭。',hype:'独立 HYPE 行情板块 · Hyperliquid 公共 API · 非链上证据、非交易建议。'}[k];
+  $('#opHelp').textContent={strong:'先找跑赢 BTC 的币，再点币种查看持仓。',scan:'寻找持仓变化异常、价格尚未明显跟随的币。',signal:'结合价格与持仓验证方向；日内监测默认关闭。'}[k];
   if(k==='strong'&&typeof stRender==='function')stRender();
-  if(k==='hype'&&typeof hyperliquidLoad==='function')hyperliquidLoad();
 }
 function layoutNavigate(v,restore=false){
   if(v==='overview')v='market';
-  if(['strong','scan','signal','hype'].includes(v)){layoutOp(v);v='opportunity'}
+  if(['strong','scan','signal'].includes(v)){layoutOp(v);v='opportunity'}
   if(v==='fund'||v==='heat'){
     layoutNavigate('market');
     $('#marketTools').open=true;
@@ -68,7 +67,7 @@ function layoutInit(){
   const main=$('#main');
   const market=layoutNode('section','v-market','<div class="workspace-heading"><h2>市场</h2><p>看行情，点币种深入分析</p></div><div id="marketListHost"></div><details id="marketTools" class="fold"><summary>辅助数据 <span>资金费率 · 热度 / 清算</span></summary><div class="fold-body"><details id="toolFund" class="fold"><summary>资金费率 <span>看多空持仓成本</span></summary></details><details id="toolHeat" class="fold"><summary>热度 / 清算 <span>MegaGlass · 外部数据</span></summary></details></div></details>');
   market.className='view';main.prepend(market);
-  const op=layoutNode('section','v-opportunity','<div class="workspace-heading"><h2>机会</h2><p>选币 → 查异动 → 验证方向</p></div><div class="workspace-tabs seg" id="opTabs" role="tablist" aria-label="机会分析方式"><button class="on" data-op="strong" role="tab">强势选币</button><button data-op="scan" role="tab">持仓异动</button><button data-op="signal" role="tab">信号验证</button><button data-op="hype" role="tab">HYPE</button></div><p class="workspace-help" id="opHelp"></p>');
+  const op=layoutNode('section','v-opportunity','<div class="workspace-heading"><h2>机会</h2><p>选币 → 查异动 → 验证方向</p></div><div class="workspace-tabs seg" id="opTabs" role="tablist" aria-label="机会分析方式"><button class="on" data-op="strong" role="tab">强势选币</button><button data-op="scan" role="tab">持仓异动</button><button data-op="signal" role="tab">信号验证</button></div><p class="workspace-help" id="opHelp"></p>');
   op.className='view';main.append(op);
   const watch=layoutNode('section','v-watch','<div class="workspace-heading"><h2>自选</h2><p id="watchSummary"></p></div><div id="watchEmpty" class="empty-state"><b>还没有自选币种</b><p>在市场点击币种旁的 ☆，集中跟踪持仓变化。</p><button class="btn pri" id="watchAdd">去市场添加</button></div><div id="watchListHost"></div>');
   watch.className='view';main.append(watch);
@@ -79,7 +78,6 @@ function layoutInit(){
   $('#rtLoadFav').textContent='重置采样';
   const hint=layoutNode('p','rtHint','只监测自选币种；手动开启，每 60 秒采样，切页后继续，暂停即停止。');hint.className='workspace-help';$('#rtCard').append(hint);
   for(const id of ['strong','scan','signal']){const el=$('#v-'+id);el.className='op-panel';op.append(el)}
-  hyperliquidInit();
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);
     $('#'+host).ontoggle=()=>{if($('#'+host).open)loader()};

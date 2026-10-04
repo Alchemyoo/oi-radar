@@ -5,7 +5,9 @@
  const num=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null;
  const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const safeUrl=v=>{try{const u=new URL(v);return u.protocol==='https:'&&!u.username&&!u.password?u.href:''}catch(_){return ''}};
- function identity(a,b){return !!a&&!!b&&a.symbol===b.symbol&&a.chain===b.chain&&a.chainId===b.chainId&&/^0x[0-9a-f]{40}$/i.test(a.address||'')&&String(a.address).toLowerCase()===String(b.address).toLowerCase()}
+ const chainValid=(chain,id,address)=>typeof ChainAdapters==='undefined'?chain==='bsc'&&id===56&&/^0x[0-9a-f]{40}$/i.test(address||''):ChainAdapters.valid({chain,chainId:id,address});
+ const chainExplorer=t=>typeof ChainAdapters==='undefined'?'':ChainAdapters.explorer(t);
+ function identity(a,b){const na=typeof ChainAdapters==='undefined'?String(a?.address||'').toLowerCase():ChainAdapters.norm(a?.chain,a?.address),nb=typeof ChainAdapters==='undefined'?String(b?.address||'').toLowerCase():ChainAdapters.norm(b?.chain,b?.address);return !!a&&!!b&&a.symbol===b.symbol&&a.chain===b.chain&&a.chainId===b.chainId&&chainValid(a.chain,a.chainId,a.address)&&chainValid(b.chain,b.chainId,b.address)&&na===nb}
  function freshness(row,now=Date.now()){
   const t=Date.parse(row?.fetchedAt),age=now-t;
   if(!row||!Number.isFinite(t)||age< -300000||!['ok','stale'].includes(row.status))return 'unavailable';
@@ -30,10 +32,10 @@
   return {state,text:bias.share===null?'链上已接入':bias.text,kind:bias.kind};
  }
  function validateRegistry(data){
-  if(data?.schemaVersion!==1||!Array.isArray(data.tokens)||!data.tokens.length||data.tokens.length>64)throw Error('合约映射格式无效');
+  if(data?.schemaVersion!==1||!Array.isArray(data.tokens)||!data.tokens.length||data.tokens.length>1000)throw Error('合约映射格式无效');
   const seen=new Set();
   for(const t of data.tokens){
-   if(!t||typeof t.symbol!=='string'||!t.symbol.endsWith('USDT')||seen.has(t.symbol)||t.chain!=='bsc'||t.chainId!==56||!/^0x[0-9a-f]{40}$/i.test(t.address||'')||!Array.isArray(t.sources)||!t.sources.length||t.sources.some(s=>!safeUrl(s.url)))throw Error('合约映射未通过校验');
+   if(!t||typeof t.symbol!=='string'||seen.has(t.symbol)||!chainValid(t.chain,t.chainId,t.address)||!Array.isArray(t.sources)||!t.sources.length||t.sources.some(s=>!safeUrl(s.url)))throw Error('合约映射未通过校验');
    seen.add(t.symbol);
   }
   return data.tokens;
@@ -51,7 +53,6 @@
  }
  // Cache-only alert lookup: exact verified identity; never fetch per alert.
  function alertTag(sym,registry=[],rows={},now=Date.now()){
-  if(sym==='HYPE'||sym==='HYPEUSDT')return ' · HYPE 行情 API 非链上证据 · 未接入可验证链上数据';
   const t=registry.find(t=>t.symbol===sym);
   if(!t)return ' · 未接入可验证链上数据';
   const r=rows[sym],e=evidence(identity(r?.identity,t)?r:null,now);
@@ -116,6 +117,7 @@
  if(typeof module!=='undefined'&&module.exports){module.exports=Core;return}
  const OC={registry:[],rows:{},transferCache:null,transferError:'',loading:false,loaded:false,error:'',only:{market:false,watch:false},promise:null};
  const listContext=()=>S.ov.favOnly?'watch':'market';
+ const coverageRows=()=>OC.registry.length?OC.registry.filter(t=>t.mappingStatus==='mapped').length:0;
  root.Onchain=OC;root.OnchainCore=Core;
  const el=s=>document.querySelector(s);
  const fmt=v=>num(v)===null?'暂无':'$'+fC(v);
@@ -123,7 +125,7 @@
  function token(sym){return OC.registry.find(t=>t.symbol===sym)}
  function row(sym){const t=token(sym),r=OC.rows[sym];return identity(r?.identity,t)?r:null}
  function badgeState(sym){
-  if(!token(sym)||sym==='HYPE'||sym==='HYPEUSDT')return {text:'未接入可验证链上数据',kind:'neutral',unmapped:true};
+  if(!token(sym))return {text:'未接入可验证链上数据',kind:'neutral',unmapped:true};
   const e=evidence(row(sym));
   return {...e,text:e.state==='unavailable'?'链上快照暂无':e.state==='stale'?'链上旧':e.text};
  }
@@ -160,7 +162,7 @@
   else{
    const status=e.state==='fresh'?'数据由服务端缓存，抓取时间不等于链上事件时间。':e.state==='stale'?'旧快照：以下仅供历史参考，不用于当前确认。':'尚无有效快照；不会把缺失数据填为 0。';
    html='<p class="oc-status '+(e.state==='fresh'?'':'down')+'">'+escape(status)+'</p>'+
-    '<div class="oc-identity"><span>BSC · chainId 56</span><code>'+escape(t.address)+'</code><a href="https://bscscan.com/token/'+encodeURIComponent(t.address)+'" target="_blank" rel="noopener noreferrer">区块浏览器 ↗</a></div>';
+    '<div class="oc-identity"><span>'+escape(t.chain)+' · chainId '+escape(t.chainId)+'</span><code>'+escape(t.address)+'</code>'+(chainExplorer(t)?'<a href="'+escape(chainExplorer(t))+'" target="_blank" rel="noopener noreferrer">区块浏览器 ↗</a>':'<span>浏览器链接不可用</span>')+'</div>';
    if(r&&e.state!=='unavailable'){
     const tx=r.txns||{},bias=countBias(tx.h1),change=r.liquidityChangePct;
     const delta=typeof change==='number'&&Number.isFinite(change)&&r.liquidityBaselineAt?(change>=0?'+':'')+change.toFixed(2)+'%':'等待可比快照';
@@ -195,11 +197,11 @@
  function render(){
   const status=el('#ocSummary');if(status){
    const n=OC.registry.length,fresh=OC.registry.filter(t=>freshness(row(t.symbol))==='fresh').length;
-   status.textContent=OC.loading?'链上缓存读取中…':OC.error?'链上缓存暂不可用':n?'链上试点 '+n+' 币 · '+fresh+' 币快照有效'+(OC.collectionMode==='actions'?' · Actions 缓存':' · 手动快照'):'链上试点暂未加载';
+   status.textContent=OC.loading?'链上缓存读取中…':OC.error?'链上缓存暂不可用':n?'链上登记 '+n+' 个 · '+fresh+' 个快照有效'+(OC.collectionMode==='actions'?' · Actions 缓存':' · 手动快照'):'链上登记暂未加载';
   }
-  const filter=el('#ocOnly');if(filter){const only=OC.only[listContext()];filter.classList.toggle('pri',only);filter.textContent=only?'✓ 只看链上试点':'链上试点';filter.disabled=!OC.registry.length}
+  const filter=el('#ocOnly');if(filter){const only=OC.only[listContext()];filter.classList.toggle('pri',only);filter.textContent=only?'✓ 只看已映射':'链上筛选';filter.disabled=!OC.registry.length}
   const pilots=el('#ocPilotList');if(pilots){pilots.innerHTML=pilotButtons();pilots.querySelectorAll('button').forEach(b=>b.onclick=()=>jumpSym(b.dataset.ocSym))}
-  const op=el('#ocOpNote');if(op)op.textContent='链上标签仅覆盖 '+OC.registry.length+' 个已核实币种；当前 1h 笔数 / 流动性证据与合约窗口不同，不合并为评分。';
+  const op=el('#ocOpNote');if(op)op.textContent='链上状态覆盖全永续登记清单：已映射地址显示数据，native / 未适配 / 待核实币种显示原因；不补零、不按名称猜地址，不合并进合约评分。';
   renderDetail();decorate();
  }
  async function getJson(path,force){
