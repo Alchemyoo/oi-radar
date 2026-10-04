@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-04T06:54:49Z",
+  "retentionHours": 72,
+  "maxPointsPerToken": 288,
+  "tokens": {
+    "龙虾USDT": [
+      {
+        "at": "2026-10-04T06:02:26Z",
+        "liquidityUsd": 2193915.7199999997,
+        "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4"
+      },
+      {
+        "at": "2026-10-04T06:39:27Z",
+        "liquidityUsd": 2187249.6,
+        "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4"
+      },
+      {
+        "at": "2026-10-04T06:54:45Z",
+        "liquidityUsd": 2171350.76,
+        "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4"
+      }
+    ],
+    "MUBARAKUSDT": [],
+    "TSTUSDT": [
+      {
+        "at": "2026-10-04T06:02:31Z",
+        "liquidityUsd": 1192493.16,
+        "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049"
+      },
+      {
+        "at": "2026-10-04T06:39:34Z",
+        "liquidityUsd": 1193934.28,
+        "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049"
+      },
+      {
+        "at": "2026-10-04T06:54:49Z",
+        "liquidityUsd": 1193672.21,
+        "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049"
+      }
+    ]
+  }
+}

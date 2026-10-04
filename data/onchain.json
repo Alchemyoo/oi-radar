@@ -1,0 +1,811 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-04T06:54:49Z",
+  "status": "ok",
+  "collectionMode": "manual",
+  "source": "DexScreener token-pairs/v1",
+  "sourceTimestampAvailable": false,
+  "tokens": {
+    "龙虾USDT": {
+      "status": "ok",
+      "identity": {
+        "symbol": "龙虾USDT",
+        "chain": "bsc",
+        "chainId": 56,
+        "address": "0xeccbb861c0dda7efd964010085488b69317e4444",
+        "name": "龙虾",
+        "verifiedAt": "2026-10-04T06:00:00Z"
+      },
+      "fetchedAt": "2026-10-04T06:54:45Z",
+      "lastAttemptAt": "2026-10-04T06:54:43Z",
+      "coverage": {
+        "chain": "bsc",
+        "returnedPools": 19,
+        "acceptedPools": 8,
+        "selectedPools": 8,
+        "invalidPools": 0,
+        "unmatchedPools": 11,
+        "duplicatePools": 0,
+        "truncated": false,
+        "scope": "API-returned measurable base-side pools; selected top <=20",
+        "fields": {
+          "liquidityUsd": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "volumeUsd.h1": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "txns.h1.buys": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "txns.h1.sells": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "volumeUsd.h24": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "txns.h24.buys": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          },
+          "txns.h24.sells": {
+            "knownPools": 8,
+            "totalPools": 8,
+            "complete": true
+          }
+        }
+      },
+      "liquidityUsd": 2171350.76,
+      "volumeUsd": {
+        "h1": 191461.35,
+        "h24": 7097427.14
+      },
+      "txns": {
+        "h1": {
+          "buys": 556,
+          "sells": 649
+        },
+        "h24": {
+          "buys": 17297,
+          "sells": 17864
+        }
+      },
+      "primaryPairAddress": "0x22af7297243c4eef12e2d5a4f888b92e56bf127c",
+      "priceUsd": 0.04515,
+      "buySellUsd": null,
+      "liquidityChangePct": -1.0285244685698358,
+      "liquidityBaselineAt": "2026-10-04T06:02:26Z",
+      "liquidityChangeKind": "snapshot_difference_including_price_effects_not_net_flow",
+      "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4",
+      "pools": [
+        {
+          "pairAddress": "0x22af7297243c4eef12e2d5a4f888b92e56bf127c",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 2099817.63,
+          "volumeUsd": {
+            "h1": 185681.03,
+            "h24": 6907126.56
+          },
+          "txns": {
+            "h1": {
+              "buys": 434,
+              "sells": 453
+            },
+            "h24": {
+              "buys": 12889,
+              "sells": 13132
+            }
+          },
+          "priceUsd": 0.04515,
+          "url": "https://dexscreener.com/bsc/0x22af7297243c4eef12e2d5a4f888b92e56bf127c"
+        },
+        {
+          "pairAddress": "0x8cda56bb7928be2e7f3143c15edc8c1c5f88aa8c",
+          "dexId": "uniswap",
+          "liquidityUsd": 40584.87,
+          "volumeUsd": {
+            "h1": 2420.58,
+            "h24": 82401.34
+          },
+          "txns": {
+            "h1": {
+              "buys": 24,
+              "sells": 56
+            },
+            "h24": {
+              "buys": 1033,
+              "sells": 1123
+            }
+          },
+          "priceUsd": 0.0451,
+          "url": "https://dexscreener.com/bsc/0x8cda56bb7928be2e7f3143c15edc8c1c5f88aa8c"
+        },
+        {
+          "pairAddress": "0x27b5c411a43dea7ca7e60632ea73fd9e74ed06a8",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 21273.87,
+          "volumeUsd": {
+            "h1": 1098.24,
+            "h24": 32962.89
+          },
+          "txns": {
+            "h1": {
+              "buys": 18,
+              "sells": 38
+            },
+            "h24": {
+              "buys": 719,
+              "sells": 762
+            }
+          },
+          "priceUsd": 0.04503,
+          "url": "https://dexscreener.com/bsc/0x27b5c411a43dea7ca7e60632ea73fd9e74ed06a8"
+        },
+        {
+          "pairAddress": "0x791f662371a06a30d69d46b5cfef0fb89ad5c6b3",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 7780.18,
+          "volumeUsd": {
+            "h1": 2220.07,
+            "h24": 72803.21
+          },
+          "txns": {
+            "h1": {
+              "buys": 74,
+              "sells": 80
+            },
+            "h24": {
+              "buys": 2204,
+              "sells": 2362
+            }
+          },
+          "priceUsd": 0.04522,
+          "url": "https://dexscreener.com/bsc/0x791f662371a06a30d69d46b5cfef0fb89ad5c6b3"
+        },
+        {
+          "pairAddress": "0x9b48a2b334205906d94412a5e153b716342a2521",
+          "dexId": "uniswap",
+          "liquidityUsd": 1498.25,
+          "volumeUsd": {
+            "h1": 33.1,
+            "h24": 1820.51
+          },
+          "txns": {
+            "h1": {
+              "buys": 4,
+              "sells": 10
+            },
+            "h24": {
+              "buys": 275,
+              "sells": 307
+            }
+          },
+          "priceUsd": 0.04501,
+          "url": "https://dexscreener.com/bsc/0x9b48a2b334205906d94412a5e153b716342a2521"
+        },
+        {
+          "pairAddress": "0xe4f63d4fc45ff997308da38f7c15e1a9250e1642",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 278.2,
+          "volumeUsd": {
+            "h1": 6.0,
+            "h24": 243.33
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 7
+            },
+            "h24": {
+              "buys": 93,
+              "sells": 89
+            }
+          },
+          "priceUsd": 0.04499,
+          "url": "https://dexscreener.com/bsc/0xe4f63d4fc45ff997308da38f7c15e1a9250e1642"
+        },
+        {
+          "pairAddress": "0xa6ba19044aae340758d63a714840aa811ea8f955",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 103.51,
+          "volumeUsd": {
+            "h1": 2.33,
+            "h24": 67.63
+          },
+          "txns": {
+            "h1": {
+              "buys": 2,
+              "sells": 5
+            },
+            "h24": {
+              "buys": 75,
+              "sells": 78
+            }
+          },
+          "priceUsd": 0.04493,
+          "url": "https://dexscreener.com/bsc/0xa6ba19044aae340758d63a714840aa811ea8f955"
+        },
+        {
+          "pairAddress": "0x23ecb1266df4ad88a63f64456f530a997627a5b1",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 14.25,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 1.67
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 9,
+              "sells": 11
+            }
+          },
+          "priceUsd": 0.04625,
+          "url": "https://dexscreener.com/bsc/0x23ecb1266df4ad88a63f64456f530a997627a5b1"
+        }
+      ]
+    },
+    "MUBARAKUSDT": {
+      "status": "ok",
+      "identity": {
+        "symbol": "MUBARAKUSDT",
+        "chain": "bsc",
+        "chainId": 56,
+        "address": "0x5c85d6c6825ab4032337f11ee92a72df936b46f6",
+        "name": "Mubarak",
+        "verifiedAt": "2026-10-04T06:00:00Z"
+      },
+      "fetchedAt": "2026-10-04T06:54:47Z",
+      "lastAttemptAt": "2026-10-04T06:54:45Z",
+      "coverage": {
+        "chain": "bsc",
+        "returnedPools": 16,
+        "acceptedPools": 11,
+        "selectedPools": 11,
+        "invalidPools": 0,
+        "unmatchedPools": 5,
+        "duplicatePools": 0,
+        "truncated": false,
+        "scope": "API-returned measurable base-side pools; selected top <=20",
+        "fields": {
+          "liquidityUsd": {
+            "knownPools": 8,
+            "totalPools": 11,
+            "complete": false
+          },
+          "volumeUsd.h1": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          },
+          "txns.h1.buys": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          },
+          "txns.h1.sells": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          },
+          "volumeUsd.h24": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          },
+          "txns.h24.buys": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          },
+          "txns.h24.sells": {
+            "knownPools": 11,
+            "totalPools": 11,
+            "complete": true
+          }
+        }
+      },
+      "liquidityUsd": null,
+      "volumeUsd": {
+        "h1": 23535.010000000002,
+        "h24": 372541.76
+      },
+      "txns": {
+        "h1": {
+          "buys": 80,
+          "sells": 80
+        },
+        "h24": {
+          "buys": 1308,
+          "sells": 1371
+        }
+      },
+      "primaryPairAddress": "0x90a54475d512b8f3852351611c38fad30a513491",
+      "priceUsd": 0.06595,
+      "buySellUsd": null,
+      "liquidityChangePct": null,
+      "liquidityBaselineAt": null,
+      "liquidityChangeKind": "snapshot_difference_including_price_effects_not_net_flow",
+      "poolFingerprint": "251741586ef509c088495979a09c8064b950ab23e12aca17617f05d2b5883e48",
+      "pools": [
+        {
+          "pairAddress": "0x90a54475d512b8f3852351611c38fad30a513491",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 3102466.35,
+          "volumeUsd": {
+            "h1": 23533.49,
+            "h24": 372478.01
+          },
+          "txns": {
+            "h1": {
+              "buys": 79,
+              "sells": 76
+            },
+            "h24": {
+              "buys": 1258,
+              "sells": 1325
+            }
+          },
+          "priceUsd": 0.06595,
+          "url": "https://dexscreener.com/bsc/0x90a54475d512b8f3852351611c38fad30a513491"
+        },
+        {
+          "pairAddress": "0xd770176e9102a4a61f1820b211ed1346305de6d2",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 829.58,
+          "volumeUsd": {
+            "h1": 0.55,
+            "h24": 20.71
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 1
+            },
+            "h24": {
+              "buys": 8,
+              "sells": 9
+            }
+          },
+          "priceUsd": 0.06629,
+          "url": "https://dexscreener.com/bsc/0xd770176e9102a4a61f1820b211ed1346305de6d2"
+        },
+        {
+          "pairAddress": "0xb7c6f7db26cde42550e4017bb9855bbaaa20eb44",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 129.26,
+          "volumeUsd": {
+            "h1": 0.96,
+            "h24": 24.95
+          },
+          "txns": {
+            "h1": {
+              "buys": 1,
+              "sells": 1
+            },
+            "h24": {
+              "buys": 14,
+              "sells": 11
+            }
+          },
+          "priceUsd": 0.06569,
+          "url": "https://dexscreener.com/bsc/0xb7c6f7db26cde42550e4017bb9855bbaaa20eb44"
+        },
+        {
+          "pairAddress": "0xf8651bb82adcc2a9177bba7310f50c4c409070ca",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 84.37,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 9.76
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 6,
+              "sells": 6
+            }
+          },
+          "priceUsd": 0.06648,
+          "url": "https://dexscreener.com/bsc/0xf8651bb82adcc2a9177bba7310f50c4c409070ca"
+        },
+        {
+          "pairAddress": "0x8be0d063873f68a08c8b5bca2fe981618bbf5047",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 68.17,
+          "volumeUsd": {
+            "h1": 0.01,
+            "h24": 6.27
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 1
+            },
+            "h24": {
+              "buys": 8,
+              "sells": 10
+            }
+          },
+          "priceUsd": 0.06641,
+          "url": "https://dexscreener.com/bsc/0x8be0d063873f68a08c8b5bca2fe981618bbf5047"
+        },
+        {
+          "pairAddress": "0x28e20b8ffa57e73e9cc30577ee10faab6880e6eb",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 52.44,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 1.93
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 4,
+              "sells": 3
+            }
+          },
+          "priceUsd": 0.06725,
+          "url": "https://dexscreener.com/bsc/0x28e20b8ffa57e73e9cc30577ee10faab6880e6eb"
+        },
+        {
+          "pairAddress": "0xb138941673bc8152a5dac3e6d2c3f3699c6246e5",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 10.67,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.11
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 0
+            }
+          },
+          "priceUsd": 0.0649,
+          "url": "https://dexscreener.com/bsc/0xb138941673bc8152a5dac3e6d2c3f3699c6246e5"
+        },
+        {
+          "pairAddress": "0x4b1a76e0594f76bcd44cf1c47e8b21f0290f0670",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 0.78,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.02
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 0
+            }
+          },
+          "priceUsd": 0.06375,
+          "url": "https://dexscreener.com/bsc/0x4b1a76e0594f76bcd44cf1c47e8b21f0290f0670"
+        },
+        {
+          "pairAddress": "0x714dd0959dd00f014b2b6a24e24ccf4b4e44220a",
+          "dexId": "uniswap",
+          "liquidityUsd": null,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.0
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 3,
+              "sells": 2
+            }
+          },
+          "priceUsd": null,
+          "url": "https://dexscreener.com/bsc/0x714dd0959dd00f014b2b6a24e24ccf4b4e44220a"
+        },
+        {
+          "pairAddress": "0xec8e14846cc341932144beb38b2a1ae77948f187",
+          "dexId": "sushiswap",
+          "liquidityUsd": null,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.0
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 1
+            },
+            "h24": {
+              "buys": 4,
+              "sells": 5
+            }
+          },
+          "priceUsd": null,
+          "url": "https://dexscreener.com/bsc/0xec8e14846cc341932144beb38b2a1ae77948f187"
+        },
+        {
+          "pairAddress": "0xee6507d3217c5c9e65809779226db11ce9e89da8",
+          "dexId": "pancakeswap",
+          "liquidityUsd": null,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.0
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 0
+            }
+          },
+          "priceUsd": null,
+          "url": "https://dexscreener.com/bsc/0xee6507d3217c5c9e65809779226db11ce9e89da8"
+        }
+      ]
+    },
+    "TSTUSDT": {
+      "status": "ok",
+      "identity": {
+        "symbol": "TSTUSDT",
+        "chain": "bsc",
+        "chainId": 56,
+        "address": "0x86bb94ddd16efc8bc58e6b056e8df71d9e666429",
+        "name": "Test",
+        "verifiedAt": "2026-10-04T06:00:00Z"
+      },
+      "fetchedAt": "2026-10-04T06:54:49Z",
+      "lastAttemptAt": "2026-10-04T06:54:47Z",
+      "coverage": {
+        "chain": "bsc",
+        "returnedPools": 17,
+        "acceptedPools": 7,
+        "selectedPools": 7,
+        "invalidPools": 0,
+        "unmatchedPools": 10,
+        "duplicatePools": 0,
+        "truncated": false,
+        "scope": "API-returned measurable base-side pools; selected top <=20",
+        "fields": {
+          "liquidityUsd": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "volumeUsd.h1": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "txns.h1.buys": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "txns.h1.sells": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "volumeUsd.h24": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "txns.h24.buys": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          },
+          "txns.h24.sells": {
+            "knownPools": 7,
+            "totalPools": 7,
+            "complete": true
+          }
+        }
+      },
+      "liquidityUsd": 1193672.21,
+      "volumeUsd": {
+        "h1": 773.63,
+        "h24": 51028.91
+      },
+      "txns": {
+        "h1": {
+          "buys": 13,
+          "sells": 33
+        },
+        "h24": {
+          "buys": 346,
+          "sells": 637
+        }
+      },
+      "primaryPairAddress": "0x16969fa79651bae11736f2f6576a86fe2726b42b",
+      "priceUsd": 0.01752,
+      "buySellUsd": null,
+      "liquidityChangePct": 0.09887268451922449,
+      "liquidityBaselineAt": "2026-10-04T06:02:31Z",
+      "liquidityChangeKind": "snapshot_difference_including_price_effects_not_net_flow",
+      "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049",
+      "pools": [
+        {
+          "pairAddress": "0x16969fa79651bae11736f2f6576a86fe2726b42b",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 918097.91,
+          "volumeUsd": {
+            "h1": 247.63,
+            "h24": 20522.42
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 5
+            },
+            "h24": {
+              "buys": 33,
+              "sells": 117
+            }
+          },
+          "priceUsd": 0.01752,
+          "url": "https://dexscreener.com/bsc/0x16969fa79651bae11736f2f6576a86fe2726b42b"
+        },
+        {
+          "pairAddress": "0xb36c81707e5ca2bd6f68cd6b71b3178d29c48a4b",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 252011.31,
+          "volumeUsd": {
+            "h1": 279.76,
+            "h24": 25957.24
+          },
+          "txns": {
+            "h1": {
+              "buys": 1,
+              "sells": 14
+            },
+            "h24": {
+              "buys": 114,
+              "sells": 287
+            }
+          },
+          "priceUsd": 0.01738,
+          "url": "https://dexscreener.com/bsc/0xb36c81707e5ca2bd6f68cd6b71b3178d29c48a4b"
+        },
+        {
+          "pairAddress": "0xf2ac982d1c8ba9d7c014ec61789dadb367c5b06e",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 22109.55,
+          "volumeUsd": {
+            "h1": 245.27,
+            "h24": 4544.31
+          },
+          "txns": {
+            "h1": {
+              "buys": 12,
+              "sells": 13
+            },
+            "h24": {
+              "buys": 196,
+              "sells": 229
+            }
+          },
+          "priceUsd": 0.01734,
+          "url": "https://dexscreener.com/bsc/0xf2ac982d1c8ba9d7c014ec61789dadb367c5b06e"
+        },
+        {
+          "pairAddress": "0xb41c0dc9bc02d52f4699f86a0638b1911469e901",
+          "dexId": "squadswap",
+          "liquidityUsd": 646.94,
+          "volumeUsd": {
+            "h1": 0.97,
+            "h24": 4.74
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 1
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 3
+            }
+          },
+          "priceUsd": 0.01739,
+          "url": "https://dexscreener.com/bsc/0xb41c0dc9bc02d52f4699f86a0638b1911469e901"
+        },
+        {
+          "pairAddress": "0x03a82656095978695d6ec12a145e4e132db5042c",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 640.79,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.14
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 0
+            }
+          },
+          "priceUsd": 0.01718,
+          "url": "https://dexscreener.com/bsc/0x03a82656095978695d6ec12a145e4e132db5042c"
+        },
+        {
+          "pairAddress": "0x1bc686b2a4cdf6ed3cc306d7289917610b76516f",
+          "dexId": "uniswap",
+          "liquidityUsd": 154.2,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.02
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 0,
+              "sells": 1
+            }
+          },
+          "priceUsd": 0.01715,
+          "url": "https://dexscreener.com/bsc/0x1bc686b2a4cdf6ed3cc306d7289917610b76516f"
+        },
+        {
+          "pairAddress": "0x7b056bcba273d3392da951b798c29ab72e009c92",
+          "dexId": "pancakeswap",
+          "liquidityUsd": 11.51,
+          "volumeUsd": {
+            "h1": 0.0,
+            "h24": 0.04
+          },
+          "txns": {
+            "h1": {
+              "buys": 0,
+              "sells": 0
+            },
+            "h24": {
+              "buys": 1,
+              "sells": 0
+            }
+          },
+          "priceUsd": 0.01704,
+          "url": "https://dexscreener.com/bsc/0x7b056bcba273d3392da951b798c29ab72e009c92"
+        }
+      ]
+    }
+  }
+}

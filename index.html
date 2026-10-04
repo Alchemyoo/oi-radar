@@ -125,6 +125,7 @@ input[type=number]{text-align:right}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
 <link rel="stylesheet" href="layout.css?v=20261004-1">
+<link rel="stylesheet" href="onchain.css?v=20261004-1">
 </head>
 <body>
 <header id="hdr">
@@ -552,6 +553,7 @@ function csvDown(name,head,rows){
 function ovFiltered(){
   const q=S.ov.q.trim().toUpperCase(),f=S.fav;
   let l=S.ov.list.filter(r=>!S.ov.favOnly||f.has(r.sym));
+  if(typeof onchainFilter==='function')l=onchainFilter(l);
   if(q)l=l.filter(r=>r.sym.includes(q));
   const k=S.ov.sort,d=S.ov.dir;
   const gv=r=>k==='oi'?(S.oi.get(r.sym)||0)*r.px:(k==='oic'?(S.oi.get(r.sym)||0):r[k]);
@@ -628,6 +630,7 @@ function dtSetSym(sym){
   const fav=S.fav.has(sym);
   $('#dtStar').textContent=fav?'★':'☆';
   $('#dtStar').classList.toggle('on',fav);
+  if(typeof onchainDetailChanged==='function')onchainDetailChanged();
 }
 function dtQuick(d){
   const end=utcToday0()-DAY,start=end-(d-1)*DAY;
@@ -1819,7 +1822,8 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261003-1"></script>
-<script src="layout.js?v=20261004-1"></script>
-<script>stBind();layoutInit();</script>
+<script src="layout.js?v=20261004-2"></script>
+<script src="onchain.js?v=20261004-1"></script>
+<script>stBind();layoutInit();onchainInit();</script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+/* Evidence, not another workspace. */
+.oc-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 8px}
+.oc-toolbar .mut{font-size:11px}
+.oc-pilots{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.oc-pilots .btn{font-size:11px;padding:4px 8px}
+.oc-badge{display:inline-block;margin-left:5px;padding:1px 5px;border:1px solid rgba(79,156,249,.28);border-radius:5px;font-size:10px;font-weight:500;line-height:1.5;color:var(--blue);background:rgba(79,156,249,.07);vertical-align:middle;white-space:nowrap}
+.oc-badge.up{color:var(--up);border-color:rgba(46,189,133,.25)}
+.oc-badge.down{color:var(--down);border-color:rgba(246,70,93,.25)}
+#ocDetail{margin-bottom:12px}
+#ocDetail>summary{flex-wrap:wrap;gap:6px}
+#ocDetailTitle{font-size:13px;color:var(--txt);font-weight:650;overflow-wrap:anywhere}
+#ocDetailStatus{font-size:11px;color:var(--sub)}
+.oc-body{padding:0 12px 13px}
+.oc-body p{font-size:11px;line-height:1.65;margin:7px 0}
+.oc-body a{color:var(--blue);text-decoration:none}
+.oc-identity{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--sub);padding:10px;border-radius:9px;background:var(--card2)}
+.oc-identity code{font:11px/1.6 ui-monospace,monospace;color:var(--txt);overflow-wrap:anywhere;user-select:all}
+.oc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px 0}
+.oc-metrics>div{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px;min-width:0}
+.oc-metrics span{display:block;font-size:11px;color:var(--sub)}
+.oc-metrics b{display:block;font-size:16px;margin-top:4px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.oc-evidence{font-size:13px;padding:9px 10px;background:rgba(79,156,249,.05);border:1px solid var(--line);border-radius:9px}
+.oc-evidence span{display:block;color:var(--sub);font-size:10px;margin-top:3px}
+.oc-sources{font-size:11px;color:var(--sub);margin:10px 0;overflow-wrap:anywhere}
+.oc-method{color:var(--sub);border-top:1px solid var(--line);padding-top:8px}
+.oc-pools summary{font-size:12px;padding:10px 0;cursor:pointer;color:var(--sub)}
+#ocOpNote{font-size:11px;margin-top:0;opacity:.85}
+@media(min-width:900px){.oc-metrics{grid-template-columns:repeat(3,1fr)}}
