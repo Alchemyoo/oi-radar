@@ -28,4 +28,8 @@
 .oc-method{color:var(--sub);border-top:1px solid var(--line);padding-top:8px}
 .oc-pools summary{font-size:12px;padding:10px 0;cursor:pointer;color:var(--sub)}
 #ocOpNote{font-size:11px;margin-top:0;opacity:.85}
-@media(min-width:900px){.oc-metrics{grid-template-columns:repeat(3,1fr)}}
+.oc-channels{display:grid;gap:8px;margin:11px 0}
+.oc-channels section{border:1px solid var(--line);border-radius:9px;padding:10px;min-width:0;overflow-wrap:anywhere}
+.oc-channels b{font-size:12px}.oc-channels small{color:var(--sub);font-size:10px;line-height:1.6}
+.oc-channels ul{padding-left:18px;font-size:11px}
+@media(min-width:900px){.oc-metrics{grid-template-columns:repeat(3,1fr)}.oc-channels{grid-template-columns:1fr 1fr}}

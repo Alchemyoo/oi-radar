@@ -30,7 +30,7 @@
   return {state,text:bias.share===null?'链上已接入':bias.text,kind:bias.kind};
  }
  function validateRegistry(data){
-  if(data?.schemaVersion!==1||!Array.isArray(data.tokens)||!data.tokens.length||data.tokens.length>20)throw Error('合约映射格式无效');
+  if(data?.schemaVersion!==1||!Array.isArray(data.tokens)||!data.tokens.length||data.tokens.length>64)throw Error('合约映射格式无效');
   const seen=new Set();
   for(const t of data.tokens){
    if(!t||typeof t.symbol!=='string'||!t.symbol.endsWith('USDT')||seen.has(t.symbol)||t.chain!=='bsc'||t.chainId!==56||!/^0x[0-9a-f]{40}$/i.test(t.address||'')||!Array.isArray(t.sources)||!t.sources.length||t.sources.some(s=>!safeUrl(s.url)))throw Error('合约映射未通过校验');
@@ -66,9 +66,55 @@
   if(e.kind==='up'||e.kind==='down')return ' · 链上笔数偏向:'+e.text+'（不是大额资金异动）';
   return ' · 链上暂无可验证异动';
  }
- const Core={TTL,num,escape,safeUrl,identity,freshness,countBias,evidence,validateRegistry,validateSnapshot,alertTag};
+ // Optional evidence channels: no fetch, no scoring, and never infer transfers from DEX.
+ function transferEvents(channel,t){
+  const addr=v=>typeof v==='string'&&/^0x[0-9a-f]{40}$/i.test(v),hash=v=>typeof v==='string'&&/^0x[0-9a-f]{64}$/i.test(v);
+  const at=v=>typeof v==='string'&&/(?:Z|[+-]\d\d:\d\d)$/.test(v)?Date.parse(v):NaN;
+  if(!channel||!identity(channel.identity,t)||t.chain!=='bsc'||t.chainId!==56||!safeUrl(channel.source)||channel.coverage?.complete!==true||channel.coverage?.finality!=='finalized'||!Array.isArray(channel.events)||channel.events.length>1000)return null;
+  const start=at(channel.window?.from),end=at(channel.window?.to),fetched=at(channel.fetchedAt);
+  if(!Number.isFinite(start)||!Number.isFinite(end)||!Number.isFinite(fetched)||!Number.isFinite(at(channel.lastAttemptAt))||end<=start||end-start>86400000||end>fetched)return null;
+  const seen=new Map();
+  for(const e of channel.events){
+   const block=at(e?.blockTime);
+   if(!e||!addr(e.tokenAddress)||e.tokenAddress.toLowerCase()!==t.address.toLowerCase()||!addr(e.from)||!addr(e.to)||!hash(e.transactionHash)||!hash(e.blockHash)||!Number.isSafeInteger(e.blockNumber)||e.blockNumber<0||!Number.isSafeInteger(e.logIndex)||e.logIndex<0||e.finality!=='finalized'||e.removed!==false||!Number.isInteger(e.decimals)||e.decimals<0||e.decimals>255||typeof e.amountRaw!=='string'||!/^(?:0|[1-9][0-9]{0,77})$/.test(e.amountRaw)||!Number.isFinite(block)||block<start||block>=end)return null;
+   if(e.usdValue!=null&&(num(e.usdValue)===null||typeof e.valuation?.source!=='string'||!e.valuation.source||e.valuation.source.length>120||at(e.valuation.at)!==block))return null;
+   const key=e.transactionHash.toLowerCase()+':'+e.logIndex;
+   // Conflicting duplicate logs fail closed; property order is irrelevant.
+   const canonical=JSON.stringify([e.tokenAddress.toLowerCase(),e.from.toLowerCase(),e.to.toLowerCase(),e.blockHash.toLowerCase(),e.blockNumber,block,e.decimals,e.amountRaw,e.usdValue??null,e.valuation?.source??null,at(e.valuation?.at)||null]);
+   if(seen.has(key)&&seen.get(key).canonical!==canonical)return null;
+   seen.set(key,{canonical,event:e});
+  }
+  return [...seen.values()].map(v=>v.event);
+ }
+ function channelSummary(row,t,now=Date.now()){
+  const valid=identity(row?.identity,t),r=valid?row:null,e=evidence(r,now);
+  let dex={state:e.state,text:e.text,anomaly:false};
+  const pct=r?.liquidityChangePct,current=num(r?.liquidityUsd),baseline=Date.parse(r?.liquidityBaselineAt),observed=Date.parse(r?.fetchedAt);
+  if(e.state==='fresh'&&typeof pct==='number'&&Number.isFinite(pct)&&pct>-100&&Math.abs(pct)>=10&&current!==null&&Number.isFinite(baseline)&&observed-baseline>=1800000&&observed-baseline<=21600000&&/^[a-f0-9]{64}$/.test(r?.poolFingerprint||'')){
+   const delta=current-current/(1+pct/100);
+   if(Number.isFinite(delta)&&Math.abs(delta)>=100000)dex={state:'fresh',text:'DEX 异动：可比池流动性估值'+(delta>0?'增加':'减少')+' $'+Math.round(Math.abs(delta)).toLocaleString('en-US')+'；含价格影响，非资金流',anomaly:true};
+  }
+  const c=r?.evidence?.schemaVersion===1?r.evidence.transfers:null;
+  let transfers={state:'disabled',text:'大额转账：未接入转账日志数据源',anomaly:false,count:null,events:[]};
+  if(c&&c.status!=='disabled'){
+   const events=transferEvents(c,t),state=freshness(c,now);
+   if(events===null||state==='unavailable')transfers={...transfers,state:'unavailable',text:'大额转账：有效证据暂无'};
+   else if(state==='stale'||r.status==='stale'||now-Date.parse(c.window.to)>TTL)transfers={...transfers,state:'stale',text:'大额转账：旧日志待更新，不确认当前异动'};
+   else{
+    const large=events.filter(e=>num(e.usdValue)!==null&&e.usdValue>=100000),unknown=events.filter(e=>num(e.usdValue)===null).length;
+    transfers={state:'fresh',text:'大额转账：已确认 '+large.length+' 笔 ≥ $100,000'+(unknown?'；'+unknown+' 笔缺 USD 估值（不视为零）':''),anomaly:large.length>0,count:large.length,events:large,window:c.window,fetchedAt:c.fetchedAt,source:c.source};
+   }
+  }
+  return {dex,transfers};
+ }
+ function channelPanel(row,t,now=Date.now()){
+  const summary=channelSummary(row,t,now),tr=summary.transfers;
+  const links=tr.events.slice(0,5).map(e=>'<li><a href="https://bscscan.com/tx/'+e.transactionHash.toLowerCase()+'" target="_blank" rel="noopener noreferrer">'+escape(e.transactionHash.slice(0,12))+'… · log '+e.logIndex+'</a> · $'+Math.round(e.usdValue).toLocaleString('en-US')+'</li>').join('');
+  return '<div class="oc-channels"><section data-oc-channel="dex"><b>DEX 池证据</b><p>'+escape(summary.dex.text)+'</p><small>笔数偏向不是大额资金；成交额与流动性不是转账净流。</small></section><section data-oc-channel="transfers"><b>大额转账证据</b><p>'+escape(tr.text)+'</p>'+(tr.window?'<p>区间 ['+escape(tr.window.from)+', '+escape(tr.window.to)+')<br>抓取 '+escape(tr.fetchedAt)+' · <a href="'+escape(safeUrl(tr.source))+'" target="_blank" rel="noopener noreferrer">日志来源 ↗</a></p>':'')+(links?'<ul>'+links+'</ul>':'')+'<small>地址转账 ≠ 买卖或交易所充值；钱包归属未核验。两个通道独立，不参与合约评分。</small></section></div>';
+ }
+ const Core={TTL,num,escape,safeUrl,identity,freshness,countBias,evidence,validateRegistry,validateSnapshot,alertTag,transferEvents,channelSummary,channelPanel};
  if(typeof module!=='undefined'&&module.exports){module.exports=Core;return}
- const OC={registry:[],rows:{},loading:false,loaded:false,error:'',only:{market:false,watch:false},promise:null};
+ const OC={registry:[],rows:{},transferCache:null,transferError:'',loading:false,loaded:false,error:'',only:{market:false,watch:false},promise:null};
  const listContext=()=>S.ov.favOnly?'watch':'market';
  root.Onchain=OC;root.OnchainCore=Core;
  const el=s=>document.querySelector(s);
@@ -127,6 +173,9 @@
     const pools=Array.isArray(r.pools)?r.pools.slice(0,20):[];
     html+='<details class="oc-pools"><summary>查看纳入的 '+pools.length+' 个池子</summary><div class="tblwrap"><table class="tbl"><thead><tr><th>DEX / 池地址</th><th>流动性</th><th>24h成交额</th></tr></thead><tbody>'+pools.map(p=>'<tr><td>'+poolLink(t,p)+'</td><td>'+fmt(p.liquidityUsd)+'</td><td>'+fmt(p.volumeUsd?.h24)+'</td></tr>').join('')+'</tbody></table></div></details>';
    }
+   let panel=channelPanel(r,t);
+   if(root.TransferEvidence){const transferHtml=root.TransferEvidence.render(OC.transferCache,t);panel=panel.replace(/<section data-oc-channel="transfers">[\s\S]*?<\/section>/,'<section data-oc-channel="transfers">'+transferHtml+'<p class="mut">当前转账缓存为手动采样；现有 Actions 仅定时采集 DEX，不自动采集 Transfer。</p></section>')}
+   html+=panel;
    html+='<div class="oc-sources">合约依据：'+t.sources.map(s=>'<a href="'+escape(safeUrl(s.url))+'" target="_blank" rel="noopener noreferrer">'+escape(s.label||'来源')+' ↗</a>').join(' · ')+'</div>';
   }
   if(OC.error)html+='<p class="down">缓存读取失败：'+escape(OC.error)+'。现有旧快照不视作实时数据。</p>';
@@ -173,8 +222,10 @@
     const snap=validateSnapshot(data,reg);
     OC.collectionMode=data.collectionMode||'manual';
     OC.registry=reg;OC.rows=snap;OC.loaded=true;OC.error='';
+    try{OC.transferCache=await getJson('data/transfers.json',force);OC.transferError=''}catch(_){OC.transferCache=null;OC.transferError='转账缓存不可用'}
    }catch(err){
     OC.error=err.name==='AbortError'?'请求超时':err.message;
+    OC.transferCache=null;OC.transferError='重读失败，转账证据不可用';
     // A failed reload must not present previous data as current evidence.
     OC.rows=Object.fromEntries(Object.entries(OC.rows).map(([k,r])=>[k,{...r,status:'stale'}]));
    }finally{OC.loading=false;OC.promise=null;render();if(S.ov.ready)ovRender();decorate()}

@@ -368,12 +368,17 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--registry", type=Path, default=root / "onchain.registry.json")
     parser.add_argument("--data-dir", type=Path, default=root / "data")
+    parser.add_argument("--include-evidence", action="store_true",
+                        help="Opt in to separate DEX/disabled-transfer evidence channels; no new network calls")
     args = parser.parse_args(argv)
     try:
         registry = load_json(args.registry)
         previous = load_json(args.data_dir / "onchain.json", {"schemaVersion": 1, "tokens": {}})
         history = load_json(args.data_dir / "onchain-history.json", {"schemaVersion": 1, "tokens": {}})
         output, cache, code = collect(registry, previous, history)
+        if args.include_evidence:
+            from onchain_evidence import attach_evidence
+            attach_evidence(output)
         # History first: after interruption it may advance, but never advertises live token freshness.
         atomic_json(args.data_dir / "onchain-history.json", cache)
         atomic_json(args.data_dir / "onchain.json", output)
