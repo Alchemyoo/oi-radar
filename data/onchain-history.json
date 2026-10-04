@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T06:54:49Z",
+  "generatedAt": "2026-10-04T07:36:04Z",
   "retentionHours": 72,
   "maxPointsPerToken": 288,
   "tokens": {
@@ -19,6 +19,11 @@
         "at": "2026-10-04T06:54:45Z",
         "liquidityUsd": 2171350.76,
         "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4"
+      },
+      {
+        "at": "2026-10-04T07:36:04Z",
+        "liquidityUsd": 2171589.85,
+        "poolFingerprint": "631a323d1a8dad329c4bd7f09039171a7a633da54a12ab597ec7aa69a86919b4"
       }
     ],
     "MUBARAKUSDT": [],
@@ -36,6 +41,11 @@
       {
         "at": "2026-10-04T06:54:49Z",
         "liquidityUsd": 1193672.21,
+        "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049"
+      },
+      {
+        "at": "2026-10-04T07:36:04Z",
+        "liquidityUsd": 1191526.75,
         "poolFingerprint": "60724ae00209de37e1f9da5283d1e00b7520865c50b09098c2977711d57ab049"
       }
     ]
