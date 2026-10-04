@@ -16,11 +16,21 @@
 
 单币90分钟以上或采集失败标旧快照；缓存重读失败保留旧值但标stale，不显示为当前方向确认。来源没有底层更新时间，fetchedAt仅抓取时间。历史保留72h、每币最多288点；流动性变化只在相同池集合、真实30min–6h基线间计算，包含币价变化影响，不是资金净流。
 
+## OI 提醒与全币种状态（新增）
+- 实时 OI 雷达发送 toast 前调用全局 `onchainAlertTag(sym)`，只查询 `Onchain.registry` / `Onchain.rows` 和既有 `OnchainCore.evidence`，不为提醒新增请求、不触发采集。缺映射明确显示「未接入可验证链上数据」。
+- symbol、chain、chainId、合约地址必须与已核实映射一致。当前仅龙虾 / MUBARAK / TST 三个 BSC 试点，其他永续合约不是已覆盖的链上数据。
+- 只有 fresh、已验证同池集合基线、可比流动性变化绝对值 ≥10% 且 USD 估值变化绝对值 ≥$100,000 时追加「链上异动:可比池流动性增加/减少」。估值金额由当前流动性和百分比反推，包含价格变化，不代表资金净流或大额转账。缺总额不判定大额。
+- 买卖笔数偏向只标「链上笔数偏向（不是大额资金异动）」；未达大额门槛的流动性下降只标普通证据。窗口与 OI 提醒不同，不解释为因果关系。
+- fresh 但未达到阈值：显示「链上暂无可验证异动」。90 分钟以上 / status stale 显示「链上暂无可验证异动（旧快照待更新）」；缺失、错误或身份不匹配显示「链上暂无可验证异动（有效快照暂无）」。旧证据不会被当成当前异动。
+- 多个 OI 提醒合并时仅标注涨跌幅绝对值最大的币，并明确标注对象，不让一币链上标签暗示所有提醒有证据。
+- 市场 / 自选 / 强势 / 持仓异动 / 象限 / 日内 / 雷达表格的币种旁，通过 `onchain.decorate` 为全部行附加状态徽标，未映射行直接显示「未接入可验证链上数据」；提示包含同一缓存证据结论及抓取时间，不改变排序、评分或扫描。不是全链全 DEX 覆盖。
+- HYPE 独立面板使用行情 API，不是链上异动；`HYPE` / `HYPEUSDT` 的提醒不会由 Hyperliquid 行情伪装为链上证据。该板块口径详见 `HYPE.md`。
+
 ## 测试
 ```sh
-node onchain.test.js
-node strong.test.js
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts -p test_onchain.py -v
+node --test --test-concurrency=1 *.test.js
+# 包含保留测试和新增 hyperliquid.test.js / onchain-alert.test.js
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts -p 'test*.py' -v
 python3 -m http.server 8770 --directory .
 ```
 测试浏览器控制台：

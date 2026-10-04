@@ -6,6 +6,9 @@
 .oc-badge{display:inline-block;margin-left:5px;padding:1px 5px;border:1px solid rgba(79,156,249,.28);border-radius:5px;font-size:10px;font-weight:500;line-height:1.5;color:var(--blue);background:rgba(79,156,249,.07);vertical-align:middle;white-space:nowrap}
 .oc-badge.up{color:var(--up);border-color:rgba(46,189,133,.25)}
 .oc-badge.down{color:var(--down);border-color:rgba(246,70,93,.25)}
+.oc-badge.oc-unmapped{display:block;width:max-content;max-width:128px;white-space:normal;overflow-wrap:anywhere;margin:3px 0 0;color:var(--sub);border-color:var(--line);background:transparent}
+.c-sym:has(.oc-badge){flex-wrap:wrap;max-width:190px}
+.c-sym .oc-unmapped{flex-basis:100%}
 #ocDetail{margin-bottom:12px}
 #ocDetail>summary{flex-wrap:wrap;gap:6px}
 #ocDetailTitle{font-size:13px;color:var(--txt);font-weight:650;overflow-wrap:anywhere}

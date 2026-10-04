@@ -49,7 +49,24 @@
   }
   return rows;
  }
- const Core={TTL,num,escape,safeUrl,identity,freshness,countBias,evidence,validateRegistry,validateSnapshot};
+ // Cache-only alert lookup: exact verified identity; never fetch per alert.
+ function alertTag(sym,registry=[],rows={},now=Date.now()){
+  if(sym==='HYPE'||sym==='HYPEUSDT')return ' · HYPE 行情 API 非链上证据 · 未接入可验证链上数据';
+  const t=registry.find(t=>t.symbol===sym);
+  if(!t)return ' · 未接入可验证链上数据';
+  const r=rows[sym],e=evidence(identity(r?.identity,t)?r:null,now);
+  if(e.state==='stale')return ' · 链上暂无可验证异动（旧快照待更新）';
+  if(e.state==='unavailable')return ' · 链上暂无可验证异动（有效快照暂无）';
+  const pct=r?.liquidityChangePct,current=num(r?.liquidityUsd);
+  if(typeof pct==='number'&&Number.isFinite(pct)&&pct>-100&&Math.abs(pct)>=10&&current!==null&&r.liquidityBaselineAt){
+   const previous=current/(1+pct/100),delta=current-previous;
+   if(Number.isFinite(delta)&&Math.abs(delta)>=100000)return ' · 链上异动:可比池流动性'+(delta>0?'增加':'减少')+' $'+Math.round(Math.abs(delta)).toLocaleString('en-US')+' ('+(pct>0?'+':'')+pct.toFixed(1)+'%；USD估值含价格影响，非资金流)';
+  }
+  if(e.text==='池流动性下降')return ' · 链上流动性下降证据（未达到大额阈值，非资金流）';
+  if(e.kind==='up'||e.kind==='down')return ' · 链上笔数偏向:'+e.text+'（不是大额资金异动）';
+  return ' · 链上暂无可验证异动';
+ }
+ const Core={TTL,num,escape,safeUrl,identity,freshness,countBias,evidence,validateRegistry,validateSnapshot,alertTag};
  if(typeof module!=='undefined'&&module.exports){module.exports=Core;return}
  const OC={registry:[],rows:{},loading:false,loaded:false,error:'',only:{market:false,watch:false},promise:null};
  const listContext=()=>S.ov.favOnly?'watch':'market';
@@ -59,25 +76,29 @@
  const tm=t=>{const d=new Date(t);return Number.isFinite(d.getTime())?d.toLocaleString('zh-CN',{hour12:false}):'暂无'};
  function token(sym){return OC.registry.find(t=>t.symbol===sym)}
  function row(sym){const t=token(sym),r=OC.rows[sym];return identity(r?.identity,t)?r:null}
- function tag(sym){
-  if(!token(sym))return '';
+ function badgeState(sym){
+  if(!token(sym)||sym==='HYPE'||sym==='HYPEUSDT')return {text:'未接入可验证链上数据',kind:'neutral',unmapped:true};
   const e=evidence(row(sym));
-  return '<span class="oc-badge '+e.kind+'" title="'+escape(e.text)+' · 点击币种查看链上证据">链上'+(e.state==='stale'?'旧':'')+'</span>';
+  return {...e,text:e.state==='unavailable'?'链上快照暂无':e.state==='stale'?'链上旧':e.text};
+ }
+ function tag(sym){
+  const b=badgeState(sym);
+  return '<span class="oc-badge '+b.kind+(b.unmapped?' oc-unmapped':'')+'" title="'+escape(alertTag(sym,OC.registry,OC.rows)+' · 点击币种查看证据范围')+'">'+escape(b.text)+'</span>';
  }
  root.onchainBadge=tag;
+ root.onchainAlertTag=sym=>alertTag(sym,OC.registry,OC.rows);
  root.onchainFilter=rows=>OC.only[listContext()]?rows.filter(r=>!!token(r.sym)):rows;
  root.onchainDetailChanged=()=>renderDetail();
  function decorate(){
   for(const sel of ['#ovTbl','#scTbl','#qdTbl','#idTbl','#stTbl','#rtTbl']){
    const table=el(sel);if(!table)continue;
    for(const a of table.querySelectorAll('a[data-sym],a[data-st-sym]')){
-    const sym=a.dataset.sym||a.dataset.stSym,t=token(sym);if(!t)continue;
-    const e=evidence(row(sym));
+    const sym=a.dataset.sym||a.dataset.stSym,state=badgeState(sym);
     let b=a.parentNode.querySelector('.oc-badge');
     if(!b){b=document.createElement('span');a.after(b)}
-    b.className='oc-badge '+e.kind;
-    b.textContent=(sel==='#ovTbl'||sel==='#rtTbl')?(e.state==='stale'?'链上旧':'链上'):e.text;
-    b.title=e.text+' · 抓取 '+tm(row(sym)?.fetchedAt)+'；笔数≠资金流；不参与合约评分';
+    b.className='oc-badge '+state.kind+(state.unmapped?' oc-unmapped':'');
+    b.textContent=state.text;
+    b.title=alertTag(sym,OC.registry,OC.rows)+' · 抓取 '+tm(row(sym)?.fetchedAt)+'；笔数≠资金流；不参与合约评分';
    }
   }
  }
@@ -87,7 +108,7 @@
   const opened=box.dataset.renderedSym===sym&&box.querySelector('.oc-pools')?.open;
   box.dataset.renderedSym=sym;
   el('#ocDetailTitle').textContent='链上证据 · '+(sym||'选择币种');
-  el('#ocDetailStatus').textContent=!t?'未接入':e.state==='fresh'?'缓存快照':e.state==='stale'?'旧快照':'暂无数据';
+  el('#ocDetailStatus').textContent=!t?'未接入可验证链上数据':e.state==='fresh'?'缓存快照':e.state==='stale'?'旧快照':'暂无数据';
   let html='';
   if(!t){html='<p class="mut">该币尚未核实链与合约地址，不按名称自动匹配。首期支持：</p>'+pilotButtons();}
   else{
