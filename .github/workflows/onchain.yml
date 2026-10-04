@@ -1,0 +1,51 @@
+name: On-chain evidence cache
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: onchain-data-main
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main' && github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline collector tests
+        run: python -m unittest discover -s scripts -p test_onchain.py -v
+      - name: Collect public base-side pool snapshots
+        run: python scripts/collect_onchain.py
+      - name: Commit only changed on-chain data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- data/onchain.json data/onchain-history.json
+          if git diff --cached --quiet -- data/onchain.json data/onchain-history.json; then
+            echo 'No on-chain data changes.'
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit --only -m 'data: refresh on-chain evidence cache' \
+              -- data/onchain.json data/onchain-history.json
+          git push origin HEAD:main
+      - name: Request legacy Pages rebuild for bot data commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds" --jq '.status'
