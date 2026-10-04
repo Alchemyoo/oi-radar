@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T20:52:17Z",
+  "generatedAt": "2026-10-04T23:46:28Z",
   "retentionHours": 72,
   "maxPointsPerToken": 288,
   "tokens": {
@@ -120,6 +120,11 @@
         "at": "2026-10-04T20:52:17Z",
         "liquidityUsd": 22719.11,
         "poolFingerprint": "dfb72f008c2523bad05d0ad6ecf21267319f3348e54fe5c5f86e6cc2f13dfc62"
+      },
+      {
+        "at": "2026-10-04T23:46:28Z",
+        "liquidityUsd": 22469.69,
+        "poolFingerprint": "dfb72f008c2523bad05d0ad6ecf21267319f3348e54fe5c5f86e6cc2f13dfc62"
       }
     ],
     "HAEDALUSDT": [],
@@ -199,6 +204,11 @@
         "at": "2026-10-04T20:52:17Z",
         "liquidityUsd": 1619575.43,
         "poolFingerprint": "89a278f42335d969b8698292018138f9e24d9373714ab31302f7ffca71bf772a"
+      },
+      {
+        "at": "2026-10-04T23:46:28Z",
+        "liquidityUsd": 1603751.84,
+        "poolFingerprint": "af56cad671f7519f039ff678e525fd52f92136f8bce36c7b45069cb4880d4d53"
       }
     ],
     "ORCAUSDT": [],
