@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-05T01:16:23.238809Z",
+  "generatedAt": "2026-10-05T01:55:15.470794Z",
   "totalSymbols": 571,
   "mappedSymbols": 275,
   "counts": {
@@ -19,10 +19,10 @@
       "unsupported": 5
     },
     "transferStatus": {
-      "unavailable": 225,
+      "ok": 237,
       "unmapped": 296,
       "unsupported": 35,
-      "ok": 15
+      "unavailable": 3
     }
   },
   "symbols": [
@@ -32,9 +32,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090250Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959831Z"
     },
     {
       "symbol": "1000000BOBUSDT",
@@ -91,10 +91,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833043Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567445Z"
     },
     {
       "symbol": "1000FLOKIUSDT",
@@ -191,10 +191,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090275Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959862Z"
     },
     {
       "symbol": "1MBABYDOGEUSDT",
@@ -211,10 +211,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264579Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416179Z"
     },
     {
       "symbol": "4USDT",
@@ -231,40 +231,40 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090280Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959893Z"
     },
     {
       "symbol": "AAVEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090283Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959910Z"
     },
     {
       "symbol": "ACEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833066Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567460Z"
     },
     {
       "symbol": "ACHUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090286Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959920Z"
     },
     {
       "symbol": "ACTUSDT",
@@ -311,20 +311,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436069Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585192Z"
     },
     {
       "symbol": "AEVOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090288Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959931Z"
     },
     {
       "symbol": "AGLDUSDT",
@@ -332,9 +332,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090290Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959940Z"
     },
     {
       "symbol": "AGTUSDT",
@@ -361,10 +361,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090293Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959949Z"
     },
     {
       "symbol": "AINUSDT",
@@ -401,10 +401,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436090Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585278Z"
     },
     {
       "symbol": "AKEUSDT",
@@ -431,10 +431,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264619Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416231Z"
     },
     {
       "symbol": "ALGOUSDT",
@@ -451,10 +451,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090295Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:05.959958Z"
     },
     {
       "symbol": "ALLOUSDT",
@@ -462,9 +462,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090298Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213765Z"
     },
     {
       "symbol": "ALLUSDT",
@@ -481,30 +481,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833071Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567471Z"
     },
     {
       "symbol": "ALTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090300Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213781Z"
     },
     {
       "symbol": "ANIMEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090302Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213793Z"
     },
     {
       "symbol": "ANKRUSDT",
@@ -522,19 +522,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090304Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213806Z"
     },
     {
       "symbol": "API3USDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090306Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213818Z"
     },
     {
       "symbol": "APRUSDT",
@@ -561,20 +561,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090308Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213829Z"
     },
     {
       "symbol": "ARBUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090310Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213838Z"
     },
     {
       "symbol": "ARCUSDT",
@@ -602,9 +602,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090312Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213845Z"
     },
     {
       "symbol": "ARKUSDT",
@@ -652,19 +652,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436095Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585334Z"
     },
     {
       "symbol": "ASTERUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833075Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567498Z"
     },
     {
       "symbol": "ASTRUSDT",
@@ -672,19 +672,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090314Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.213852Z"
     },
     {
       "symbol": "ATHUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090317Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460218Z"
     },
     {
       "symbol": "ATOMUSDT",
@@ -702,9 +702,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090319Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460235Z"
     },
     {
       "symbol": "AUCTIONUSDT",
@@ -771,20 +771,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436099Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585390Z"
     },
     {
       "symbol": "AWEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436102Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585444Z"
     },
     {
       "symbol": "AXLUSDT",
@@ -792,19 +792,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090321Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460311Z"
     },
     {
       "symbol": "AXSUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:44.090323Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460348Z"
     },
     {
       "symbol": "AZTECUSDT",
@@ -841,40 +841,40 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833078Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567511Z"
     },
     {
       "symbol": "BANANAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311866Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460359Z"
     },
     {
       "symbol": "BANDUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311889Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460368Z"
     },
     {
       "symbol": "BANKUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833081Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567520Z"
     },
     {
       "symbol": "BANUSDT",
@@ -892,9 +892,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311893Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460377Z"
     },
     {
       "symbol": "BASEDUSDT",
@@ -932,9 +932,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833084Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567529Z"
     },
     {
       "symbol": "BCHUSDC",
@@ -981,10 +981,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311896Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.460386Z"
     },
     {
       "symbol": "BERAUSDT",
@@ -1001,20 +1001,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311899Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660880Z"
     },
     {
       "symbol": "BIGTIMEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311902Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660894Z"
     },
     {
       "symbol": "BILLUSDT",
@@ -1032,9 +1032,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311904Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660903Z"
     },
     {
       "symbol": "BIOUSDT",
@@ -1042,9 +1042,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311906Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660909Z"
     },
     {
       "symbol": "BIRBUSDT",
@@ -1081,40 +1081,40 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311908Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660916Z"
     },
     {
       "symbol": "BMTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833086Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.567539Z"
     },
     {
       "symbol": "BNBUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311910Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660921Z"
     },
     {
       "symbol": "BNBUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311913Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660926Z"
     },
     {
       "symbol": "BNTUSDT",
@@ -1131,20 +1131,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264738Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416425Z"
     },
     {
       "symbol": "BOMEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264744Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416435Z"
     },
     {
       "symbol": "BRETTUSDT",
@@ -1162,19 +1162,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311915Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660935Z"
     },
     {
       "symbol": "BROCCOLI714USDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833089Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679885Z"
     },
     {
       "symbol": "BROCCOLIF3BUSDT",
@@ -1192,9 +1192,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311917Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660941Z"
     },
     {
       "symbol": "BSBUSDT",
@@ -1312,19 +1312,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311919Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.660946Z"
     },
     {
       "symbol": "CAKEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311921Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900338Z"
     },
     {
       "symbol": "CAPUSDT",
@@ -1342,9 +1342,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311923Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900352Z"
     },
     {
       "symbol": "CATIUSDT",
@@ -1381,10 +1381,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311925Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900362Z"
     },
     {
       "symbol": "CETUSUSDT",
@@ -1394,7 +1394,7 @@
       "dexFetchedAt": null,
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264772Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416470Z"
     },
     {
       "symbol": "CFGUSDT",
@@ -1402,9 +1402,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311927Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900371Z"
     },
     {
       "symbol": "CFXUSDT",
@@ -1421,10 +1421,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311930Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900379Z"
     },
     {
       "symbol": "CHILLGUYUSDT",
@@ -1441,30 +1441,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311932Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900387Z"
     },
     {
       "symbol": "CHRUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311934Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900394Z"
     },
     {
       "symbol": "CHZUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:47.311936Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:06.900402Z"
     },
     {
       "symbol": "CKBUSDT",
@@ -1521,10 +1521,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550111Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140706Z"
     },
     {
       "symbol": "COOKIEUSDT",
@@ -1532,29 +1532,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550135Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140723Z"
     },
     {
       "symbol": "COTIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550138Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140738Z"
     },
     {
       "symbol": "COWUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550141Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140750Z"
     },
     {
       "symbol": "CROSSUSDT",
@@ -1611,10 +1611,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550144Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140760Z"
     },
     {
       "symbol": "CTUSDT",
@@ -1631,30 +1631,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833091Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679897Z"
     },
     {
       "symbol": "CVCUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550147Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140771Z"
     },
     {
       "symbol": "CVXUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550149Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140807Z"
     },
     {
       "symbol": "CYBERUSDT",
@@ -1662,9 +1662,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550151Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.140817Z"
     },
     {
       "symbol": "CYSUSDT",
@@ -1721,20 +1721,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550153Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384706Z"
     },
     {
       "symbol": "DIAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550155Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384719Z"
     },
     {
       "symbol": "DODOXUSDT",
@@ -1781,20 +1781,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550157Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384728Z"
     },
     {
       "symbol": "DOODUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833094Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679907Z"
     },
     {
       "symbol": "DOSUSDT",
@@ -1831,10 +1831,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550159Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384739Z"
     },
     {
       "symbol": "DYDXUSDT",
@@ -1862,9 +1862,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550161Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384746Z"
     },
     {
       "symbol": "EDGEUSDT",
@@ -1881,10 +1881,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550163Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384753Z"
     },
     {
       "symbol": "EGLDUSDT",
@@ -1921,50 +1921,50 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550165Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384773Z"
     },
     {
       "symbol": "ENAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550167Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384789Z"
     },
     {
       "symbol": "ENJUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550168Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.384797Z"
     },
     {
       "symbol": "ENSOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550170Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599022Z"
     },
     {
       "symbol": "ENSUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550172Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599038Z"
     },
     {
       "symbol": "EPICUSDT",
@@ -1972,19 +1972,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550174Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599051Z"
     },
     {
       "symbol": "ERAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:50.550176Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599061Z"
     },
     {
       "symbol": "ESPORTSUSDT",
@@ -2002,9 +2002,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818042Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599073Z"
     },
     {
       "symbol": "ETCUSDT",
@@ -2031,20 +2031,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818065Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599087Z"
     },
     {
       "symbol": "ETHFIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818069Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599095Z"
     },
     {
       "symbol": "ETHU",
@@ -2102,9 +2102,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818071Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599110Z"
     },
     {
       "symbol": "EVAAUSDT",
@@ -2121,20 +2121,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264887Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416613Z"
     },
     {
       "symbol": "FETUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818074Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.599138Z"
     },
     {
       "symbol": "FFUSDT",
@@ -2142,9 +2142,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818076Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965711Z"
     },
     {
       "symbol": "FHEUSDT",
@@ -2161,10 +2161,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264899Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416628Z"
     },
     {
       "symbol": "FIGHTUSDT",
@@ -2261,10 +2261,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833097Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679913Z"
     },
     {
       "symbol": "FRAXUSDT",
@@ -2282,19 +2282,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818078Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965727Z"
     },
     {
       "symbol": "GALAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818081Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965742Z"
     },
     {
       "symbol": "GASUSDT",
@@ -2311,20 +2311,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833100Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679919Z"
     },
     {
       "symbol": "GIGGLEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833103Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679925Z"
     },
     {
       "symbol": "GLMUSDT",
@@ -2332,9 +2332,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818083Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965755Z"
     },
     {
       "symbol": "GMTUSDT",
@@ -2351,30 +2351,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unavailable",
       "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:20.141042Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.853952Z"
     },
     {
       "symbol": "GOATUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264928Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416664Z"
     },
     {
       "symbol": "GPSUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436105Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585498Z"
     },
     {
       "symbol": "GRAMUSDT",
@@ -2391,10 +2391,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264935Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416675Z"
     },
     {
       "symbol": "GRIFFAINUSDT",
@@ -2411,10 +2411,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818086Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965773Z"
     },
     {
       "symbol": "GRVTUSDT",
@@ -2431,10 +2431,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818088Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965817Z"
     },
     {
       "symbol": "GUAUSDT",
@@ -2451,10 +2451,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:20.923502Z"
+      "transferFetchedAt": "2026-10-05T01:55:15.029878Z"
     },
     {
       "symbol": "GUSDT",
@@ -2481,10 +2481,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833106Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679932Z"
     },
     {
       "symbol": "HANAUSDT",
@@ -2522,19 +2522,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818091Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965829Z"
     },
     {
       "symbol": "HEMIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818093Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:07.965839Z"
     },
     {
       "symbol": "HIVEUSDT",
@@ -2561,40 +2561,40 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833109Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.679938Z"
     },
     {
       "symbol": "HOMEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833111Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773305Z"
     },
     {
       "symbol": "HOTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818096Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144509Z"
     },
     {
       "symbol": "HUMAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833113Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773317Z"
     },
     {
       "symbol": "HUSDT",
@@ -2612,9 +2612,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818098Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144525Z"
     },
     {
       "symbol": "HYPEUSDT",
@@ -2641,10 +2641,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818100Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144537Z"
     },
     {
       "symbol": "IDOLUSDT",
@@ -2661,20 +2661,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818102Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144546Z"
     },
     {
       "symbol": "ILVUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818104Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144554Z"
     },
     {
       "symbol": "IMXUSDT",
@@ -2702,9 +2702,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818106Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144566Z"
     },
     {
       "symbol": "INUSDT",
@@ -2732,9 +2732,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833116Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773325Z"
     },
     {
       "symbol": "IOTAUSDT",
@@ -2751,20 +2751,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818108Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144575Z"
     },
     {
       "symbol": "IOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.264996Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416753Z"
     },
     {
       "symbol": "IRYSUSDT",
@@ -2781,10 +2781,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:53.818110Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.144589Z"
     },
     {
       "symbol": "JCTUSDT",
@@ -2801,10 +2801,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265003Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416764Z"
     },
     {
       "symbol": "JOEUSDT",
@@ -2831,20 +2831,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265007Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416769Z"
     },
     {
       "symbol": "JUPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265013Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416775Z"
     },
     {
       "symbol": "KAIAUSDT",
@@ -2861,20 +2861,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436108Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585551Z"
     },
     {
       "symbol": "KAITOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436110Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585556Z"
     },
     {
       "symbol": "KASUSDT",
@@ -2892,29 +2892,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:11.833118Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773332Z"
     },
     {
       "symbol": "KAVAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047693Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773337Z"
     },
     {
       "symbol": "KERNELUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043664Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395729Z"
     },
     {
       "symbol": "KGENUSDT",
@@ -2931,20 +2931,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047716Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773346Z"
     },
     {
       "symbol": "KMNOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265039Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416809Z"
     },
     {
       "symbol": "KNCUSDT",
@@ -2992,29 +2992,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043687Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395746Z"
     },
     {
       "symbol": "LAYERUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265047Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416820Z"
     },
     {
       "symbol": "LDOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043691Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395767Z"
     },
     {
       "symbol": "LIGHTUSDT",
@@ -3031,30 +3031,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043694Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395780Z"
     },
     {
       "symbol": "LINKUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043697Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395823Z"
     },
     {
       "symbol": "LINKUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043699Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395852Z"
     },
     {
       "symbol": "LISTAUSDT",
@@ -3071,30 +3071,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043702Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395863Z"
     },
     {
       "symbol": "LPTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043704Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395875Z"
     },
     {
       "symbol": "LQTYUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043706Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.395888Z"
     },
     {
       "symbol": "LSKUSDT",
@@ -3102,9 +3102,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043708Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569342Z"
     },
     {
       "symbol": "LTCUSDC",
@@ -3132,9 +3132,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043710Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569356Z"
     },
     {
       "symbol": "LUNA2USDT",
@@ -3161,10 +3161,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043712Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569366Z"
     },
     {
       "symbol": "MAGMAUSDT",
@@ -3181,10 +3181,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043714Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569378Z"
     },
     {
       "symbol": "MANTAUSDT",
@@ -3211,20 +3211,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047720Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773353Z"
     },
     {
       "symbol": "MASKUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043717Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569388Z"
     },
     {
       "symbol": "MAVIAUSDT",
@@ -3242,9 +3242,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043719Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569396Z"
     },
     {
       "symbol": "MEGAUSDT",
@@ -3271,20 +3271,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043721Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569403Z"
     },
     {
       "symbol": "MERLUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047724Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.773359Z"
     },
     {
       "symbol": "METISUSDT",
@@ -3301,30 +3301,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265120Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416912Z"
     },
     {
       "symbol": "MEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265125Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416918Z"
     },
     {
       "symbol": "MEWUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265129Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416923Z"
     },
     {
       "symbol": "MINAUSDT",
@@ -3341,20 +3341,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047727Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874163Z"
     },
     {
       "symbol": "MITOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047730Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874172Z"
     },
     {
       "symbol": "MMTUSDT",
@@ -3364,7 +3364,7 @@
       "dexFetchedAt": null,
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265139Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416941Z"
     },
     {
       "symbol": "MOCAUSDT",
@@ -3391,30 +3391,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265145Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.416947Z"
     },
     {
       "symbol": "MORPHOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043723Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.569419Z"
     },
     {
       "symbol": "MOVEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043725Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791302Z"
     },
     {
       "symbol": "MOVRUSDT",
@@ -3422,9 +3422,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436113Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.585609Z"
     },
     {
       "symbol": "MTLUSDT",
@@ -3441,10 +3441,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047733Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874181Z"
     },
     {
       "symbol": "MUSDT",
@@ -3461,10 +3461,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047735Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874187Z"
     },
     {
       "symbol": "NAORISUSDT",
@@ -3532,19 +3532,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043727Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791322Z"
     },
     {
       "symbol": "NIGHTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047738Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874191Z"
     },
     {
       "symbol": "NILUSDT",
@@ -3552,9 +3552,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043730Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791352Z"
     },
     {
       "symbol": "NMRUSDT",
@@ -3562,9 +3562,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:15:57.043732Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791365Z"
     },
     {
       "symbol": "NOMUSDT",
@@ -3572,9 +3572,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403161Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791378Z"
     },
     {
       "symbol": "NOTUSDT",
@@ -3592,9 +3592,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047741Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874196Z"
     },
     {
       "symbol": "OGNUSDT",
@@ -3612,19 +3612,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436115Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.680006Z"
     },
     {
       "symbol": "ONDOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403184Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791409Z"
     },
     {
       "symbol": "ONEUSDT",
@@ -3672,19 +3672,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403223Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791422Z"
     },
     {
       "symbol": "OPGUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047743Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874201Z"
     },
     {
       "symbol": "OPNUSDT",
@@ -3692,29 +3692,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403228Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.791433Z"
     },
     {
       "symbol": "OPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:23.215378Z"
+      "transferFetchedAt": "2026-10-05T01:55:15.441671Z"
     },
     {
       "symbol": "ORCAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265218Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417026Z"
     },
     {
       "symbol": "ORDERUSDT",
@@ -3731,20 +3731,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265224Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417034Z"
     },
     {
       "symbol": "ORDIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265230Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417042Z"
     },
     {
       "symbol": "OUSDT",
@@ -3761,60 +3761,60 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047747Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:13.874206Z"
     },
     {
       "symbol": "PAXGUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403232Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958055Z"
     },
     {
       "symbol": "PENDLEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403237Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958079Z"
     },
     {
       "symbol": "PENGUUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403240Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958089Z"
     },
     {
       "symbol": "PENGUUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403242Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958095Z"
     },
     {
       "symbol": "PEOPLEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403244Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958103Z"
     },
     {
       "symbol": "PHAROSUSDT",
@@ -3862,9 +3862,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403246Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958111Z"
     },
     {
       "symbol": "PLAYUSDT",
@@ -3882,29 +3882,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403248Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958124Z"
     },
     {
       "symbol": "PNUTUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265260Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417080Z"
     },
     {
       "symbol": "PNUTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265265Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417087Z"
     },
     {
       "symbol": "POLUSDT",
@@ -3941,20 +3941,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265271Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417092Z"
     },
     {
       "symbol": "PORTALUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403251Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958133Z"
     },
     {
       "symbol": "POWERUSDT",
@@ -3971,10 +3971,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403253Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:08.958142Z"
     },
     {
       "symbol": "PRLUSDT",
@@ -4011,10 +4011,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403255Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225785Z"
     },
     {
       "symbol": "PTBUSDT",
@@ -4041,10 +4041,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265288Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417112Z"
     },
     {
       "symbol": "PUNDIXUSDT",
@@ -4052,29 +4052,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403257Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225807Z"
     },
     {
       "symbol": "PYTHUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265294Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417122Z"
     },
     {
       "symbol": "QNTUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403259Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225877Z"
     },
     {
       "symbol": "QTUMUSDT",
@@ -4102,9 +4102,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403261Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225891Z"
     },
     {
       "symbol": "RAVEUSDT",
@@ -4142,39 +4142,39 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403263Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225905Z"
     },
     {
       "symbol": "RENDERUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403266Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225919Z"
     },
     {
       "symbol": "RESOLVUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403268Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225932Z"
     },
     {
       "symbol": "REUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:00.403270Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.225949Z"
     },
     {
       "symbol": "REZUSDT",
@@ -4182,9 +4182,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623023Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428427Z"
     },
     {
       "symbol": "RIFUSDT",
@@ -4192,9 +4192,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623046Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428439Z"
     },
     {
       "symbol": "RIVERUSDT",
@@ -4221,20 +4221,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623050Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428447Z"
     },
     {
       "symbol": "RONINUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265327Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417164Z"
     },
     {
       "symbol": "ROSEUSDT",
@@ -4251,20 +4251,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623053Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428456Z"
     },
     {
       "symbol": "RSRUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623055Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428464Z"
     },
     {
       "symbol": "RUNEUSDT",
@@ -4312,39 +4312,39 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623057Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428470Z"
     },
     {
       "symbol": "SANDUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623059Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428491Z"
     },
     {
       "symbol": "SANTOSUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047749Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043861Z"
     },
     {
       "symbol": "SAPIENUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436118Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.680020Z"
     },
     {
       "symbol": "SCRUSDT",
@@ -4372,9 +4372,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623061Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.428499Z"
     },
     {
       "symbol": "SFPUSDT",
@@ -4382,9 +4382,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623063Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601118Z"
     },
     {
       "symbol": "SHELLUSDT",
@@ -4392,9 +4392,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623066Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601133Z"
     },
     {
       "symbol": "SIGNUSDT",
@@ -4402,9 +4402,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623068Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601143Z"
     },
     {
       "symbol": "SIRENUSDT",
@@ -4441,30 +4441,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047752Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043876Z"
     },
     {
       "symbol": "SKYUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623071Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601155Z"
     },
     {
       "symbol": "SLPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623074Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601163Z"
     },
     {
       "symbol": "SLXUSDT",
@@ -4512,19 +4512,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623076Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601169Z"
     },
     {
       "symbol": "SOMIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047755Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043884Z"
     },
     {
       "symbol": "SONICUSDT",
@@ -4541,20 +4541,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047757Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043891Z"
     },
     {
       "symbol": "SOPHUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623079Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601176Z"
     },
     {
       "symbol": "SPACEUSDT",
@@ -4582,9 +4582,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623082Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.601185Z"
     },
     {
       "symbol": "SPORTFUNUSDT",
@@ -4601,10 +4601,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623084Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792144Z"
     },
     {
       "symbol": "SQDUSDT",
@@ -4672,9 +4672,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623086Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792154Z"
     },
     {
       "symbol": "STRKUSDT",
@@ -4704,7 +4704,7 @@
       "dexFetchedAt": null,
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265397Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417271Z"
     },
     {
       "symbol": "SUIUSDT",
@@ -4714,7 +4714,7 @@
       "dexFetchedAt": null,
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265403Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417279Z"
     },
     {
       "symbol": "SUNUSDT",
@@ -4731,10 +4731,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623089Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792166Z"
     },
     {
       "symbol": "SUSDT",
@@ -4751,10 +4751,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:03.623091Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792172Z"
     },
     {
       "symbol": "SWARMSUSDT",
@@ -4772,29 +4772,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858758Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792178Z"
     },
     {
       "symbol": "SYNUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858781Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792186Z"
     },
     {
       "symbol": "SYRUPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858785Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792195Z"
     },
     {
       "symbol": "TACUSDT",
@@ -4871,10 +4871,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047760Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043897Z"
     },
     {
       "symbol": "TIAUSDC",
@@ -4902,19 +4902,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858788Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:09.792201Z"
     },
     {
       "symbol": "TNSRUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265431Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417315Z"
     },
     {
       "symbol": "TOSHIUSDT",
@@ -4952,9 +4952,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858791Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:10.571477Z"
     },
     {
       "symbol": "TREEUSDT",
@@ -4962,9 +4962,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858794Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:10.571497Z"
     },
     {
       "symbol": "TRIAUSDT",
@@ -4981,20 +4981,20 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265442Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417330Z"
     },
     {
       "symbol": "TRUMPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265446Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417335Z"
     },
     {
       "symbol": "TRUSTUSDT",
@@ -5031,30 +5031,30 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047762Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043903Z"
     },
     {
       "symbol": "TURBOUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858797Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:10.571507Z"
     },
     {
       "symbol": "TURTLEUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047765Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043909Z"
     },
     {
       "symbol": "TUSDT",
@@ -5071,10 +5071,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:15.047767Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.043914Z"
     },
     {
       "symbol": "TWTUSDT",
@@ -5112,29 +5112,29 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858800Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:10.571514Z"
     },
     {
       "symbol": "UNIUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858802Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:11.967128Z"
     },
     {
       "symbol": "UNIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858804Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:11.967159Z"
     },
     {
       "symbol": "USDCUSDT",
@@ -5143,8 +5143,8 @@
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
       "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858807Z"
+      "transferReason": "response_too_large",
+      "transferFetchedAt": "2026-10-05T01:55:12.482819Z"
     },
     {
       "symbol": "USELESSUSDT",
@@ -5172,9 +5172,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858809Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.625097Z"
     },
     {
       "symbol": "USUSDT",
@@ -5191,10 +5191,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858811Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.625108Z"
     },
     {
       "symbol": "VELODROMEUSDT",
@@ -5231,10 +5231,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858813Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806399Z"
     },
     {
       "symbol": "VTHOUSDT",
@@ -5264,17 +5264,17 @@
       "dexFetchedAt": null,
       "transferStatus": "unsupported",
       "transferReason": "non_evm_transfer_adapter_unavailable",
-      "transferFetchedAt": "2026-10-05T01:15:40.265486Z"
+      "transferFetchedAt": "2026-10-05T01:55:05.417387Z"
     },
     {
       "symbol": "WAXPUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858815Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806413Z"
     },
     {
       "symbol": "WCTUSDT",
@@ -5321,40 +5321,40 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858817Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806426Z"
     },
     {
       "symbol": "WLDUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858819Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806434Z"
     },
     {
       "symbol": "WLFIUSDC",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858821Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806443Z"
     },
     {
       "symbol": "WLFIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858823Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806449Z"
     },
     {
       "symbol": "WOOUSDT",
@@ -5362,9 +5362,9 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858825Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806456Z"
     },
     {
       "symbol": "WUSDT",
@@ -5372,19 +5372,19 @@
       "dexStatus": "error",
       "dexError": "no_accepted_base_pools",
       "dexFetchedAt": null,
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858828Z"
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806465Z"
     },
     {
       "symbol": "XAIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "unavailable",
       "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:20.141065Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.853966Z"
     },
     {
       "symbol": "XANUSDT",
@@ -5401,10 +5401,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858830Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806482Z"
     },
     {
       "symbol": "XLMUSDT",
@@ -5451,10 +5451,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:15.651362Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.126615Z"
     },
     {
       "symbol": "XRPUSDC",
@@ -5501,50 +5501,50 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:06.858832Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:12.806502Z"
     },
     {
       "symbol": "YBUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175817Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057317Z"
     },
     {
       "symbol": "YFIUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175837Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057332Z"
     },
     {
       "symbol": "YGGUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175849Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057342Z"
     },
     {
       "symbol": "ZAMAUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175866Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057357Z"
     },
     {
       "symbol": "ZBTUSDT",
@@ -5554,7 +5554,7 @@
       "dexFetchedAt": null,
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175874Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057365Z"
     },
     {
       "symbol": "ZECUSDC",
@@ -5581,10 +5581,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
-      "transferStatus": "unavailable",
-      "transferReason": "rpc_http_error",
-      "transferFetchedAt": "2026-10-05T01:16:19.436121Z"
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
+      "transferStatus": "ok",
+      "transferReason": null,
+      "transferFetchedAt": "2026-10-05T01:55:14.680043Z"
     },
     {
       "symbol": "ZEREBROUSDT",
@@ -5621,10 +5621,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:15.651374Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.126627Z"
     },
     {
       "symbol": "ZKCUSDT",
@@ -5634,7 +5634,7 @@
       "dexFetchedAt": null,
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175889Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057379Z"
     },
     {
       "symbol": "ZKPUSDT",
@@ -5644,17 +5644,17 @@
       "dexFetchedAt": null,
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175918Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057401Z"
     },
     {
       "symbol": "ZKUSDT",
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175928Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.057410Z"
     },
     {
       "symbol": "ZORAUSDT",
@@ -5671,10 +5671,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:08.175945Z"
+      "transferFetchedAt": "2026-10-05T01:55:13.223396Z"
     },
     {
       "symbol": "ZRXUSDT",
@@ -5701,10 +5701,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:15.651381Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.126634Z"
     },
     {
       "symbol": "我踏马来了USDT",
@@ -5721,10 +5721,10 @@
       "mappingStatus": "mapped",
       "dexStatus": "ok",
       "dexError": null,
-      "dexFetchedAt": "2026-10-05T01:15:40Z",
+      "dexFetchedAt": "2026-10-05T01:55:05Z",
       "transferStatus": "ok",
       "transferReason": null,
-      "transferFetchedAt": "2026-10-05T01:16:15.651389Z"
+      "transferFetchedAt": "2026-10-05T01:55:14.126640Z"
     },
     {
       "symbol": "龙虾USDT",

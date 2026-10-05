@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-05T01:15:40Z",
+  "generatedAt": "2026-10-05T01:55:05Z",
   "retentionHours": 72,
   "maxPointsPerToken": 288,
   "tokens": {
@@ -15,6 +15,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5578965.92,
         "poolFingerprint": "674fc60b42e7ba141bfd3b9289dad9b0310cd9e71daad56475f531e2225f358f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5600448.4,
+        "poolFingerprint": "674fc60b42e7ba141bfd3b9289dad9b0310cd9e71daad56475f531e2225f358f"
       }
     ],
     "1INCHUSDT": [
@@ -26,6 +31,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 294441.61,
+        "poolFingerprint": "43927a8048c0cde802723c5bf35bd4986ecad154fc884c1d3f81c958ce49b353"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 294757.68,
         "poolFingerprint": "43927a8048c0cde802723c5bf35bd4986ecad154fc884c1d3f81c958ce49b353"
       }
     ],
@@ -39,6 +49,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 834639.74,
         "poolFingerprint": "5dd7283484f8dc1df7beec121e930f741b366d04b608029e0127d4aeaa7e853b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 833647.41,
+        "poolFingerprint": "5dd7283484f8dc1df7beec121e930f741b366d04b608029e0127d4aeaa7e853b"
       }
     ],
     "AAVEUSDC": [
@@ -50,6 +65,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 201357.59,
+        "poolFingerprint": "fda5565ef846fdb4e8fa834c5f9c054fbe2753f25da0c019a564f6c33b5b8aea"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 201249.08,
         "poolFingerprint": "fda5565ef846fdb4e8fa834c5f9c054fbe2753f25da0c019a564f6c33b5b8aea"
       }
     ],
@@ -63,6 +83,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 201357.59,
         "poolFingerprint": "fda5565ef846fdb4e8fa834c5f9c054fbe2753f25da0c019a564f6c33b5b8aea"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 201249.08,
+        "poolFingerprint": "fda5565ef846fdb4e8fa834c5f9c054fbe2753f25da0c019a564f6c33b5b8aea"
       }
     ],
     "ACEUSDT": [
@@ -73,6 +98,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 21.41,
+        "poolFingerprint": "dc8734cb4b1626e9825d53789064a92056377beb4c517d300c9109fbb7044d03"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 21.41,
         "poolFingerprint": "dc8734cb4b1626e9825d53789064a92056377beb4c517d300c9109fbb7044d03"
       }
@@ -87,6 +117,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 61368.42,
         "poolFingerprint": "3bb7f2b38c55926c3a4f1730a55d5e6680065ac84f15beaae32da5be41e91eb4"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 61368.42,
+        "poolFingerprint": "3bb7f2b38c55926c3a4f1730a55d5e6680065ac84f15beaae32da5be41e91eb4"
       }
     ],
     "AEROUSDT": [
@@ -99,6 +134,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 44187933.74,
         "poolFingerprint": "a3c54457781ec9c8290719eab6f3f31b232f8c4cbb36c049f148c9697ca052f0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 43819389.93,
+        "poolFingerprint": "a3c54457781ec9c8290719eab6f3f31b232f8c4cbb36c049f148c9697ca052f0"
       }
     ],
     "AEVOUSDT": [
@@ -110,6 +150,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 634978.06,
+        "poolFingerprint": "7121b8998e52ca2d5d5f336c892c6fae46d5dc37c08710add94dd4690e26aa3c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 635613.02,
         "poolFingerprint": "7121b8998e52ca2d5d5f336c892c6fae46d5dc37c08710add94dd4690e26aa3c"
       }
     ],
@@ -124,6 +169,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 265631.06,
         "poolFingerprint": "fa4942f5e443c9d984445f3a5f4707945b23714c99297096f0f99422533ea06f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 265122.65,
+        "poolFingerprint": "fa4942f5e443c9d984445f3a5f4707945b23714c99297096f0f99422533ea06f"
       }
     ],
     "AIXBTUSDT": [
@@ -135,6 +185,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 349224.75,
+        "poolFingerprint": "0f606d77edf61df6cec6fe6c9f307f366481c96310fd5f2f031a71524637bf15"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 349814.76,
         "poolFingerprint": "0f606d77edf61df6cec6fe6c9f307f366481c96310fd5f2f031a71524637bf15"
       }
     ],
@@ -148,6 +203,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3560517.85,
         "poolFingerprint": "98e43c4f4318a450b40e4bdaf4315485478ec826b89f7bd26638d97c07202930"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3552292.7,
+        "poolFingerprint": "98e43c4f4318a450b40e4bdaf4315485478ec826b89f7bd26638d97c07202930"
       }
     ],
     "ALICEUSDT": [
@@ -158,6 +218,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 2337.88,
+        "poolFingerprint": "7b7ae983c79621becc599c79fa0fc3fec7a553f04b72739d113e1116cb82d05e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 2337.88,
         "poolFingerprint": "7b7ae983c79621becc599c79fa0fc3fec7a553f04b72739d113e1116cb82d05e"
       }
@@ -173,6 +238,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 65.67,
         "poolFingerprint": "487c8f033f86b0afe7b1da81a5111752ce08f5ff38e26f4123a36f0de12fc5bf"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 65.67,
+        "poolFingerprint": "487c8f033f86b0afe7b1da81a5111752ce08f5ff38e26f4123a36f0de12fc5bf"
       }
     ],
     "ALTUSDT": [
@@ -185,6 +255,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 97554.37,
         "poolFingerprint": "25b6bfdc5b27d9803c105e4688dd9e1ecf47def9a849f6b19541f46a0259b4cb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 97554.37,
+        "poolFingerprint": "25b6bfdc5b27d9803c105e4688dd9e1ecf47def9a849f6b19541f46a0259b4cb"
       }
     ],
     "ANIMEUSDT": [
@@ -195,6 +270,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 168714.58,
+        "poolFingerprint": "6a1ff27a61d56e9e6483645543ccb837d49ab8b02236fca5d016be0ae8a97094"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 168714.58,
         "poolFingerprint": "6a1ff27a61d56e9e6483645543ccb837d49ab8b02236fca5d016be0ae8a97094"
       }
@@ -210,6 +290,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 132735.83,
         "poolFingerprint": "29cc90d3b63cbba20149dd899f283e4d692af1fbd361b533c6f802110838d88a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 132707.66,
+        "poolFingerprint": "29cc90d3b63cbba20149dd899f283e4d692af1fbd361b533c6f802110838d88a"
       }
     ],
     "ARBUSDC": [
@@ -222,6 +307,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 44609.29,
         "poolFingerprint": "e0b4cd6655c1677becb91653a17a6f90ab9df0c6fa54856f431b89ac734717df"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 44411.35,
+        "poolFingerprint": "e0b4cd6655c1677becb91653a17a6f90ab9df0c6fa54856f431b89ac734717df"
       }
     ],
     "ARBUSDT": [
@@ -233,6 +323,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 44609.29,
+        "poolFingerprint": "e0b4cd6655c1677becb91653a17a6f90ab9df0c6fa54856f431b89ac734717df"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 44411.35,
         "poolFingerprint": "e0b4cd6655c1677becb91653a17a6f90ab9df0c6fa54856f431b89ac734717df"
       }
     ],
@@ -248,6 +343,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 285318.51,
         "poolFingerprint": "1552e6afb41484bb8e5b2d5dd2bf31982072d2617fd6ee3eb224ea884c953e1a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 285383.53,
+        "poolFingerprint": "1552e6afb41484bb8e5b2d5dd2bf31982072d2617fd6ee3eb224ea884c953e1a"
       }
     ],
     "ASTRUSDT": [],
@@ -260,6 +360,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 435451.81,
+        "poolFingerprint": "6544bdd5cbe0d6200f610dddb914d9a32783a85fcf426caed3dc7931db7b38d6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 433888.08,
         "poolFingerprint": "6544bdd5cbe0d6200f610dddb914d9a32783a85fcf426caed3dc7931db7b38d6"
       }
     ],
@@ -274,6 +379,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 742704.78,
         "poolFingerprint": "f2e15a799d3d59645a9846f9430aa14fcaf82c9cdff3f21cc0ccdd1d968d8a88"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 742435.23,
+        "poolFingerprint": "f2e15a799d3d59645a9846f9430aa14fcaf82c9cdff3f21cc0ccdd1d968d8a88"
       }
     ],
     "AWEUSDT": [
@@ -285,6 +395,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 417026.75,
+        "poolFingerprint": "41108aa092bc468d4acd4f7b7d5b9c7cd414b02975062292e3e338e370dd35c5"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 416583.21,
         "poolFingerprint": "41108aa092bc468d4acd4f7b7d5b9c7cd414b02975062292e3e338e370dd35c5"
       }
     ],
@@ -299,6 +414,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 110433.32,
         "poolFingerprint": "6ac3df3f7d2faca32df37cbf5d9b5ba2f9a105dc7bff9936bde733775e049645"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 110647.95,
+        "poolFingerprint": "6ac3df3f7d2faca32df37cbf5d9b5ba2f9a105dc7bff9936bde733775e049645"
       }
     ],
     "BANANAS31USDT": [
@@ -311,6 +431,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 4327425.25,
         "poolFingerprint": "6c5e0c567749787f135de1f7249120f549b1cf7eeb82597bfc88f62878baa4ff"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 4345294.62,
+        "poolFingerprint": "6c5e0c567749787f135de1f7249120f549b1cf7eeb82597bfc88f62878baa4ff"
       }
     ],
     "BANANAUSDT": [
@@ -321,6 +446,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 3328848.95,
+        "poolFingerprint": "393a06b6325c88542af8e5b35020e61b8b72d996d571daf3b07ff7f2645c8dc3"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 3328848.95,
         "poolFingerprint": "393a06b6325c88542af8e5b35020e61b8b72d996d571daf3b07ff7f2645c8dc3"
       }
@@ -335,6 +465,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 14863.14,
         "poolFingerprint": "99910af9463e736e38f0d7b220979ed575d646ed3a0b795368974151c3df6b88"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 14863.14,
+        "poolFingerprint": "99910af9463e736e38f0d7b220979ed575d646ed3a0b795368974151c3df6b88"
       }
     ],
     "BANKUSDT": [
@@ -346,6 +481,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 572845.47,
+        "poolFingerprint": "e0470b0a7fda944810cddaaa8efc8624506834a3ae04b8220be004ea02f623cb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 574995.27,
         "poolFingerprint": "e0470b0a7fda944810cddaaa8efc8624506834a3ae04b8220be004ea02f623cb"
       }
     ],
@@ -361,6 +501,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 20612.57,
         "poolFingerprint": "4231186845ec307100c42151d15bd17abb45ee41acdfb78c8a8d66390174f9d8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 20612.57,
+        "poolFingerprint": "4231186845ec307100c42151d15bd17abb45ee41acdfb78c8a8d66390174f9d8"
       }
     ],
     "BICOUSDT": [
@@ -373,6 +518,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 35891.45,
         "poolFingerprint": "027615fa0fb92e0f7e3e397ea8535c6db259a8c2956ae6473fbe3d580aa93027"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 36231.47,
+        "poolFingerprint": "027615fa0fb92e0f7e3e397ea8535c6db259a8c2956ae6473fbe3d580aa93027"
       }
     ],
     "BIGTIMEUSDT": [
@@ -384,6 +534,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 50198.46,
+        "poolFingerprint": "a457e3a4d41405ba33437f24762f1e4a3b83c7856c3a85d3e5fdd4fa0459c581"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 50060.23,
         "poolFingerprint": "a457e3a4d41405ba33437f24762f1e4a3b83c7856c3a85d3e5fdd4fa0459c581"
       }
     ],
@@ -399,6 +554,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5611.23,
         "poolFingerprint": "b1ff4adb9ed07b1ac1d614a4817074f78d91936bfb9ed15876c76b28157b6f6e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5611.23,
+        "poolFingerprint": "b1ff4adb9ed07b1ac1d614a4817074f78d91936bfb9ed15876c76b28157b6f6e"
       }
     ],
     "BMTUSDT": [
@@ -411,6 +571,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 352910.01,
         "poolFingerprint": "861250d8d8519ea2f7790924fc5d74636a86c2cbd56b04978dba5291f052bc9e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 352766.82,
+        "poolFingerprint": "861250d8d8519ea2f7790924fc5d74636a86c2cbd56b04978dba5291f052bc9e"
       }
     ],
     "BNBUSDC": [
@@ -421,6 +586,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 313878.76,
+        "poolFingerprint": "0f9012d1cc751bf8521db333cd4b89f877c8f1e67767bc46fef74d16a5204aba"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 313878.76,
         "poolFingerprint": "0f9012d1cc751bf8521db333cd4b89f877c8f1e67767bc46fef74d16a5204aba"
       }
@@ -435,6 +605,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 313878.76,
         "poolFingerprint": "0f9012d1cc751bf8521db333cd4b89f877c8f1e67767bc46fef74d16a5204aba"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 313878.76,
+        "poolFingerprint": "0f9012d1cc751bf8521db333cd4b89f877c8f1e67767bc46fef74d16a5204aba"
       }
     ],
     "BOMEUSDC": [
@@ -446,6 +621,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 18368813.97,
+        "poolFingerprint": "d12786b8e57ff5b9ad2cb7d6bf76e9986d2b243fd1d236edbdc2dcbfb2584c5a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 18323954.86,
         "poolFingerprint": "d12786b8e57ff5b9ad2cb7d6bf76e9986d2b243fd1d236edbdc2dcbfb2584c5a"
       }
     ],
@@ -459,6 +639,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 18368813.97,
         "poolFingerprint": "d12786b8e57ff5b9ad2cb7d6bf76e9986d2b243fd1d236edbdc2dcbfb2584c5a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 18323954.86,
+        "poolFingerprint": "d12786b8e57ff5b9ad2cb7d6bf76e9986d2b243fd1d236edbdc2dcbfb2584c5a"
       }
     ],
     "BREVUSDT": [],
@@ -470,6 +655,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 2620968.68,
+        "poolFingerprint": "772342e5820a026d4f98e6997ac9a609fd0cb6552c787f3fa0a945068d065f20"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 2620968.68,
         "poolFingerprint": "772342e5820a026d4f98e6997ac9a609fd0cb6552c787f3fa0a945068d065f20"
       }
@@ -486,6 +676,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 176977.0,
         "poolFingerprint": "abb4660d3fc242573f30271733a3994b122eea4747b9b53bae5b33985c82cfe9"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 177314.13,
+        "poolFingerprint": "abb4660d3fc242573f30271733a3994b122eea4747b9b53bae5b33985c82cfe9"
       }
     ],
     "CARVUSDT": [],
@@ -497,6 +692,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 10870.56,
+        "poolFingerprint": "e80524e5c68c4364a366851a9c3b6626fd95182f8a4054d9a691b627433995f0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 10870.56,
         "poolFingerprint": "e80524e5c68c4364a366851a9c3b6626fd95182f8a4054d9a691b627433995f0"
       }
@@ -513,6 +713,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 129132.27,
         "poolFingerprint": "6e40ce6fe1934aa7c4536b515b36a8e7eb8adfea07dc211488f8d953fd00c87e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 130156.47,
+        "poolFingerprint": "6e40ce6fe1934aa7c4536b515b36a8e7eb8adfea07dc211488f8d953fd00c87e"
       }
     ],
     "CHIPUSDT": [
@@ -525,6 +730,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 94767.41,
         "poolFingerprint": "f2f60f24a677b744e7498bb8c00da11eae5f44373471abe09d1e007df79b169a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 95075.98,
+        "poolFingerprint": "f2f60f24a677b744e7498bb8c00da11eae5f44373471abe09d1e007df79b169a"
       }
     ],
     "CHRUSDT": [
@@ -535,6 +745,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 12332.88,
+        "poolFingerprint": "d042b85b3864d6ba7c5410735dfd9c11a0985c9a9f5ca66384788690ddb4dbc1"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 12332.88,
         "poolFingerprint": "d042b85b3864d6ba7c5410735dfd9c11a0985c9a9f5ca66384788690ddb4dbc1"
       }
@@ -549,6 +764,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 8733.7,
         "poolFingerprint": "98c914e2f1075b2df58c83cab01963f65a80f447668af1667dfa3d2d93941806"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 8733.7,
+        "poolFingerprint": "98c914e2f1075b2df58c83cab01963f65a80f447668af1667dfa3d2d93941806"
       }
     ],
     "COMPUSDT": [
@@ -560,6 +780,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 168432.87,
+        "poolFingerprint": "d3d9b2735b411e93ad69e6cfa6255543b5ff8c4507c90f395a925155b3b1b462"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 168515.51,
         "poolFingerprint": "d3d9b2735b411e93ad69e6cfa6255543b5ff8c4507c90f395a925155b3b1b462"
       }
     ],
@@ -574,6 +799,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 194858.11,
         "poolFingerprint": "0071e9a34799226df6594250a7f8a686d93f740c9b5dc0ad011aa929ab226023"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 194483.48,
+        "poolFingerprint": "0071e9a34799226df6594250a7f8a686d93f740c9b5dc0ad011aa929ab226023"
       }
     ],
     "COWUSDT": [
@@ -586,6 +816,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 459349.11,
         "poolFingerprint": "a435762e46a47f895924c103a727b2174dbc5f4e4eeec98e4b550ca843969cb5"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 460098.18,
+        "poolFingerprint": "a435762e46a47f895924c103a727b2174dbc5f4e4eeec98e4b550ca843969cb5"
       }
     ],
     "CTSIUSDT": [
@@ -596,6 +831,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 2086.79,
+        "poolFingerprint": "ed6bd830bd6a1b695fcb348af97f955caf9a54419b2e6373ec574dba0c748b23"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 2086.79,
         "poolFingerprint": "ed6bd830bd6a1b695fcb348af97f955caf9a54419b2e6373ec574dba0c748b23"
       }
@@ -610,6 +850,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 674272.6,
         "poolFingerprint": "f1d45481beda5cdcfc12772c91fc65239fe6ddadf371d7009b1fe32bf8a3dd67"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 674151.74,
+        "poolFingerprint": "f1d45481beda5cdcfc12772c91fc65239fe6ddadf371d7009b1fe32bf8a3dd67"
       }
     ],
     "CVCUSDT": [
@@ -622,6 +867,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 4249.39,
         "poolFingerprint": "687fed0b9622a9ff91a02c762c86c861c59425aa3bbae79ef635e4188a5488cb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 4289.97,
+        "poolFingerprint": "687fed0b9622a9ff91a02c762c86c861c59425aa3bbae79ef635e4188a5488cb"
       }
     ],
     "CVXUSDT": [
@@ -633,6 +883,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 6917476.56,
+        "poolFingerprint": "1adb2e441fcefa880561aff2f1a671cb48ac1c682d7df765fc02d184d2471c2c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 6922470.62,
         "poolFingerprint": "1adb2e441fcefa880561aff2f1a671cb48ac1c682d7df765fc02d184d2471c2c"
       }
     ],
@@ -647,6 +902,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 246453.56,
         "poolFingerprint": "78681d971e89af805666a6aab6e545f4dc6392850246c30c341c94c1d6ece5b8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 246733.45,
+        "poolFingerprint": "78681d971e89af805666a6aab6e545f4dc6392850246c30c341c94c1d6ece5b8"
       }
     ],
     "DIAUSDT": [
@@ -658,6 +918,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 59619.7,
+        "poolFingerprint": "a73c97326fa68a309b3d16bac21b6f82aacb6cf24de51a79cff2118245869bc0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 59589.15,
         "poolFingerprint": "a73c97326fa68a309b3d16bac21b6f82aacb6cf24de51a79cff2118245869bc0"
       }
     ],
@@ -671,6 +936,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 211513.83,
         "poolFingerprint": "b1f8d8ab56fdc5979adae889f5b82af4313915e54362b964db000be65f297902"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 211842.19,
+        "poolFingerprint": "b1f8d8ab56fdc5979adae889f5b82af4313915e54362b964db000be65f297902"
       }
     ],
     "DOODUSDT": [
@@ -683,6 +953,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 186753.62,
         "poolFingerprint": "ea307d6f21229040b86f1d4e522b142f9a8cd89f528cabd14ae89915adb2a215"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 187553.51,
+        "poolFingerprint": "ea307d6f21229040b86f1d4e522b142f9a8cd89f528cabd14ae89915adb2a215"
       }
     ],
     "DUSKUSDT": [
@@ -694,6 +969,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 267935.82,
+        "poolFingerprint": "7491301b5885832ae34d93fa9db47daf3b32f3584aaec99f502ed7aa0bec595b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 266471.95,
         "poolFingerprint": "7491301b5885832ae34d93fa9db47daf3b32f3584aaec99f502ed7aa0bec595b"
       }
     ],
@@ -708,6 +988,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 96477.91,
         "poolFingerprint": "49f2a4dcd5ac28e19e8b2ec0c09b16d562424266ea105080561fc460c8ee87f1"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 96477.91,
+        "poolFingerprint": "49f2a4dcd5ac28e19e8b2ec0c09b16d562424266ea105080561fc460c8ee87f1"
       }
     ],
     "ENAUSDC": [
@@ -719,6 +1004,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3224909.41,
+        "poolFingerprint": "caaf934c1c78ed570bc3c99d15c11c55f2333a708bab954f47d78984ce596165"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3212459.88,
         "poolFingerprint": "caaf934c1c78ed570bc3c99d15c11c55f2333a708bab954f47d78984ce596165"
       }
     ],
@@ -732,6 +1022,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3224909.41,
         "poolFingerprint": "caaf934c1c78ed570bc3c99d15c11c55f2333a708bab954f47d78984ce596165"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3212459.88,
+        "poolFingerprint": "caaf934c1c78ed570bc3c99d15c11c55f2333a708bab954f47d78984ce596165"
       }
     ],
     "ENJUSDT": [
@@ -744,6 +1039,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 71115.59,
         "poolFingerprint": "4f0a2b205b3043a1ef31ab8e68b8baf1e171b1fb0718a1fb9af602f88ec56f37"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 71310.02,
+        "poolFingerprint": "4f0a2b205b3043a1ef31ab8e68b8baf1e171b1fb0718a1fb9af602f88ec56f37"
       }
     ],
     "ENSOUSDT": [
@@ -754,6 +1054,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 783.82,
+        "poolFingerprint": "e23c73a20088aaef99791fd79ae86afff3c1af9fc3887fae8063459fd93cb683"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 783.82,
         "poolFingerprint": "e23c73a20088aaef99791fd79ae86afff3c1af9fc3887fae8063459fd93cb683"
       }
@@ -768,6 +1073,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 736806.15,
         "poolFingerprint": "6c0094240c604531ec5cd9d87935cbd5d0f6dc9680ff3253fceb14f1a714c8e6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 738861.69,
+        "poolFingerprint": "6c0094240c604531ec5cd9d87935cbd5d0f6dc9680ff3253fceb14f1a714c8e6"
       }
     ],
     "EPICUSDT": [],
@@ -780,6 +1090,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 8617.52,
+        "poolFingerprint": "3c267308a20ce7cc9398bc5234cc3889aab55218b9cac09cdbc4f1c0937955f8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 8681.63,
         "poolFingerprint": "3c267308a20ce7cc9398bc5234cc3889aab55218b9cac09cdbc4f1c0937955f8"
       }
     ],
@@ -794,6 +1109,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 385530.55,
         "poolFingerprint": "62bd879b932443a8645731993416d1b1c814cb441ca9a143dd3a396272765c7d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 383132.38,
+        "poolFingerprint": "62bd879b932443a8645731993416d1b1c814cb441ca9a143dd3a396272765c7d"
       }
     ],
     "ETHFIUSDT": [
@@ -805,6 +1125,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 385530.55,
+        "poolFingerprint": "62bd879b932443a8645731993416d1b1c814cb441ca9a143dd3a396272765c7d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 383132.38,
         "poolFingerprint": "62bd879b932443a8645731993416d1b1c814cb441ca9a143dd3a396272765c7d"
       }
     ],
@@ -819,6 +1144,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 9081192.04,
         "poolFingerprint": "1908a6a6ae866c3734e034aa0bab6edb6741612cbddc12d39f335c9c7912b0df"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 9055527.76,
+        "poolFingerprint": "1908a6a6ae866c3734e034aa0bab6edb6741612cbddc12d39f335c9c7912b0df"
       }
     ],
     "FETUSDT": [
@@ -830,6 +1160,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1946009.57,
+        "poolFingerprint": "998f7dfb355cab018f03c5c4c7e4902957c68563b9bcbaebcf3b475a0a76481d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1932290.93,
         "poolFingerprint": "998f7dfb355cab018f03c5c4c7e4902957c68563b9bcbaebcf3b475a0a76481d"
       }
     ],
@@ -844,6 +1179,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 6045.03,
         "poolFingerprint": "24971f899bb4f032b139570985de05c46759d3008920b4e765a7675c7b4ace8c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 6002.19,
+        "poolFingerprint": "24971f899bb4f032b139570985de05c46759d3008920b4e765a7675c7b4ace8c"
       }
     ],
     "FORMUSDT": [
@@ -855,6 +1195,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 606521.18,
+        "poolFingerprint": "9e75713c6d65ee5961e53c2a8724776141bd3c9a3c0d83d06085640a2f169717"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 606798.83,
         "poolFingerprint": "9e75713c6d65ee5961e53c2a8724776141bd3c9a3c0d83d06085640a2f169717"
       }
     ],
@@ -869,6 +1214,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 56870.33,
         "poolFingerprint": "2390f0e7fe1d5f64da61dde69405afbc7a6f24b0f996f11ea1df258b39bb3020"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 56870.33,
+        "poolFingerprint": "2390f0e7fe1d5f64da61dde69405afbc7a6f24b0f996f11ea1df258b39bb3020"
       }
     ],
     "GENIUSUSDT": [
@@ -881,6 +1231,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 80267.09,
         "poolFingerprint": "4e93c13d700d8f8e7b545e12c322720d7f64a327062493790fa650b20e451036"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 79853.33,
+        "poolFingerprint": "4e93c13d700d8f8e7b545e12c322720d7f64a327062493790fa650b20e451036"
       }
     ],
     "GIGGLEUSDT": [
@@ -892,6 +1247,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 905418.53,
+        "poolFingerprint": "d82e7f4d7f39c89db945dd2c472f55780a82f859194b5d14eb536fd6dbf91f73"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 907601.04,
         "poolFingerprint": "d82e7f4d7f39c89db945dd2c472f55780a82f859194b5d14eb536fd6dbf91f73"
       }
     ],
@@ -906,6 +1266,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 145064.59,
         "poolFingerprint": "c604927916b185c1310ceb90d868641c40f18313595cbb8fd1e39bc7393fe8a0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 144820.11,
+        "poolFingerprint": "c604927916b185c1310ceb90d868641c40f18313595cbb8fd1e39bc7393fe8a0"
       }
     ],
     "GOATUSDT": [
@@ -918,6 +1283,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1798872.82,
         "poolFingerprint": "ad5852f825cc33132786d939d8d723445fba6390b41254680e559c5dc35ec80c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1796592.14,
+        "poolFingerprint": "ad5852f825cc33132786d939d8d723445fba6390b41254680e559c5dc35ec80c"
       }
     ],
     "GPSUSDT": [
@@ -928,6 +1298,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 4946.41,
+        "poolFingerprint": "f697da5095781d75fdc33dde7c3ced7b1e86c0efb8f7dcfe6c8ee3d42c610d61"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 4946.41,
         "poolFingerprint": "f697da5095781d75fdc33dde7c3ced7b1e86c0efb8f7dcfe6c8ee3d42c610d61"
       }
@@ -942,6 +1317,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 294092.22,
         "poolFingerprint": "5542e9cf3131fdee1cead82f60e3e48b83e14b7942ee23c7a45237533beca435"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 292316.26,
+        "poolFingerprint": "5542e9cf3131fdee1cead82f60e3e48b83e14b7942ee23c7a45237533beca435"
       }
     ],
     "GRTUSDT": [
@@ -954,6 +1334,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 181718.24,
         "poolFingerprint": "ea6b79059495828bdf56f012a1aa846e7efb25db0ad13a237629e402c63fab5d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 182293.76,
+        "poolFingerprint": "ea6b79059495828bdf56f012a1aa846e7efb25db0ad13a237629e402c63fab5d"
       }
     ],
     "GTCUSDT": [
@@ -965,6 +1350,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 221560.35,
+        "poolFingerprint": "f562cb5599e5f01604522d41de6f73ced4707499a379b8098070bccecce694cd"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 230366.64,
         "poolFingerprint": "f562cb5599e5f01604522d41de6f73ced4707499a379b8098070bccecce694cd"
       }
     ],
@@ -993,6 +1383,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 11681.93,
         "poolFingerprint": "021e1a48df6a0a70f3152b001faefdc07b01fc62b4fd4ed1795f4b2f036ca6ee"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 11623.65,
+        "poolFingerprint": "021e1a48df6a0a70f3152b001faefdc07b01fc62b4fd4ed1795f4b2f036ca6ee"
       }
     ],
     "HAEDALUSDT": [
@@ -1004,6 +1399,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 172851.41,
+        "poolFingerprint": "1ffd922fd1e95963b3dae52d74cc510efa1650243b5a6125de7b859f8389a54b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 173997.37,
         "poolFingerprint": "1ffd922fd1e95963b3dae52d74cc510efa1650243b5a6125de7b859f8389a54b"
       }
     ],
@@ -1018,6 +1418,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 107286.98,
         "poolFingerprint": "4b3b21b394ca4907403ea7fb93c7acfb0196484bd7ab0d0762fae6011f59a476"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 107286.98,
+        "poolFingerprint": "4b3b21b394ca4907403ea7fb93c7acfb0196484bd7ab0d0762fae6011f59a476"
       }
     ],
     "HOLOUSDT": [
@@ -1030,6 +1435,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 548706.34,
         "poolFingerprint": "92838a8e6b8442623b005d9de06e998d5bed58c6ba6dcb9fc8888bcb93f22c9d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 551011.74,
+        "poolFingerprint": "92838a8e6b8442623b005d9de06e998d5bed58c6ba6dcb9fc8888bcb93f22c9d"
       }
     ],
     "HOMEUSDT": [
@@ -1040,6 +1450,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 18.03,
+        "poolFingerprint": "4ef0557f148af464eecc6b36b6aa7d416599d3e95317801b2458ea3608fb2fb6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 18.03,
         "poolFingerprint": "4ef0557f148af464eecc6b36b6aa7d416599d3e95317801b2458ea3608fb2fb6"
       }
@@ -1054,6 +1469,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 45121.89,
         "poolFingerprint": "1716d1d56a29008c5a0e47d91b8c17dff89191502d847d44b15a68a2aeca3125"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 45086.6,
+        "poolFingerprint": "1716d1d56a29008c5a0e47d91b8c17dff89191502d847d44b15a68a2aeca3125"
       }
     ],
     "HUMAUSDT": [
@@ -1065,6 +1485,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 4105819.23,
+        "poolFingerprint": "acbb80ea27ad9433ff8ef6fbd677e13675ae83d9bd85931d28bd86d8ba82e41a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 4107601.55,
         "poolFingerprint": "acbb80ea27ad9433ff8ef6fbd677e13675ae83d9bd85931d28bd86d8ba82e41a"
       }
     ],
@@ -1079,6 +1504,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 610073.97,
         "poolFingerprint": "fdcd9b034c4596c82433de322c1d1ae8ba9e4866fde99083b21e5fae0b1e6a51"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 608161.32,
+        "poolFingerprint": "fdcd9b034c4596c82433de322c1d1ae8ba9e4866fde99083b21e5fae0b1e6a51"
       }
     ],
     "IDUSDT": [
@@ -1091,6 +1521,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 641140.43,
         "poolFingerprint": "8bbbffe65abb0c0c8ce030487f0aeccd6fb081b23348406a150fb9d22affa50d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 642355.36,
+        "poolFingerprint": "8bbbffe65abb0c0c8ce030487f0aeccd6fb081b23348406a150fb9d22affa50d"
       }
     ],
     "ILVUSDT": [
@@ -1102,6 +1537,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2323165.62,
+        "poolFingerprint": "b401b2f1265c35e1c7c3a98304b8ed8b5f6d24f39a52c4e8bf9a1193ba0b246a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2318319.29,
         "poolFingerprint": "b401b2f1265c35e1c7c3a98304b8ed8b5f6d24f39a52c4e8bf9a1193ba0b246a"
       }
     ],
@@ -1117,6 +1557,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 14716.84,
         "poolFingerprint": "fd28e968d5be7738c2c7d3ab80f43bb0ccb0dae8ca6d994cd13b83b0770db643"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 14716.84,
+        "poolFingerprint": "fd28e968d5be7738c2c7d3ab80f43bb0ccb0dae8ca6d994cd13b83b0770db643"
       }
     ],
     "IOUSDT": [
@@ -1128,6 +1573,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 75122.19,
+        "poolFingerprint": "8ce38a4d4f0481f9ed2766c2ba6a93c4d401e4416d990fcc3774697fb401a5c6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 75191.69,
         "poolFingerprint": "8ce38a4d4f0481f9ed2766c2ba6a93c4d401e4416d990fcc3774697fb401a5c6"
       }
     ],
@@ -1141,6 +1591,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 40560.46,
         "poolFingerprint": "e3fdbd73f9f93d2b3314108fdcc8503e93efae67ecf27419418fd1026f945583"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 40760.05,
+        "poolFingerprint": "e3fdbd73f9f93d2b3314108fdcc8503e93efae67ecf27419418fd1026f945583"
       }
     ],
     "JELLYJELLYUSDT": [
@@ -1152,6 +1607,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5388186.96,
+        "poolFingerprint": "4baaaf00601e08eed0a2778ebae98e3702c73d393cc425f99cf8c3f59558f87b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5389185.71,
         "poolFingerprint": "4baaaf00601e08eed0a2778ebae98e3702c73d393cc425f99cf8c3f59558f87b"
       }
     ],
@@ -1165,6 +1625,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1408074.48,
         "poolFingerprint": "b1286d8ea8179954ed73cdf55af27a49fe8c52d171faf0eff17cd5a5a6397908"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1401568.82,
+        "poolFingerprint": "b1286d8ea8179954ed73cdf55af27a49fe8c52d171faf0eff17cd5a5a6397908"
       }
     ],
     "JUPUSDT": [
@@ -1176,6 +1641,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 842735.64,
+        "poolFingerprint": "b8f3c864e09d629743265653fdc41e8b76b4009bb512fae647c9d41fb4b7725a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 834597.88,
         "poolFingerprint": "b8f3c864e09d629743265653fdc41e8b76b4009bb512fae647c9d41fb4b7725a"
       }
     ],
@@ -1189,6 +1659,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 10555.73,
         "poolFingerprint": "587bdfd32c87165c8067523499e83a021cbfbdb978c4689c0dedd2e3e373aeef"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 10524.82,
+        "poolFingerprint": "587bdfd32c87165c8067523499e83a021cbfbdb978c4689c0dedd2e3e373aeef"
       }
     ],
     "KAITOUSDT": [
@@ -1200,6 +1675,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 10555.73,
+        "poolFingerprint": "587bdfd32c87165c8067523499e83a021cbfbdb978c4689c0dedd2e3e373aeef"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 10524.82,
         "poolFingerprint": "587bdfd32c87165c8067523499e83a021cbfbdb978c4689c0dedd2e3e373aeef"
       }
     ],
@@ -1214,6 +1694,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 480617.56,
         "poolFingerprint": "89c68325c3565a21f481c3e28d8bc63664f5cc83396521cf1869ae1a7c6ad0c7"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 481064.65,
+        "poolFingerprint": "89c68325c3565a21f481c3e28d8bc63664f5cc83396521cf1869ae1a7c6ad0c7"
       }
     ],
     "KERNELUSDT": [
@@ -1224,6 +1709,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 12600.19,
+        "poolFingerprint": "6434bb5f5f09218a0d2d7a3ca748f61588bb00db46678821f2b31819a5d4964c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 12600.19,
         "poolFingerprint": "6434bb5f5f09218a0d2d7a3ca748f61588bb00db46678821f2b31819a5d4964c"
       }
@@ -1238,6 +1728,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 13.12,
         "poolFingerprint": "162c9a485be4ef3454898cd8a0efb32f6fc46b69b0e03b0eb9cd29cbd3445ff4"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 13.12,
+        "poolFingerprint": "162c9a485be4ef3454898cd8a0efb32f6fc46b69b0e03b0eb9cd29cbd3445ff4"
       }
     ],
     "KMNOUSDT": [
@@ -1249,6 +1744,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2016472.75,
+        "poolFingerprint": "c0288164f9417bb350aa6cc027d765fca68c9cf0c1e142b7719291ed7ffe1932"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2011880.81,
         "poolFingerprint": "c0288164f9417bb350aa6cc027d765fca68c9cf0c1e142b7719291ed7ffe1932"
       }
     ],
@@ -1263,6 +1763,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 13866.8,
         "poolFingerprint": "868d9ed30be906ad9dd3c455729f86e6bcbe1a1bc5af14c0bf4bfa8bb6800a63"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 13881.68,
+        "poolFingerprint": "868d9ed30be906ad9dd3c455729f86e6bcbe1a1bc5af14c0bf4bfa8bb6800a63"
       }
     ],
     "LDOUSDT": [
@@ -1274,6 +1779,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 683812.55,
+        "poolFingerprint": "e7b76d843fb5a58c430bf658526f013415c4593dbffbdb3638f67c5f1a6cfcbc"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 683216.18,
         "poolFingerprint": "e7b76d843fb5a58c430bf658526f013415c4593dbffbdb3638f67c5f1a6cfcbc"
       }
     ],
@@ -1287,6 +1797,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 50261.94,
         "poolFingerprint": "8a91cad9eae545ccf05a409eb530094af5719e27d5747b7cc3c9ea375fa42be5"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 49910.48,
+        "poolFingerprint": "8a91cad9eae545ccf05a409eb530094af5719e27d5747b7cc3c9ea375fa42be5"
       }
     ],
     "LINKUSDC": [
@@ -1298,6 +1813,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 500336.61,
+        "poolFingerprint": "f3a0bb7354bf0ec89cbe70e9a2b2b65ed1f62bebce7230390b0bae7f3078ec7c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 498953.25,
         "poolFingerprint": "f3a0bb7354bf0ec89cbe70e9a2b2b65ed1f62bebce7230390b0bae7f3078ec7c"
       }
     ],
@@ -1311,6 +1831,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 500336.61,
         "poolFingerprint": "f3a0bb7354bf0ec89cbe70e9a2b2b65ed1f62bebce7230390b0bae7f3078ec7c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 498953.25,
+        "poolFingerprint": "f3a0bb7354bf0ec89cbe70e9a2b2b65ed1f62bebce7230390b0bae7f3078ec7c"
       }
     ],
     "LITUSDT": [
@@ -1321,6 +1846,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 3486.06,
+        "poolFingerprint": "0d73e0209ad8cbf9736689c8b6e221b10114818170d98a47e91a71341502bc18"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 3486.06,
         "poolFingerprint": "0d73e0209ad8cbf9736689c8b6e221b10114818170d98a47e91a71341502bc18"
       }
@@ -1335,6 +1865,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 37780.22,
         "poolFingerprint": "935f6423e2b73a5d24e1542900009bf1da0912d5f0929fb3e75c462f7b0e2668"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 37780.22,
+        "poolFingerprint": "935f6423e2b73a5d24e1542900009bf1da0912d5f0929fb3e75c462f7b0e2668"
       }
     ],
     "LQTYUSDT": [
@@ -1346,6 +1881,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 599454.0,
+        "poolFingerprint": "df15deb400bc88c67fa2dc521e2eb68df4b28b28ec6af1d5f472e34c27d26d49"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 600606.69,
         "poolFingerprint": "df15deb400bc88c67fa2dc521e2eb68df4b28b28ec6af1d5f472e34c27d26d49"
       }
     ],
@@ -1361,6 +1901,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 16423.17,
         "poolFingerprint": "193cfa3559887cf18a0f89768f08db82b8aae4da07fb92b2b2af2f7f2d05873e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 16434.93,
+        "poolFingerprint": "193cfa3559887cf18a0f89768f08db82b8aae4da07fb92b2b2af2f7f2d05873e"
       }
     ],
     "MANAUSDT": [
@@ -1372,6 +1917,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 93296.65,
+        "poolFingerprint": "39ac650f4917cbbe58170ad535eebab9d0abb7ae27d05f91f49e1a260ab958d5"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 93295.39,
         "poolFingerprint": "39ac650f4917cbbe58170ad535eebab9d0abb7ae27d05f91f49e1a260ab958d5"
       }
     ],
@@ -1385,6 +1935,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 430299.76,
         "poolFingerprint": "cc1653ca7bc1523d89b2008507684df56906e922924d17e87faf789fc52627e8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 426187.69,
+        "poolFingerprint": "cc1653ca7bc1523d89b2008507684df56906e922924d17e87faf789fc52627e8"
       }
     ],
     "MASKUSDT": [
@@ -1396,6 +1951,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 593607.62,
+        "poolFingerprint": "6cf7b261f0299ab0b365ca99d502e89953a06663a74e0f3029d6367d9472c7dc"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 595009.87,
         "poolFingerprint": "6cf7b261f0299ab0b365ca99d502e89953a06663a74e0f3029d6367d9472c7dc"
       }
     ],
@@ -1410,6 +1970,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 286221.59,
         "poolFingerprint": "ce7124a6112c8d307c7b2edc3463af541f3ea66e4162877145c2b1acefb58f37"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 286221.59,
+        "poolFingerprint": "ce7124a6112c8d307c7b2edc3463af541f3ea66e4162877145c2b1acefb58f37"
       }
     ],
     "MERLUSDT": [
@@ -1421,6 +1986,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 246114.01,
+        "poolFingerprint": "6adcb20ed2b3b1b14e6045d96bd55b424d7edfbcc61da67b81194cac046be7bf"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 245196.66,
         "poolFingerprint": "6adcb20ed2b3b1b14e6045d96bd55b424d7edfbcc61da67b81194cac046be7bf"
       }
     ],
@@ -1434,6 +2004,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1358033.84,
         "poolFingerprint": "4df475ba8830bdbc3da4dfadf245b1e343ab8cfb24a70f707c7a7b7a8a40cddd"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1354269.32,
+        "poolFingerprint": "4df475ba8830bdbc3da4dfadf245b1e343ab8cfb24a70f707c7a7b7a8a40cddd"
       }
     ],
     "MEUSDT": [
@@ -1445,6 +2020,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 566020.31,
+        "poolFingerprint": "86ecf7ce916ac54f6776fb85aa840783f6c1c71db79d8082bc5d0a5a0eccebf2"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 568356.59,
         "poolFingerprint": "86ecf7ce916ac54f6776fb85aa840783f6c1c71db79d8082bc5d0a5a0eccebf2"
       }
     ],
@@ -1458,6 +2038,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 10895673.8,
         "poolFingerprint": "3b2c377f1dbba8f9090fa90617fc80b68a3dd7e016f7b9a67a2d12129afab249"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 10851334.51,
+        "poolFingerprint": "3b2c377f1dbba8f9090fa90617fc80b68a3dd7e016f7b9a67a2d12129afab249"
       }
     ],
     "MIRAUSDT": [
@@ -1470,6 +2055,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 237297.04,
         "poolFingerprint": "305e9679da080d888cca9aa4fe7d09adbbd5e051b6bfd609c708ea2b150da87d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 236559.69,
+        "poolFingerprint": "305e9679da080d888cca9aa4fe7d09adbbd5e051b6bfd609c708ea2b150da87d"
       }
     ],
     "MITOUSDT": [
@@ -1480,6 +2070,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 78330.59,
+        "poolFingerprint": "1cc7673f802fa43dc075a3fa59308f0607a7314c409d6e211479f7655b992c6c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 78330.59,
         "poolFingerprint": "1cc7673f802fa43dc075a3fa59308f0607a7314c409d6e211479f7655b992c6c"
       }
@@ -1495,6 +2090,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3113439.51,
         "poolFingerprint": "d8e5a7368e098e86c6331c9a4a8ece7a05cd6f50005bf944b7bda8d657cc3bd0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3101040.22,
+        "poolFingerprint": "d8e5a7368e098e86c6331c9a4a8ece7a05cd6f50005bf944b7bda8d657cc3bd0"
       }
     ],
     "MORPHOUSDT": [
@@ -1507,6 +2107,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 128492.14,
         "poolFingerprint": "335d1a532111969118905168cc67a38fa591d25c639327af6d8e1e76f8207da6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 128139.45,
+        "poolFingerprint": "335d1a532111969118905168cc67a38fa591d25c639327af6d8e1e76f8207da6"
       }
     ],
     "MOVEUSDT": [
@@ -1517,6 +2122,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 2942.97,
+        "poolFingerprint": "a7b5cf386adbc0ffa2e3ffb0ccffe2ca39ab71af535cffdbc7cca4217abda75d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 2942.97,
         "poolFingerprint": "a7b5cf386adbc0ffa2e3ffb0ccffe2ca39ab71af535cffdbc7cca4217abda75d"
       }
@@ -1532,6 +2142,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3132430.71,
         "poolFingerprint": "536631088e0c49b3d00f02a3b9669a0c9aeda798af8895e8dbed6f47b54c9b11"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3166248.68,
+        "poolFingerprint": "536631088e0c49b3d00f02a3b9669a0c9aeda798af8895e8dbed6f47b54c9b11"
       }
     ],
     "MYXUSDT": [
@@ -1543,6 +2158,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 261507.96,
+        "poolFingerprint": "301e63879be49a437cbc0c61231588be36fb28a133d42ce66a892d4f1b5401b4"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 261527.14,
         "poolFingerprint": "301e63879be49a437cbc0c61231588be36fb28a133d42ce66a892d4f1b5401b4"
       }
     ],
@@ -1556,6 +2176,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 41803.45,
+        "poolFingerprint": "19f3e8652c3e379cd2878243bcdfb6f7a8b355e88ebf9e9c4db0f9c94a76787c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 41837.49,
         "poolFingerprint": "19f3e8652c3e379cd2878243bcdfb6f7a8b355e88ebf9e9c4db0f9c94a76787c"
       }
     ],
@@ -1574,6 +2199,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1673884.68,
         "poolFingerprint": "3041800f773d4deb1ad5c7a664985ae43efaf0de5184fda8ea10239614d6594b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1673649.29,
+        "poolFingerprint": "3041800f773d4deb1ad5c7a664985ae43efaf0de5184fda8ea10239614d6594b"
       }
     ],
     "OPENUSDT": [],
@@ -1586,6 +2216,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 20726.07,
+        "poolFingerprint": "fc4c9249997daa4a29948c4c83208777785546da10aa9f81f15719a58771198e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 20740.47,
         "poolFingerprint": "fc4c9249997daa4a29948c4c83208777785546da10aa9f81f15719a58771198e"
       }
     ],
@@ -1615,6 +2250,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 91856.39,
         "poolFingerprint": "086a31c5f3c41519951a76f05a43b0453189d6d1b78789956ccf56020b0dadb7"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 101911.45,
+        "poolFingerprint": "086a31c5f3c41519951a76f05a43b0453189d6d1b78789956ccf56020b0dadb7"
       }
     ],
     "ORCAUSDT": [
@@ -1626,6 +2266,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 788105.92,
+        "poolFingerprint": "422e965d3f465da461f3ac4e88c4917a40c4606f02ff7b06366b9f95e02c3557"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 784946.89,
         "poolFingerprint": "422e965d3f465da461f3ac4e88c4917a40c4606f02ff7b06366b9f95e02c3557"
       }
     ],
@@ -1639,6 +2284,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2247.26,
         "poolFingerprint": "806808d281a5718c99cb86939f953a99694280ffafbd064d8e543d875c7c34e6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2289.88,
+        "poolFingerprint": "806808d281a5718c99cb86939f953a99694280ffafbd064d8e543d875c7c34e6"
       }
     ],
     "ORDIUSDT": [
@@ -1650,6 +2300,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2247.26,
+        "poolFingerprint": "806808d281a5718c99cb86939f953a99694280ffafbd064d8e543d875c7c34e6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2289.88,
         "poolFingerprint": "806808d281a5718c99cb86939f953a99694280ffafbd064d8e543d875c7c34e6"
       }
     ],
@@ -1663,6 +2318,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 335294.54,
         "poolFingerprint": "2aeeaca2c55a3dec5e31655913a65f9d6651e780194f5e9f7b00ccd39e2401eb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 337089.11,
+        "poolFingerprint": "2aeeaca2c55a3dec5e31655913a65f9d6651e780194f5e9f7b00ccd39e2401eb"
       }
     ],
     "PAXGUSDT": [
@@ -1674,6 +2334,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2104045.3,
+        "poolFingerprint": "e497e3675f40fd3dd26163d59a59bd9007b0097af7777bcfb9a773f0a6c781a1"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2104552.51,
         "poolFingerprint": "e497e3675f40fd3dd26163d59a59bd9007b0097af7777bcfb9a773f0a6c781a1"
       }
     ],
@@ -1687,6 +2352,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 360896.65,
         "poolFingerprint": "e1a85da25f0eb34bf89a7d7f1272f820455fbca15eabc043a41b8f3cedc4652f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 359716.09,
+        "poolFingerprint": "e1a85da25f0eb34bf89a7d7f1272f820455fbca15eabc043a41b8f3cedc4652f"
       }
     ],
     "PENGUUSDC": [
@@ -1698,6 +2368,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 20923.35,
+        "poolFingerprint": "a4a6be92772d13961986b12c98dd702a905d8b9f448bf68a22eefafbc521897b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 20969.91,
         "poolFingerprint": "a4a6be92772d13961986b12c98dd702a905d8b9f448bf68a22eefafbc521897b"
       }
     ],
@@ -1711,6 +2386,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 20923.35,
         "poolFingerprint": "a4a6be92772d13961986b12c98dd702a905d8b9f448bf68a22eefafbc521897b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 20969.91,
+        "poolFingerprint": "a4a6be92772d13961986b12c98dd702a905d8b9f448bf68a22eefafbc521897b"
       }
     ],
     "PEOPLEUSDT": [
@@ -1721,6 +2401,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 153940.07,
+        "poolFingerprint": "58a301891cbbf6cc0bf6dd1f7923cf8bc7be14726ffbac72c32eea6be55d81f6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 153940.07,
         "poolFingerprint": "58a301891cbbf6cc0bf6dd1f7923cf8bc7be14726ffbac72c32eea6be55d81f6"
       }
@@ -1737,6 +2422,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3765038.98,
         "poolFingerprint": "851a7ef829b87924bea8d083793aee07d4279976fc05a69cf9f157268a11aa24"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3760113.66,
+        "poolFingerprint": "851a7ef829b87924bea8d083793aee07d4279976fc05a69cf9f157268a11aa24"
       }
     ],
     "PNUTUSDT": [
@@ -1748,6 +2438,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3765038.98,
+        "poolFingerprint": "851a7ef829b87924bea8d083793aee07d4279976fc05a69cf9f157268a11aa24"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3760113.66,
         "poolFingerprint": "851a7ef829b87924bea8d083793aee07d4279976fc05a69cf9f157268a11aa24"
       }
     ],
@@ -1761,6 +2456,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 4168677.82,
         "poolFingerprint": "2063a6bdeeeaeba1ad5400a9d10879c880d7db1277253690c2f8d15ea39ab16b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 4172436.2,
+        "poolFingerprint": "2063a6bdeeeaeba1ad5400a9d10879c880d7db1277253690c2f8d15ea39ab16b"
       }
     ],
     "PORTALUSDT": [
@@ -1771,6 +2471,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 6368.5,
+        "poolFingerprint": "d9a08e88e7ceb80c529a98acaadcc6f1cb70f5d79ef54f04d48b6bd7571ea19b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 6368.5,
         "poolFingerprint": "d9a08e88e7ceb80c529a98acaadcc6f1cb70f5d79ef54f04d48b6bd7571ea19b"
       }
@@ -1785,6 +2490,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 654336.94,
         "poolFingerprint": "c7046de03c7cd27bd5446b958e9e29aa18da2df736b3bf99eaef5f12262470db"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 655177.1,
+        "poolFingerprint": "c7046de03c7cd27bd5446b958e9e29aa18da2df736b3bf99eaef5f12262470db"
       }
     ],
     "PROVEUSDT": [
@@ -1795,6 +2505,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 5315.89,
+        "poolFingerprint": "3b4542c70a74e0599bbfa1c89e8935d4ed29d144e34e2a1937748ff7c335ff15"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 5315.89,
         "poolFingerprint": "3b4542c70a74e0599bbfa1c89e8935d4ed29d144e34e2a1937748ff7c335ff15"
       }
@@ -1809,6 +2524,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 29133686.29,
         "poolFingerprint": "cc3ebc7b9b35ac804ad184d657cad50738c79dd616946a4f739c59fd1839750d"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 28944116.98,
+        "poolFingerprint": "cc3ebc7b9b35ac804ad184d657cad50738c79dd616946a4f739c59fd1839750d"
       }
     ],
     "PUNDIXUSDT": [],
@@ -1822,6 +2542,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 85663.94,
         "poolFingerprint": "a2f212c995b31b6ffb6539603638a2e1775088221cc561f47d340caee81a6292"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 85478.68,
+        "poolFingerprint": "a2f212c995b31b6ffb6539603638a2e1775088221cc561f47d340caee81a6292"
       }
     ],
     "QNTUSDT": [
@@ -1833,6 +2558,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 965102.68,
+        "poolFingerprint": "78ebde626c460570942b109449fb3ca346644cfe6ac1bba3a380214434d88dfb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 962124.27,
         "poolFingerprint": "78ebde626c460570942b109449fb3ca346644cfe6ac1bba3a380214434d88dfb"
       }
     ],
@@ -1848,6 +2578,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 267644.09,
         "poolFingerprint": "abaa205178332a12b6eca7335d2b5432b01ee6d1dd8ec6c4549fff65d89eaeb7"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 267453.45,
+        "poolFingerprint": "abaa205178332a12b6eca7335d2b5432b01ee6d1dd8ec6c4549fff65d89eaeb7"
       }
     ],
     "RESOLVUSDT": [
@@ -1860,6 +2595,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 38865.13,
         "poolFingerprint": "a7a7cb7f8edc729c33f2ee9e98643c734a1187884f71f6271cf0f5e011cff69f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 39497.93,
+        "poolFingerprint": "a7a7cb7f8edc729c33f2ee9e98643c734a1187884f71f6271cf0f5e011cff69f"
       }
     ],
     "REUSDT": [
@@ -1871,6 +2611,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5926.15,
+        "poolFingerprint": "0603d0974b2f999bc0a26e7be3f1263219209c2db9423502673fcdffb06fafb3"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5990.81,
         "poolFingerprint": "0603d0974b2f999bc0a26e7be3f1263219209c2db9423502673fcdffb06fafb3"
       }
     ],
@@ -1886,6 +2631,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 349996.68,
         "poolFingerprint": "c04a7ac68502490ab35dd83adec3989ac7a8e43198c1e512e080fa376e80d8a2"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 349996.68,
+        "poolFingerprint": "c04a7ac68502490ab35dd83adec3989ac7a8e43198c1e512e080fa376e80d8a2"
       }
     ],
     "RONINUSDT": [
@@ -1896,6 +2646,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 62764.93,
+        "poolFingerprint": "d75e108399a6a9f20f568a2241c6a6e9339fabd04940c89439e7133e1bcfc141"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 62764.93,
         "poolFingerprint": "d75e108399a6a9f20f568a2241c6a6e9339fabd04940c89439e7133e1bcfc141"
       }
@@ -1910,6 +2665,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 380148.5,
         "poolFingerprint": "1b7d4c85f2aaf20f549844bff124f107b515be0f5d5bda7000dff501f8d4bc67"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 380809.23,
+        "poolFingerprint": "1b7d4c85f2aaf20f549844bff124f107b515be0f5d5bda7000dff501f8d4bc67"
       }
     ],
     "RSRUSDT": [
@@ -1921,6 +2681,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 122690.89,
+        "poolFingerprint": "02be6da83e9b456e07065c4b92f05f7b13ba64296f2d2344536e15f01f0849a8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 122532.66,
         "poolFingerprint": "02be6da83e9b456e07065c4b92f05f7b13ba64296f2d2344536e15f01f0849a8"
       }
     ],
@@ -1935,6 +2700,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 497315.88,
         "poolFingerprint": "9fc7149d3eb08de5fbafc3d65828531eb77a790b0200b28a8489679a0ea591a5"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 496390.39,
+        "poolFingerprint": "9fc7149d3eb08de5fbafc3d65828531eb77a790b0200b28a8489679a0ea591a5"
       }
     ],
     "SANTOSUSDT": [
@@ -1947,6 +2717,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 108495.85,
         "poolFingerprint": "e1e33a014e86964a22d2da6e129b12a19631bda7a0f14054aa477ce32c830163"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 108801.46,
+        "poolFingerprint": "e1e33a014e86964a22d2da6e129b12a19631bda7a0f14054aa477ce32c830163"
       }
     ],
     "SAPIENUSDT": [
@@ -1958,6 +2733,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 14620.56,
+        "poolFingerprint": "bd2eb7ce999389cb3947c49344cd97338829844fbdb11473f282c55164e8b9da"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 15046.75,
         "poolFingerprint": "bd2eb7ce999389cb3947c49344cd97338829844fbdb11473f282c55164e8b9da"
       }
     ],
@@ -1975,6 +2755,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5655959.89,
         "poolFingerprint": "9e374817d8267cc7289a4a404dfd8a265e90c92cb141d736a794513054718359"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5667486.02,
+        "poolFingerprint": "9e374817d8267cc7289a4a404dfd8a265e90c92cb141d736a794513054718359"
       }
     ],
     "SKYUSDT": [
@@ -1987,6 +2772,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1989536.0,
         "poolFingerprint": "77925b3fdf80530a64d4f397d6768aae76be7cc81d23bfc99d1d9fd753cd9684"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1989536.0,
+        "poolFingerprint": "77925b3fdf80530a64d4f397d6768aae76be7cc81d23bfc99d1d9fd753cd9684"
       }
     ],
     "SLPUSDT": [
@@ -1997,6 +2787,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 11727.82,
+        "poolFingerprint": "1b6af8165d7b941600079519316d7dabfd769042e5318d9724193992f350fde8"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 11727.82,
         "poolFingerprint": "1b6af8165d7b941600079519316d7dabfd769042e5318d9724193992f350fde8"
       }
@@ -2012,6 +2807,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 167635.62,
         "poolFingerprint": "255f2a24f2cb5d442bdaa8c0c35aa15097a208122ff828fb0d62f9616a4205c6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 167619.23,
+        "poolFingerprint": "255f2a24f2cb5d442bdaa8c0c35aa15097a208122ff828fb0d62f9616a4205c6"
       }
     ],
     "SOONUSDT": [
@@ -2023,6 +2823,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 749779.46,
+        "poolFingerprint": "c1d47418bb755e7980abb806d8ffb45e22e1fbcda921c4b3218402d46128237e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 750636.88,
         "poolFingerprint": "c1d47418bb755e7980abb806d8ffb45e22e1fbcda921c4b3218402d46128237e"
       }
     ],
@@ -2036,6 +2841,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 116524.43,
         "poolFingerprint": "72a8f5876a15ef565134004fa6bd70f5c0d40961c701ef69bab3d8923fda0a9f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 117022.64,
+        "poolFingerprint": "72a8f5876a15ef565134004fa6bd70f5c0d40961c701ef69bab3d8923fda0a9f"
       }
     ],
     "SPKUSDT": [],
@@ -2048,6 +2858,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 12779710.5,
+        "poolFingerprint": "bda8093677580e7d0415dee9aceb5558020467fca240686a5086d0ece487fa19"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 12758494.54,
         "poolFingerprint": "bda8093677580e7d0415dee9aceb5558020467fca240686a5086d0ece487fa19"
       }
     ],
@@ -2064,6 +2879,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 4139525.64,
         "poolFingerprint": "f056e1f4970c2489141e3818deb53091d719bd2436914111f8d716dcb5ded4ba"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 4149413.74,
+        "poolFingerprint": "f056e1f4970c2489141e3818deb53091d719bd2436914111f8d716dcb5ded4ba"
       }
     ],
     "SUSHIUSDT": [
@@ -2074,6 +2894,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 156453.82,
+        "poolFingerprint": "c961bba1dad8d8c31a027b64b572a1c731367dc4568ac5bfcc751554b63596e4"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 156453.82,
         "poolFingerprint": "c961bba1dad8d8c31a027b64b572a1c731367dc4568ac5bfcc751554b63596e4"
       }
@@ -2089,6 +2914,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 178932.96,
         "poolFingerprint": "78dba1e63c9040eab4fa51dd9a6d5b57a73e44d661167f7bc4023bc670888d04"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 178318.95,
+        "poolFingerprint": "78dba1e63c9040eab4fa51dd9a6d5b57a73e44d661167f7bc4023bc670888d04"
       }
     ],
     "SYRUPUSDT": [
@@ -2101,6 +2931,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1253224.48,
         "poolFingerprint": "1dca421113cfd8a106579431ed1effc9ae010a1d63f1951e33bd56b1fb4b0637"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1250925.22,
+        "poolFingerprint": "1dca421113cfd8a106579431ed1effc9ae010a1d63f1951e33bd56b1fb4b0637"
       }
     ],
     "THEUSDT": [
@@ -2111,6 +2946,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 89195.58,
+        "poolFingerprint": "e7c469e5e441c5b18a36cdcdaf521507b99336ad6b43b28a80c70e07743221de"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 89195.58,
         "poolFingerprint": "e7c469e5e441c5b18a36cdcdaf521507b99336ad6b43b28a80c70e07743221de"
       }
@@ -2126,6 +2966,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 70896.86,
         "poolFingerprint": "0a28fa42292702f91543a136a469df6d171a5fabd1ddc9443d7c030351f9fb18"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 70943.26,
+        "poolFingerprint": "0a28fa42292702f91543a136a469df6d171a5fabd1ddc9443d7c030351f9fb18"
       }
     ],
     "TRBUSDT": [],
@@ -2140,6 +2985,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 259975.71,
         "poolFingerprint": "79d0a4da2c5930101d873f15d9e9cd34a8ee954776d37391ed680f614bf1f980"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 259653.86,
+        "poolFingerprint": "79d0a4da2c5930101d873f15d9e9cd34a8ee954776d37391ed680f614bf1f980"
       }
     ],
     "TRUMPUSDT": [
@@ -2151,6 +3001,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 259975.71,
+        "poolFingerprint": "79d0a4da2c5930101d873f15d9e9cd34a8ee954776d37391ed680f614bf1f980"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 259653.86,
         "poolFingerprint": "79d0a4da2c5930101d873f15d9e9cd34a8ee954776d37391ed680f614bf1f980"
       }
     ],
@@ -2189,6 +3044,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 956516.64,
         "poolFingerprint": "e114f35746454dab455ff153e855ce786be0a8a03f24e0323227e2901aa95e0b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 956516.64,
+        "poolFingerprint": "e114f35746454dab455ff153e855ce786be0a8a03f24e0323227e2901aa95e0b"
       }
     ],
     "TURBOUSDT": [
@@ -2200,6 +3060,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 97932.18,
+        "poolFingerprint": "631953969121803bdb78c7a3d147841d13ad3aa2ceff9247c49ce8703ec9e9ec"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 97985.5,
         "poolFingerprint": "631953969121803bdb78c7a3d147841d13ad3aa2ceff9247c49ce8703ec9e9ec"
       }
     ],
@@ -2213,6 +3078,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 10427.92,
         "poolFingerprint": "021d849feb769f85a29cb3014e12ab7e0de8207fb06c25f3dfcf4dc2d5c797f0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 10445.14,
+        "poolFingerprint": "021d849feb769f85a29cb3014e12ab7e0de8207fb06c25f3dfcf4dc2d5c797f0"
       }
     ],
     "TUTUSDT": [
@@ -2224,6 +3094,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3069665.87,
+        "poolFingerprint": "7adff3eb883a7f9148b19cf0619a7a8ad99182405db935eb3fd5e0fda9675b5f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3083117.39,
         "poolFingerprint": "7adff3eb883a7f9148b19cf0619a7a8ad99182405db935eb3fd5e0fda9675b5f"
       }
     ],
@@ -2238,6 +3113,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 182535.38,
         "poolFingerprint": "da06e61616c2eec009d4e1543ab59afaa8847d4a64f0069d778af4ed77b90ad9"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 182278.01,
+        "poolFingerprint": "da06e61616c2eec009d4e1543ab59afaa8847d4a64f0069d778af4ed77b90ad9"
       }
     ],
     "UNIUSDT": [
@@ -2249,6 +3129,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 182535.38,
+        "poolFingerprint": "da06e61616c2eec009d4e1543ab59afaa8847d4a64f0069d778af4ed77b90ad9"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 182278.01,
         "poolFingerprint": "da06e61616c2eec009d4e1543ab59afaa8847d4a64f0069d778af4ed77b90ad9"
       }
     ],
@@ -2264,6 +3149,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 193160.78,
         "poolFingerprint": "8ddba92bf0062ab594ab525263d0719b1bd1aa6dd963286a93dd051eeacde1de"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 193618.99,
+        "poolFingerprint": "8ddba92bf0062ab594ab525263d0719b1bd1aa6dd963286a93dd051eeacde1de"
       }
     ],
     "VIRTUALUSDT": [
@@ -2275,6 +3165,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 311666.59,
+        "poolFingerprint": "588b201f48f941072422d8a05af7787f223ce61d82fe9ad9090e960f65b39628"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 312438.0,
         "poolFingerprint": "588b201f48f941072422d8a05af7787f223ce61d82fe9ad9090e960f65b39628"
       }
     ],
@@ -2289,6 +3184,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 122689.1,
         "poolFingerprint": "153c68c5f5a7ba4d4c4615535fd5a2e525e3ce470efe4bd1d377cac9b94ca95b"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 122689.1,
+        "poolFingerprint": "153c68c5f5a7ba4d4c4615535fd5a2e525e3ce470efe4bd1d377cac9b94ca95b"
       }
     ],
     "WLDUSDC": [
@@ -2299,6 +3199,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 238352.54,
+        "poolFingerprint": "94aba8cf92aa3d2b75413f225d4234d27803fa02054f115522c6599e6aa0c382"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 238352.54,
         "poolFingerprint": "94aba8cf92aa3d2b75413f225d4234d27803fa02054f115522c6599e6aa0c382"
       }
@@ -2313,6 +3218,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 238352.54,
         "poolFingerprint": "94aba8cf92aa3d2b75413f225d4234d27803fa02054f115522c6599e6aa0c382"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 238352.54,
+        "poolFingerprint": "94aba8cf92aa3d2b75413f225d4234d27803fa02054f115522c6599e6aa0c382"
       }
     ],
     "WLFIUSDC": [
@@ -2325,6 +3235,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1113631.73,
         "poolFingerprint": "f1eb6a0ff2fce67b06380614cd643cdc4897cfdae587a072e7ec9d89eb33046a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1112972.67,
+        "poolFingerprint": "f1eb6a0ff2fce67b06380614cd643cdc4897cfdae587a072e7ec9d89eb33046a"
       }
     ],
     "WLFIUSDT": [
@@ -2336,6 +3251,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1113631.73,
+        "poolFingerprint": "f1eb6a0ff2fce67b06380614cd643cdc4897cfdae587a072e7ec9d89eb33046a"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1112972.67,
         "poolFingerprint": "f1eb6a0ff2fce67b06380614cd643cdc4897cfdae587a072e7ec9d89eb33046a"
       }
     ],
@@ -2351,6 +3271,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 3154.48,
         "poolFingerprint": "dc841011cf6c86ace8734696d86dde47aaacb154735e9bbc230945ff0aae6cea"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 3154.48,
+        "poolFingerprint": "dc841011cf6c86ace8734696d86dde47aaacb154735e9bbc230945ff0aae6cea"
       }
     ],
     "XAUTUSDT": [
@@ -2362,6 +3287,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 5517892.34,
+        "poolFingerprint": "3f19acdede40f32deef35038a49dea526eff491ad8de5cf87ffcb2dd9f93405e"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 5518124.13,
         "poolFingerprint": "3f19acdede40f32deef35038a49dea526eff491ad8de5cf87ffcb2dd9f93405e"
       }
     ],
@@ -2375,6 +3305,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 421935.39,
         "poolFingerprint": "8422c0bfa60ee2b8038da72e89d5da22b7b41d4f4f200f4858875e8a011c76e6"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 419474.07,
+        "poolFingerprint": "8422c0bfa60ee2b8038da72e89d5da22b7b41d4f4f200f4858875e8a011c76e6"
       }
     ],
     "XVSUSDT": [
@@ -2385,6 +3320,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 96063.19,
+        "poolFingerprint": "375c942cdc3b834d0ecbe1ad93bf0bb22c74e482cd208272faa57b426d831a5c"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 96063.19,
         "poolFingerprint": "375c942cdc3b834d0ecbe1ad93bf0bb22c74e482cd208272faa57b426d831a5c"
       }
@@ -2399,6 +3339,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 1146626.22,
         "poolFingerprint": "66383be8e22fe63097442ea57de62b38a0252a3ef80dcacb9ca874d634767707"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 1147210.26,
+        "poolFingerprint": "66383be8e22fe63097442ea57de62b38a0252a3ef80dcacb9ca874d634767707"
       }
     ],
     "YFIUSDT": [
@@ -2409,6 +3354,11 @@
       },
       {
         "at": "2026-10-05T01:15:40Z",
+        "liquidityUsd": 4309459580.33,
+        "poolFingerprint": "b7b080a90c773da7fcf133ccd8965ec28d7a446fb9d93ec518fe4c01ba52c6fb"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
         "liquidityUsd": 4309459580.33,
         "poolFingerprint": "b7b080a90c773da7fcf133ccd8965ec28d7a446fb9d93ec518fe4c01ba52c6fb"
       }
@@ -2423,6 +3373,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 10529.54,
         "poolFingerprint": "9f58b407f3dc796df8e6f7b0136a098dfc2f1af40f90f4d7873253ba7b077893"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 10529.54,
+        "poolFingerprint": "9f58b407f3dc796df8e6f7b0136a098dfc2f1af40f90f4d7873253ba7b077893"
       }
     ],
     "ZAMAUSDT": [
@@ -2434,6 +3389,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 650314.17,
+        "poolFingerprint": "723bf4a8224ca327ea0c766be39511db911b8039ea9d8b921788a0d5dac6acc0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 649768.39,
         "poolFingerprint": "723bf4a8224ca327ea0c766be39511db911b8039ea9d8b921788a0d5dac6acc0"
       }
     ],
@@ -2448,6 +3408,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 2923800.99,
         "poolFingerprint": "857851d1584c8a07c145ae742825d34a8fe985d3a5b2176a750a3c08f2a961c0"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 2879828.64,
+        "poolFingerprint": "857851d1584c8a07c145ae742825d34a8fe985d3a5b2176a750a3c08f2a961c0"
       }
     ],
     "ZILUSDT": [
@@ -2459,6 +3424,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 37585.43,
+        "poolFingerprint": "05652ce802730a21629dc7b95b6c5286430a93d727027c49544bd81307faf059"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 37720.26,
         "poolFingerprint": "05652ce802730a21629dc7b95b6c5286430a93d727027c49544bd81307faf059"
       }
     ],
@@ -2474,6 +3444,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 64399.64,
         "poolFingerprint": "b654e10c21e7dc4d1ee3264f8de609559d5364cce2691d6324b3714eed97bc19"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 63523.58,
+        "poolFingerprint": "b654e10c21e7dc4d1ee3264f8de609559d5364cce2691d6324b3714eed97bc19"
       }
     ],
     "ZROUSDT": [
@@ -2485,6 +3460,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 68332.8,
+        "poolFingerprint": "9d6ffc3637f2d1ebeef570040aa678719f9806f807526795a97713b1e7e8de28"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 68152.62,
         "poolFingerprint": "9d6ffc3637f2d1ebeef570040aa678719f9806f807526795a97713b1e7e8de28"
       }
     ],
@@ -2498,6 +3478,11 @@
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 8304436.4,
         "poolFingerprint": "2c4017a60e9352225dedd211d9c930b0a1e9eb04f4ee9e331dad855eff088d00"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 8331256.8,
+        "poolFingerprint": "2c4017a60e9352225dedd211d9c930b0a1e9eb04f4ee9e331dad855eff088d00"
       }
     ],
     "牛来USDT": [
@@ -2509,6 +3494,11 @@
       {
         "at": "2026-10-05T01:15:40Z",
         "liquidityUsd": 695402.63,
+        "poolFingerprint": "4f7539eaadfa295a0550ee0f2ec23ac040426e2e17530c8c87d0c1c369c3dd4f"
+      },
+      {
+        "at": "2026-10-05T01:55:05Z",
+        "liquidityUsd": 692535.95,
         "poolFingerprint": "4f7539eaadfa295a0550ee0f2ec23ac040426e2e17530c8c87d0c1c369c3dd4f"
       }
     ]
