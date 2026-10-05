@@ -94,7 +94,7 @@ class FullTransfers(unittest.TestCase):
         rpc = self.providers['bsc']
         logs = [p[0] for m, p in rpc.records if m == 'eth_getLogs']
         decimals = [p for m, p in rpc.records if m == 'eth_call']
-        self.assertEqual([len(q['address']) for q in logs], [20, 5])
+        self.assertEqual([len(q['address']) for q in logs], [8, 8, 8, 1])
         self.assertEqual(len(decimals), 25)
         self.assertEqual(len({p[0]['to'] for p in decimals}), 25)
         self.assertTrue(all(p[1] == hex(1000 - c.CHAIN_CONFIG['bsc'][2]) for p in decimals))

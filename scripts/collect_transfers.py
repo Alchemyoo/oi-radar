@@ -37,6 +37,7 @@ RPC_URLS = {v[1] for v in CHAIN_CONFIG.values()} | {'https://bsc.drpc.org'}
 MAX_RESPONSE = 2 * 1024 * 1024
 MAX_LOGS = 2000
 MAX_GROUP = 20
+MAX_LOG_ADDRESSES = 8
 STOP_REASONS = {'rate_limited', 'rpc_timeout', 'rpc_network_error',
                 'deadline_exceeded', 'chain_deadline_exceeded',
                 'request_budget_exhausted', 'global_request_budget_exhausted'}
@@ -443,7 +444,7 @@ def collect_registry(registry, blocks=100, units='1000000', thresholds=None,
             addresses = {}
             for row in chain_rows:
                 addresses.setdefault(row['identity']['address'].lower(), []).append(row)
-            for group in grouped(list(addresses)):
+            for group in grouped(list(addresses), MAX_LOG_ADDRESSES):
                 shared.check()
                 collect_group(rpc, [r for a in group for r in addresses[a]], start, end,
                               anchor, start_time, end_time, cache)
@@ -463,7 +464,7 @@ def collect_registry(registry, blocks=100, units='1000000', thresholds=None,
             'collection': {'scope': 'all_registry_mapped_symbols', 'mappedCount': len(rows),
                            'statusCounts': counts, 'deadlineSeconds': deadline, 'requestTimeoutSeconds': 4,
                            'globalRequestBudget': shared.limit, 'perChainRequestBudget': 90,
-                           'requests': shared.used, 'batchMaxMethods': MAX_GROUP,
+                           'requests': shared.used, 'batchMaxMethods': MAX_GROUP, 'maxLogAddresses': MAX_LOG_ADDRESSES,
                            'blocksPerQuery': 100, 'defaultBlocks': blocks, 'chainBlocks': chain_blocks,
                            'coverageKind': 'bounded_block_range_not_wall_clock_window'},
             'tokens': rows}
