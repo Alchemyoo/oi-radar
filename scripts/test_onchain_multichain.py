@@ -68,9 +68,9 @@ class BatchTests(unittest.TestCase):
         calls = []
         def opener(request, timeout):
             calls.append(request.full_url)
-            if len(calls) == 2:
+            if "," in request.full_url:
                 raise HTTPError(request.full_url, 503, "fixture", None, None)
-            chain = request.full_url.split("/token-pairs/v1/", 1)[1].split("/", 1)[0]
+            self.assertTrue(request.full_url.startswith(c.BATCH_API + "/ethereum/"))
             addresses = request.full_url.rsplit("/", 1)[1].split(",")
             rows = []
             for address in addresses:
@@ -79,10 +79,11 @@ class BatchTests(unittest.TestCase):
             return io.BytesIO(json.dumps(rows).encode())
         pairs, errors = c.fetch_pairs_batched(identities, opener=opener,
                                               pause=lambda _: None, workers=1, interval=0)
-        self.assertGreaterEqual(len(calls), 2)  # bounded failed batch handling
-        self.assertGreaterEqual(len([url for url in calls if "," in url]), 1)
-        self.assertEqual(len(pairs), 31)  # successful fixture responses are kept per token
-        self.assertEqual(len(errors), 0)
+        self.assertEqual(len(calls), 3)
+        self.assertTrue(all(url.startswith(c.BATCH_API + "/") for url in calls))
+        self.assertEqual(len([url for url in calls if "," in url]), 2)
+        self.assertEqual(len(pairs), 1)
+        self.assertEqual(len(errors), 30)
         self.assertIn("T030USDT", pairs)
 
     def test_collect_keeps_sui_explicitly_unsupported(self):

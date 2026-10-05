@@ -1,11 +1,13 @@
 /* Standalone cache-only Transfer evidence. No scoring, guessed identity or labels. */
 (function(root){
  'use strict';
+ const C=typeof module!=='undefined'&&module.exports?require('./chains.js'):root.ChainAdapters;
  const A=/^0x[0-9a-f]{40}$/i,H=/^0x[0-9a-f]{64}$/i,U=/^(0|[1-9][0-9]{0,77})$/;
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const time=v=>typeof v==='string'&&Number.isFinite(Date.parse(v));
  const integer=v=>Number.isSafeInteger(v)&&v>=0;
- const identity=(a,b)=>a&&b&&a.symbol===b.symbol&&a.chain===b.chain&&a.chainId===b.chainId&&A.test(a.address)&&A.test(b.address)&&a.address.toLowerCase()===b.address.toLowerCase();
+ const identity=(a,b)=>!!C&&C.identity(a,b);
+ const explorer=t=>C&&C.valid(t)&&C.E[t.chain]?C.E[t.chain][1].replace(/\/token\/$/,''):null;
  const direction=(from,to)=>from==='0x'+'0'.repeat(40)?'mint':to==='0x'+'0'.repeat(40)?'burn':'address_to_address';
  function rawThreshold(units,decimals){
   if(!Number.isInteger(decimals)||decimals<0||decimals>255||typeof units!=='string'||units.length>80||!/^\d+(?:\.\d+)?$/.test(units))throw Error('threshold_unknown');
@@ -17,9 +19,12 @@
  function validate(data,token){
   const r=data?.tokens?.[token?.symbol];
   if(data?.schemaVersion!==1||!identity(r?.identity,token))throw Error('identity_or_schema_mismatch');
-  if(!['ok','unknown','unavailable'].includes(r.status)||!Array.isArray(r.events)||r.events.length>50)throw Error('invalid_status');
-  if(r.status!=='ok'){if(r.events.length)throw Error('unavailable_with_events');return r}
+  if(!['ok','unknown','unavailable','unsupported'].includes(r.status)||!Array.isArray(r.events)||r.events.length>50)throw Error('invalid_status');
+  if(r.status!=='ok'){if(r.events.length)throw Error('unavailable_with_events');if(r.coverage?.complete===true||(r.coverage?.matchedCount!==undefined&&r.coverage.matchedCount!==null))throw Error('unavailable_with_known_count');return r}
+  if(!C.E[token.chain]||!A.test(token.address))throw Error('non_evm_event_cache');
   const c=r.coverage,t=r.threshold;
+  if(c?.finalized===true||(c?.finalized!==undefined&&c.finalized!==false)||(c?.confirmationBlocksBuffer!==undefined&&(!integer(c.confirmationBlocksBuffer)||c.confirmationBlocksBuffer>2000)))throw Error('invalid_finality');
+  if(data.collectionMode==='github_actions'&&(c?.finalized!==false||!integer(c?.confirmationBlocksBuffer)))throw Error('unknown_automated_buffer');
   if(!time(r.fetchedAt)||!c||!integer(c.fromBlock)||!integer(c.toBlock)||c.fromBlock>c.toBlock||c.toBlock-c.fromBlock>=2000||c.complete!==true||!integer(c.matchedCount)||typeof c.displayTruncated!=='boolean'||!time(c.fromTime)||!time(c.toTime)||Date.parse(c.fromTime)>Date.parse(c.toTime)||!t||t.kind!=='token_units'||t.operator!=='>='||!U.test(t.raw||''))throw Error('invalid_coverage');
   const threshold=rawThreshold(t.units,r.decimals);
   if(threshold.toString()!==t.raw||!r.decimalsSource||r.decimalsSource.method!=='eth_call:decimals()'||r.decimalsSource.blockNumber!==c.toBlock||!H.test(r.decimalsSource.blockHash))throw Error('invalid_decimals_or_threshold');
@@ -32,17 +37,18 @@
   return r;
  }
  function state(r,now=Date.now()){
-  if(!r)return 'unavailable';if(r.status==='unknown')return 'unknown';if(r.status!=='ok')return 'unavailable';
+  if(!r)return 'unavailable';if(r.status==='unknown')return 'unknown';if(r.status==='unsupported')return 'unsupported';if(r.status!=='ok')return 'unavailable';
   const age=now-Date.parse(r.fetchedAt),endAge=now-Date.parse(r.coverage?.toTime);return !Number.isFinite(age)||!Number.isFinite(endAge)||age< -300000||endAge< -300000?'unavailable':age>90*60000||endAge>90*60000?'stale':'ok';
  }
  function render(data,token,now=Date.now()){
   let r=null,error='';try{r=validate(data,token)}catch(e){error=e.message}
-  const s=state(r,now),head='<h3>大额 Transfer 事件证据</h3>',note='<p>转账不是买卖、交易所净流入或资金流。地址标签未知；USD 估值未知。不参与合约评分。</p>';
+  const mode=data?.collectionMode==='github_actions'?'采集方式：GitHub Actions（仅表示执行环境；不保证覆盖或最终性）':data?.collectionMode==='manual'?'采集方式：手动运行': '采集方式：未知';
+  const s=state(r,now),head='<h3>大额 Transfer 事件证据</h3>',note='<p>'+esc(mode)+'。页面只重读缓存，不触发扫描。</p><p>转账不是买卖、交易所净流入或资金流。地址标签未知；USD 估值未知。不参与合约评分。</p>';
   if(!token)return head+'<p>未知：未接入已核实链与合约，不按名称匹配。</p>'+note;
-  if(s==='unknown'||s==='unavailable')return head+'<p>'+esc(s==='unknown'?'未知：decimals 或数量阈值未核实':'不可用：没有完整有效的日志缓存')+' · '+esc(error||r?.reason||'not_collected')+'</p>'+note;
-  const c=r.coverage,explorer=token.chainId===56?'https://bscscan.com':null;
-  const link=(path,value)=>explorer?'<a target="_blank" rel="noopener noreferrer" href="'+explorer+'/'+path+'/'+encodeURIComponent(value)+'">'+esc(value)+'</a>':esc(value);
-  let html=head+'<p>'+esc(s==='stale'?'旧快照：仅供历史参考':'RPC 缓存：单一公共节点返回，未独立交叉核验')+'</p><p>'+esc(token.symbol)+' · chainId '+esc(token.chainId)+' · '+esc(token.address)+'</p><p>数量过滤 ≥ '+esc(r.threshold.units)+' tokens；decimals '+r.decimals+'（区块 '+r.decimalsSource.blockNumber+' eth_call 核实）。不是 USD 大额标准。</p><p>区块 '+c.fromBlock+'–'+c.toBlock+'；'+esc(c.fromTime)+'–'+esc(c.toTime)+'。抓取 '+esc(r.fetchedAt)+'；20 区块缓冲，不保证最终性。</p><p>范围内满足阈值 '+c.matchedCount+' 个事件'+(c.displayTruncated?'；仅显示最近 50 个':'')+'。不代表全链或 1h 覆盖。</p>';
+  if(['unknown','unavailable','unsupported'].includes(s))return head+'<p>'+esc(s==='unknown'?'未知：decimals 或数量阈值未核实':s==='unsupported'?'不支持：该链尚无 Transfer 采集适配器':'不可用：没有完整有效的日志缓存')+' · '+esc(error||r?.reason||'not_collected')+'。覆盖未知；事件计数未知，不填 0。</p>'+note;
+  const c=r.coverage,base=explorer(token);
+  const link=(path,value)=>base?'<a target="_blank" rel="noopener noreferrer" href="'+base+'/'+path+'/'+encodeURIComponent(value)+'">'+esc(value)+'</a>':esc(value);
+  let html=head+'<p>'+esc(s==='stale'?'旧快照：仅供历史参考':'RPC 缓存：单一公共节点返回，未独立交叉核验')+'</p><p>'+esc(token.symbol)+' · chainId '+esc(token.chainId)+' · '+esc(token.address)+'</p><p>数量过滤 ≥ '+esc(r.threshold.units)+' tokens；decimals '+r.decimals+'（区块 '+r.decimalsSource.blockNumber+' eth_call 核实）。不是 USD 大额标准。</p><p>区块 '+c.fromBlock+'–'+c.toBlock+'；'+esc(c.fromTime)+'–'+esc(c.toTime)+'。抓取 '+esc(r.fetchedAt)+'；'+(integer(c.confirmationBlocksBuffer)?c.confirmationBlocksBuffer+' 区块缓冲':'缓冲未知')+'，不保证最终性（finalized=false 或未知）。</p><p>范围内满足阈值 '+c.matchedCount+' 个事件'+(c.displayTruncated?'；仅显示最近 50 个':'')+'。仅覆盖上述有界区块；不代表全链、30 分钟或 1h 覆盖。</p>';
   if(!r.events.length)html+='<p>完整查询范围内无满足该数量阈值的事件；不是全链“无大额转账”。</p>';
   else html+='<div style="overflow:auto"><table><thead><tr><th>数量 / 方向</th><th>From → To（标签未知）</th><th>交易哈希 / logIndex / 时间</th></tr></thead><tbody>'+r.events.map(e=>'<tr><td>'+esc(amount(e.rawAmount,r.decimals))+'<br>'+esc({mint:'零地址发出（mint 形式）',burn:'转至零地址（burn 形式）',address_to_address:'地址 → 地址（用途未知）'}[e.direction])+'</td><td>'+link('address',e.from)+'<br>→ '+link('address',e.to)+'</td><td>'+link('tx',e.txHash)+' #'+e.logIndex+'<br>'+esc(e.eventTime)+'</td></tr>').join('')+'</tbody></table></div>';
   return html+note;

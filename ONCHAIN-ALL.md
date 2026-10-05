@@ -1,36 +1,31 @@
-# 全永续链上接入状态
+# 全永续链上采集与覆盖验收
 
-## 当前范围
+## 目录与身份
 
-官方 Futures `exchangeInfo` 归档统计：571 个 `TRADING/PERPETUAL`（含所有 quote），528 个 base asset。生成器 `scripts/build_onchain_universe.py` 只生成审查候选，不自动改生产登记表：
+目录快照包含571个TRADING/PERPETUAL符号（全部quote、528个base），不含TRADIFI_PERPETUAL。275个选定链地址中66个为官方元数据关联、209个为provider_matched，后者不是项目方独立合约核验。其余61个无已登记DEX合约、20个无适配、7个身份歧义、208个待核实：这是状态目录，不是已采集数值。
 
-- 275 个符号具有严格来源关联的已选地址：66 个 Binance 官方 Alpha/资产来源，209 个 provider-matched（Binance asset identity + CoinGecko 唯一名称/符号桥接，不等于项目方独立核验）。
-- 61 个 `native_no_dex_contract`，不伪造 ERC-20 地址。
-- 20 个 `no_adapter`，例如当前未实现的 Sui 通道；不返回假数值。
-- 7 个 `ambiguous_identity`，208 个 `pending_verification`。
-- 映射链分布：Ethereum 180、BSC 44、Solana 30、Base 12、Sui 5、Arbitrum 2、Avalanche 1、Optimism 1。
+前端读取onchain.universe.json与登记、DEX、Transfer缓存四条独立链路。展示目录原因、证据层级、有效/旧/不可用状态和真实链浏览器。移除275个快捷按钮；索引和渲染去重；快照流式读取上限16MiB。三主入口、三机会子页保留，没有独立HYPE/Hyperliquid接入。
 
-候选文件生成于 `/var/minis/workspace/allchain/proposed-registry.json`，不是已发布的 `onchain.registry.json`。原因是把 provider-matched 地址直接当成全市场事实会造成同名币、桥接资产、数字倍数合约误配。
+## DEX修复与真实采集
 
-## 已实现的采集能力
+此前将多个地址发往单地址token-pairs/v1接口，导致大量错误无池结果；现已改为官方tokens/v1批量端点。同链30地址/批、4worker、链地址跨quote去重。429停止新批次及重试，失败只影响相应批次。所有池仍严格匹配base地址，Solana大小写保留，不翻转quote侧。
 
-`scripts/collect_onchain.py` 已支持：
+2026-10-04T23:54:40Z本地真实完整登记采集：275记录，198ok、72no_accepted_base_pools、5unsupported（Sui）。缺池不是0成交额，也不能证明全链无池；仅表示当前精确地址/所选链的API未返回合法base池。没有伪造新抓取时间。
 
-- 严格 EVM chainId/address、Solana base58、Sui Move 类型格式校验；
-- 同链最多30地址一批的 DexScreener `token-pairs/v1` 请求；4 worker、全局间隔、429停发和批次失败隔离；
-- baseToken 精确匹配，绝不把 quoteToken 翻转为 base；EVM 地址大小写归一，Solana 大小写敏感；
-- Sui 明确输出 `unsupported_chain_adapter`，不伪装成成功；native/no-contract 和未映射状态由候选清单保留；
-- 历史池指纹按 `chain + address + pool set` 隔离，旧地址不复用新地址基线；失败可保留 stale，缺失值不补零。
+## Transfer与自动流水线
 
-现有 GitHub Actions 工作流和生产登记表未自动扩大；要把275个映射纳入生产，还需要审查 provider-matched 映射、更新前端多链身份校验、扩展 `onchain.js` 详情/区块浏览器链接和 Transfer provider，随后再调整 Actions 预算与缓存大小。
+Transfer采集器现在遍历所有275映射，EVM按链与地址去重：Ethereum/BSC/Base/Arbitrum/Optimism/Avalanche/Polygon公开RPC，Solana/Sui明确未适配。每批最多20地址，100区块有界查询，decimals按结束块读取，日志/区块hash与链Id校验，链独立失败。180秒全局预算、90秒链预算、400个HTTP请求上限、4秒请求时限（云端POSIX时钟；iSH不支持setitimer时保留socket时限）。确认块缓冲按链配置，不承诺finality。
 
-## 已移除
+2026-10-05T00:13:40Z手机实跑：240unavailable（218rpc_timeout、22rpc_http_error）、35unsupported；这不是成功转账覆盖。主界面保留失败原因与未知计数。Transfer过滤默认100万token单位，不是统一USD大额标准；USD估值、地址标签未知，不生成美元鲸鱼确认。
 
-独立 Hyperliquid/HYPE 板块、脚本、样式和测试已移除；Binance 永续清单中的普通符号仍由官方 exchangeInfo 正常列出，不建立专用行情模块。
+Actions仍计划每30分钟。collect_pipeline.py依次采集DEX、Transfer，并产出逐符号onchain-coverage.json；发布四个data文件。只有确实写入当前合法attempt才允许发布，失败状态可以被发布，但不会将旧缓存改成当前成功。构建/调度success不代表每个链成功，必须检查覆盖报告。
 
-## 测试
+## 验收
 
-- Python 全套 `scripts/test*.py`：65/65；
-- Node 全套串行测试：112/112；
-- `chains.test.js` 覆盖 EVM/Solana/Sui/unsupported 状态；
-- 未进行全市场真实 DexScreener 采集：公共 API 在当前网络不可达，避免用旧快照冒充新数据。
+- 完整Node128/128、Python90/90（后续新增测试以最终日志为准）。
+- 真WebKit：571目录、275地址、198有效DEX数据、0快捷按钮；Ethereum与Solana浏览器链接、native说明、三入口、320px无整页溢出；layout.qa.js27/27。
+- 云端首次完整pipeline与自动cron仍需发布后实跑确认，结果另记。
+
+## 尚未覆盖
+
+208待核实身份、native链活动、缺链适配/Sui/Solana Transfer、美元历史定价及可信地址标签、长时间连续日志覆盖尚未完成。没有把未知或无响应说成零、没有宣称571符号均有有效链上数据。

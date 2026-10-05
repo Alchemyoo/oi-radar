@@ -1,8 +1,7 @@
 /* Evidence, not another workspace. */
 .oc-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 8px}
 .oc-toolbar .mut{font-size:11px}
-.oc-pilots{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
-.oc-pilots .btn{font-size:11px;padding:4px 8px}
+.oc-badge[data-oc-status="native_no_dex_contract"],.oc-badge[data-oc-status="no_adapter"],.oc-badge[data-oc-status="ambiguous_identity"],.oc-badge[data-oc-status="pending_verification"]{color:var(--sub);border-color:var(--line);background:transparent}
 .oc-badge{display:inline-block;margin-left:5px;padding:1px 5px;border:1px solid rgba(79,156,249,.28);border-radius:5px;font-size:10px;font-weight:500;line-height:1.5;color:var(--blue);background:rgba(79,156,249,.07);vertical-align:middle;white-space:nowrap}
 .oc-badge.up{color:var(--up);border-color:rgba(46,189,133,.25)}
 .oc-badge.down{color:var(--down);border-color:rgba(246,70,93,.25)}
@@ -27,7 +26,11 @@
 .oc-sources{font-size:11px;color:var(--sub);margin:10px 0;overflow-wrap:anywhere}
 .oc-method{color:var(--sub);border-top:1px solid var(--line);padding-top:8px}
 .oc-pools summary{font-size:12px;padding:10px 0;cursor:pointer;color:var(--sub)}
-#ocOpNote{font-size:11px;margin-top:0;opacity:.85}
+#ocSummary{line-height:1.65;overflow-wrap:anywhere}
+.oc-catalog{border:1px solid var(--line);border-radius:9px;background:var(--card2);padding:10px;margin:8px 0;overflow-wrap:anywhere}
+.oc-catalog b{font-size:12px}.oc-catalog small{font-size:10px;line-height:1.7;color:var(--sub)}
+.oc-catalog code{font-size:10px;user-select:all}
+.oc-badge[data-oc-status="mapped"]{max-width:190px;white-space:normal;overflow-wrap:anywhere}
 .oc-channels{display:grid;gap:8px;margin:11px 0}
 .oc-channels section{border:1px solid var(--line);border-radius:9px;padding:10px;min-width:0;overflow-wrap:anywhere}
 .oc-channels b{font-size:12px}.oc-channels small{color:var(--sub);font-size:10px;line-height:1.6}

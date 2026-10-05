@@ -18,6 +18,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 API = "https://api.dexscreener.com/token-pairs/v1"
+BATCH_API = "https://api.dexscreener.com/tokens/v1"
 ADDRESS = re.compile(r"0[xX][0-9a-fA-F]{40}\Z")
 SYMBOL = re.compile(r"[A-Z0-9\u3400-\u9fff][A-Z0-9_\-\u3400-\u9fff]{0,31}\Z")
 DEX = re.compile(r"[a-zA-Z0-9_-]{1,64}\Z")
@@ -193,9 +194,11 @@ def registry_tokens(registry):
     return result
 
 
-def _fetch_json(url, opener, pause):
+def _fetch_json(url, opener, pause, before_attempt=None):
     request = Request(url, headers={"Accept": "application/json", "User-Agent": "oi-radar-onchain/1"})
     for attempt in range(2):
+        if before_attempt:
+            before_attempt()
         try:
             with opener(request, timeout=10) as response:
                 raw = response.read(MAX_RESPONSE + 1)
@@ -242,7 +245,7 @@ class _RateLimiter:
 def _batch_url(batch):
     chain = batch[0]["chain"]
     addresses = ",".join(identity["address"] for identity in batch)
-    return f"{API}/{chain}/{addresses}"
+    return f"{BATCH_API}/{chain}/{addresses}"
 
 
 def fetch_pairs_batched(identities, opener=urlopen, pause=time.sleep, workers=MAX_WORKERS,
@@ -255,21 +258,30 @@ def fetch_pairs_batched(identities, opener=urlopen, pause=time.sleep, workers=MA
     is the strict base-side identity gate.
     """
     supported = [i for i in identities if i.get("adapterSupported", _address_kind(i.get("chain")) != "unsupported")]
+    groups = {}
+    for i in supported:
+        key = (i["chain"], _canonical_address(i["chain"], i["address"]))
+        groups.setdefault(key, []).append(i)
+    unique = [rows[0] for rows in groups.values()]
     batches = []
-    for chain in sorted({i["chain"] for i in supported}):
-        rows = [i for i in supported if i["chain"] == chain]
+    for chain in sorted({i["chain"] for i in unique}):
+        rows = [i for i in unique if i["chain"] == chain]
         batches.extend(rows[offset:offset + MAX_BATCH_ADDRESSES]
                        for offset in range(0, len(rows), MAX_BATCH_ADDRESSES))
     results, errors = {}, {}
     limiter = _RateLimiter(interval)
     halted = threading.Event()
 
-    def request(batch):
+    def permit():
         if halted.is_set():
             raise RateLimited("rate_limited")
         limiter.wait()
+        if halted.is_set():
+            raise RateLimited("rate_limited")
+
+    def request(batch):
         try:
-            return _fetch_json(_batch_url(batch), opener, pause)
+            return _fetch_json(_batch_url(batch), opener, pause, permit)
         except RateLimited:
             halted.set()
             raise
@@ -290,13 +302,17 @@ def fetch_pairs_batched(identities, opener=urlopen, pause=time.sleep, workers=MA
                             key = _canonical_address(batch[0]["chain"], address)
                             by_address.setdefault(key, []).append(pair)
                 for identity in batch:
-                    results[identity["symbol"]] = by_address.get(identity["address"], [])
+                    key = (identity["chain"], _canonical_address(identity["chain"], identity["address"]))
+                    for alias in groups[key]:
+                        results[alias["symbol"]] = by_address.get(key[1], [])
             except (CollectionError, TimeoutError, URLError, OSError) as error:
                 code = str(error) if isinstance(error, CollectionError) else "network_error"
                 if not re.fullmatch(r"[a-z0-9_]{1,64}", code):
                     code = "collection_error"
                 for identity in batch:
-                    errors[identity["symbol"]] = code
+                    key = (identity["chain"], _canonical_address(identity["chain"], identity["address"]))
+                    for alias in groups[key]:
+                        errors[alias["symbol"]] = code
     return results, errors
 
 
@@ -518,7 +534,7 @@ def collect(registry, previous, history, fetcher=fetch_pairs, clock=utcnow):
               "error")
     output = {"schemaVersion": 1, "generatedAt": stamp(now), "status": status,
               "collectionMode": "actions" if os.environ.get("GITHUB_ACTIONS") == "true" else "manual",
-              "source": "DexScreener token-pairs/v1", "sourceTimestampAvailable": False,
+              "source": "DexScreener tokens/v1 (batched); token-pairs/v1 (single)", "sourceTimestampAvailable": False,
               "tokens": tokens}
     cache = {"schemaVersion": 1, "generatedAt": stamp(now), "retentionHours": HISTORY_HOURS,
              "maxPointsPerToken": MAX_POINTS,
