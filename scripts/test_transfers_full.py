@@ -257,3 +257,32 @@ class AdaptiveLimitTests(unittest.TestCase):
   rpc=Auth('bsc');tokens=[token('AUTH%dUSDT'%i,address='0x'+format(i+1,'040x'))for i in range(5)]
   out=c.collect_registry({'schemaVersion':1,'tokens':tokens},rpc_factory=lambda url,**kw:rpc)
   self.assertEqual(out['collection']['statusCounts'],{'unavailable':5});self.assertEqual(sum(m=='eth_getLogs'for m,p in rpc.records),1)
+
+class BlockRangeSplitTests(unittest.TestCase):
+ def test_high_volume_single_token_preserves_entire_window_and_events(self):
+  t=token('ACTIVEUSDT')
+  class HighVolume(FakeRPC):
+   def _method(self,method,params):
+    if method=='eth_getLogs':
+     q=params[0];lo=c.quantity(q['fromBlock']);hi=c.quantity(q['toBlock'])
+     self.records.append((method,copy.deepcopy(params)))
+     if hi-lo+1>25:raise c.Unavailable('response_too_large')
+     return [event(t['address'],number=lo,index=lo)]
+    return super()._method(method,params)
+  rpc=HighVolume('bsc')
+  out=c.collect_registry({'schemaVersion':1,'tokens':[t]},rpc_factory=lambda url,**kw:rpc)
+  row=out['tokens']['ACTIVEUSDT'];self.assertEqual(row['status'],'ok')
+  self.assertEqual(row['coverage']['toBlock']-row['coverage']['fromBlock']+1,100)
+  self.assertEqual(row['coverage']['matchedCount'],4)
+  self.assertTrue(all(e['blockNumber']>=row['coverage']['fromBlock']for e in row['events']))
+ def test_rate_limit_not_split_or_retried(self):
+  class Limited:
+   calls=0
+   def call(self,*a):self.calls+=1;raise c.Unavailable('rate_limited')
+  rpc=Limited()
+  with self.assertRaisesRegex(c.Unavailable,'rate_limited'):c.bounded_logs(rpc,['0x'+'a'*40],1,100)
+  self.assertEqual(rpc.calls,1)
+ def test_official_arbitrum_fixed_path_allowlist(self):
+  rpc=c.RPC('https://arb1.arbitrum.io/rpc',chain='arbitrum')
+  self.assertEqual(rpc.url,'https://arb1.arbitrum.io/rpc')
+  with self.assertRaises(c.Unavailable):c.RPC('https://arb1.arbitrum.io/rpc?token=x',chain='arbitrum')

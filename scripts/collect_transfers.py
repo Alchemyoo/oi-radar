@@ -27,7 +27,7 @@ CHAIN_CONFIG = {
     'ethereum': (1, 'https://ethereum-rpc.publicnode.com', 20),
     'bsc': (56, DEFAULT_RPC, 64),
     'base': (8453, 'https://base-rpc.publicnode.com', 32),
-    'arbitrum': (42161, 'https://arbitrum-one-rpc.publicnode.com', 32),
+    'arbitrum': (42161, 'https://arb1.arbitrum.io/rpc', 32),
     'optimism': (10, 'https://optimism-rpc.publicnode.com', 32),
     'avalanche': (43114, 'https://avalanche-c-chain-rpc.publicnode.com', 20),
     'polygon': (137, 'https://polygon-bor-rpc.publicnode.com', 128),
@@ -36,6 +36,8 @@ CHAIN_IDS = {**{k: v[0] for k, v in CHAIN_CONFIG.items()}, 'linea': 59144}
 RPC_URLS = {v[1] for v in CHAIN_CONFIG.values()} | {'https://bsc.drpc.org'}
 MAX_RESPONSE = 2 * 1024 * 1024
 MAX_LOGS = 2000
+MAX_AGGREGATE_LOGS = 20000
+CHAIN_REQUEST_BUDGET = 140
 MAX_GROUP = 20
 MAX_LOG_ADDRESSES = 8
 STOP_REASONS = {'rate_limited', 'rpc_timeout', 'rpc_network_error',
@@ -114,7 +116,7 @@ class RPC:
     def __init__(self, url, opener=urlopen, budget=90, shared=None, chain=None):
         u = urlsplit(url)
         clean = url.rstrip('/')
-        if u.scheme != 'https' or clean not in RPC_URLS or u.path not in ('', '/') or u.query or u.fragment:
+        if u.scheme != 'https' or clean not in RPC_URLS or u.query or u.fragment:
             raise Unavailable('rpc_not_allowlisted')
         if chain and clean not in ({CHAIN_CONFIG[chain][1]} | ({'https://bsc.drpc.org'} if chain == 'bsc' else set())):
             raise Unavailable('rpc_chain_url_mismatch')
@@ -276,6 +278,28 @@ def fail(row, reason, status=None):
     return row
 
 
+def bounded_logs(rpc, addresses, start, end):
+    """Split a single high-volume token's block range without changing coverage."""
+    try:
+        logs = rpc.call('eth_getLogs', [{'address': addresses, 'fromBlock': hex(start),
+                        'toBlock': hex(end), 'topics': [TOPIC]}])
+        if not isinstance(logs, list):
+            raise Unavailable('invalid_rpc_logs')
+        if len(logs) >= MAX_LOGS:
+            raise Unavailable('log_limit_or_invalid_response')
+        return logs
+    except Unavailable as e:
+        caps = ('response_too_large', 'log_limit_or_invalid_response', 'rpc_http_413')
+        if str(e) not in caps or len(addresses) != 1 or start >= end:
+            raise
+        mid = (start + end) // 2
+        left = bounded_logs(rpc, addresses, start, mid)
+        right = bounded_logs(rpc, addresses, mid + 1, end)
+        if len(left) + len(right) > MAX_AGGREGATE_LOGS:
+            raise Unavailable('aggregate_log_limit')
+        return left + right
+
+
 def collect_group(rpc, rows, start, end, anchor, start_time, end_time, cache):
     """One <=20-address query; alias symbols never cause duplicate RPC work."""
     by_address = {}
@@ -311,10 +335,7 @@ def collect_group(rpc, rows, start, end, anchor, start_time, end_time, cache):
         seen = {}
         for lower in range(start, end + 1, 100):
             upper = min(lower + 99, end)
-            logs = rpc.call('eth_getLogs', [{'address': list(active), 'fromBlock': hex(lower),
-                            'toBlock': hex(upper), 'topics': [TOPIC]}])
-            if not isinstance(logs, list) or len(logs) >= MAX_LOGS:
-                raise Unavailable('log_limit_or_invalid_response')
+            logs = bounded_logs(rpc, list(active), lower, upper)
             for log in logs:
                 address = str(log.get('address', '')).lower() if isinstance(log, dict) else ''
                 if address not in active:
@@ -428,7 +449,7 @@ def collect_registry(registry, blocks=100, units='1000000', thresholds=None,
         rpc = None
         try:
             shared.check()
-            rpc = rpc_factory(url, budget=90, shared=shared, chain=chain)
+            rpc = rpc_factory(url, budget=CHAIN_REQUEST_BUDGET, shared=shared, chain=chain)
             if quantity(rpc.call('eth_chainId', [])) != chain_id:
                 raise Unavailable('chain_id_mismatch')
             head = quantity(rpc.call('eth_blockNumber', []))
@@ -463,7 +484,7 @@ def collect_registry(registry, blocks=100, units='1000000', thresholds=None,
                        'providers': providers},
             'collection': {'scope': 'all_registry_mapped_symbols', 'mappedCount': len(rows),
                            'statusCounts': counts, 'deadlineSeconds': deadline, 'requestTimeoutSeconds': 4,
-                           'globalRequestBudget': shared.limit, 'perChainRequestBudget': 90,
+                           'globalRequestBudget': shared.limit, 'perChainRequestBudget': CHAIN_REQUEST_BUDGET,
                            'requests': shared.used, 'batchMaxMethods': MAX_GROUP, 'maxLogAddresses': MAX_LOG_ADDRESSES,
                            'blocksPerQuery': 100, 'defaultBlocks': blocks, 'chainBlocks': chain_blocks,
                            'coverageKind': 'bounded_block_range_not_wall_clock_window'},
