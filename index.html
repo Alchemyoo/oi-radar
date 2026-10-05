@@ -125,7 +125,6 @@ input[type=number]{text-align:right}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
 <link rel="stylesheet" href="layout.css?v=20261004-1">
-<link rel="stylesheet" href="onchain.css?v=20261005-1">
 </head>
 <body>
 <header id="hdr">
@@ -385,7 +384,6 @@ input[type=number]{text-align:right}
   <button data-v="watch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/></svg>自选<span class="nav-count" id="watchCount" hidden></span></button>
 </nav>
 <div id="toast"></div>
-<script src="chains.js?v=20261004-1"></script>
 <script src="radar.js?v=20261004-3"></script>
 <script>
 'use strict';
@@ -560,7 +558,6 @@ function csvDown(name,head,rows){
 function ovFiltered(){
   const q=S.ov.q.trim().toUpperCase(),f=S.fav;
   let l=S.ov.list.filter(r=>!S.ov.favOnly||f.has(r.sym));
-  if(typeof onchainFilter==='function')l=onchainFilter(l);
   if(q)l=l.filter(r=>r.sym.includes(q));
   const k=S.ov.sort,d=S.ov.dir;
   const gv=r=>k==='oi'?(S.oi.get(r.sym)||0)*r.px:(k==='oic'?(S.oi.get(r.sym)||0):r[k]);
@@ -637,7 +634,6 @@ function dtSetSym(sym){
   const fav=S.fav.has(sym);
   $('#dtStar').textContent=fav?'★':'☆';
   $('#dtStar').classList.toggle('on',fav);
-  if(typeof onchainDetailChanged==='function')onchainDetailChanged();
 }
 function dtQuick(d){
   const end=utcToday0()-DAY,start=end-(d-1)*DAY;
@@ -1322,8 +1318,7 @@ async function rtPollRequest(){
   if(alerts.length){
     alerts.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
     const a=alerts[0],px=S.tick[a.sym]?S.tick[a.sym].px:null;
-    const chainTag=typeof onchainAlertTag==='function'?onchainAlertTag(a.sym):' · 未接入可验证链上数据';
-    toast(`${a.sym.replace('USDT','')} ${a.win}h OI ${a.pct>0?'激增':'骤降'} ${Math.abs(a.pct).toFixed(1)}%${px?' · $'+fPrice(px):''}${chainTag}${alerts.length>1?`（仅标注 ${a.sym.replace('USDT','')}；共${alerts.length}个 OI 提醒）`:''}`);
+    toast(`${a.sym.replace('USDT','')} ${a.win}h OI ${a.pct>0?'激增':'骤降'} ${Math.abs(a.pct).toFixed(1)}%${px?' · $'+fPrice(px):''}${alerts.length>1?` 等${alerts.length}个 OI 提醒`:''}`);
   }
   S.rt.snapT=now;
   rtBuild();
@@ -1790,9 +1785,7 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261003-1"></script>
-<script src="layout.js?v=20261004-3"></script>
-<script src="transfers.js?v=20261005-1"></script>
-<script src="onchain.js?v=20261005-1"></script>
-<script>stBind();layoutInit();onchainInit();</script>
+<script src="layout.js?v=20261005-4"></script>
+<script>stBind();layoutInit();</script>
 </body>
 </html>

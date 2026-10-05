@@ -1,5 +1,0 @@
-'use strict';
-const test=require('node:test'),assert=require('node:assert/strict'),C=require('./chains.js');
-test('EVM chain ids and lower-case identity',()=>{assert.ok(C.valid({chain:'bsc',chainId:56,address:'0x'+'a'.repeat(40)}));assert.ok(C.valid({chain:'ethereum',chainId:1,address:'0x'+'A'.repeat(40)}));assert.ok(!C.valid({chain:'bsc',chainId:1,address:'0x'+'a'.repeat(40)}));assert.ok(C.identity({symbol:'XUSDT',chain:'bsc',chainId:56,address:'0x'+'A'.repeat(40)},{symbol:'XUSDT',chain:'bsc',chainId:56,address:'0x'+'a'.repeat(40)}))});
-test('Solana and Sui use non-EVM validation',()=>{assert.ok(C.valid({chain:'solana',chainId:'CT_501',address:'11111111111111111111111111111111'}));assert.ok(!C.valid({chain:'solana',chainId:'CT_501',address:'0x'+'a'.repeat(40)}));assert.ok(C.valid({chain:'sui',chainId:'CT_784',address:'0x2::coin::COIN'}));assert.ok(!C.valid({chain:'sui',chainId:'CT_784',address:'0x2'}))});
-test('unsupported/native are rejected not fabricated',()=>{assert.equal(C.valid({chain:'unsupported',chainId:999,address:'0x'+'a'.repeat(40)}),false);assert.equal(C.explorer({chain:'unsupported',chainId:999,address:'x'}),'')});

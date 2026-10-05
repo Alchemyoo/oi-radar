@@ -398,13 +398,10 @@ test('index.html rtPollRequest: window alert fires once, lastAlertAt blocks repe
 });
 
 /* ======================= 5. things that must not change ======================= */
-test('static: three entries kept, scripts wired, old buggy paths gone, Actions untouched', () => {
+test('static: three entries kept, scripts wired and old buggy paths gone', () => {
   for (const v of ['market', 'opportunity', 'watch']) assert.ok(html.includes(`data-v="${v}"`), v);
   assert.ok(html.indexOf('src="radar.js') > 0 && html.indexOf('src="radar.js') < html.indexOf("<script>\n'use strict';"));
   for (const bad of ['oif_scanchecked', 'lastAgo', 'S.tick[r.sym]&&S.tick[r.sym].px', 'loadKlines(sym,S.sc.W+1)'])
     assert.ok(!html.includes(bad), 'still present: ' + bad);
-  const wf = fs.readFileSync(path.join(__dirname, '.github/workflows/onchain.yml'), 'utf8');
-  assert.match(wf, /cron: '\*\/30 \* \* \* \*'/);
-  assert.match(wf, /scripts\/collect_onchain\.py/);
   for (const m of [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)]) new vm.Script(m[1]);
 });

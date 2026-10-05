@@ -15,7 +15,6 @@ function layoutList(k){
   $('#ovTitle').firstChild.textContent=k==='watch'?'自选行情 ':'USDT 永续市场 ';
   $('#ovFavBtn').textContent=k==='watch'?'＋ 去市场添加':'★ 自选';
   ovMeta();ovRender();
-  if(typeof onchainRender==='function')onchainRender();
 }
 function layoutOp(k){
   if(!['strong','scan','signal'].includes(k))k='strong';

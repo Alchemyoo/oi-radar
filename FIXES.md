@@ -8,12 +8,11 @@
 - Intraday OI and closed 5m price share 15/30/60min endpoints. Incomplete coverage/gaps remain warmup; no future endpoint borrowing. Dedicated intraday thresholds; unknown funding contributes zero; generation guards pause/window changes.
 - Full OI loading uses six workers; partial failures remain retryable. 429/418 Retry-After cooldown prevents archive fallback. Stop aborts currently active core requests (shared cancellation may also interrupt concurrently loading secondary cards; they remain retryable).
 - Funding uses successful fundingInfo interval overrides; default8h only on successful omitted overrides, failed interval lookup yields unknown. Actual 4h contracts verified in browser. Missing OI remains unknown. WS keeps mark separate from last traded price.
-- Historical detail prices request explicit date bounds and compare previous close. External MegaGlass symbol/attribute/remarks are escaped. Zoom enabled, iOS meta and numeric/date input16px, table colspans and documentation corrected. Same-symbol onchain pool expansion persists redraw.
-- Three primary entries and enabled Actions cache workflow/data untouched.
+- Historical detail prices request explicit date bounds and compare previous close. External MegaGlass symbol/attribute/remarks are escaped. Zoom enabled, iOS meta and numeric/date input16px, table colspans and documentation corrected.
+- Three primary entries preserve the original market, opportunity and watchlist workflows.
 
 ## Executed validation
-- Node: 78/78 (radar20 + strong20 + onchain12 + remaining7 + windows14 + finish5).
-- Python: 25/25 unittest cases.
+- Retained tests exercise OI endpoints, T+1, alerting, strong rankings and intraday time windows.
 - Browser layout.qa.js:27/27 including stale-detail and radar pause response guards.
 - Browser: 528 contracts loaded; BTC3d scan archive endpoints both coin and notional quantities returned; price1.356475%; actual4h funding overrides verified.
 - Narrow viewport: each three entry document width equals effective innerWidth. Device WebView reported innerWidth402 despite requested320, so not a physical320px guarantee.
