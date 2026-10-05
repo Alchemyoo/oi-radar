@@ -237,3 +237,23 @@ class RPCTransport(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class AdaptiveLimitTests(unittest.TestCase):
+ def test_http400_address_limit_splits_under_same_bounds(self):
+  class Limited(FakeRPC):
+   def _method(self, method, params):
+    if method=='eth_getLogs' and len(params[0]['address'])>2:
+     self.records.append((method,copy.deepcopy(params)));raise c.Unavailable('rpc_http_400')
+    return super()._method(method,params)
+  rpc=Limited('bsc');tokens=[token('LIMIT%dUSDT'%i,address='0x'+format(i+1,'040x'))for i in range(5)]
+  out=c.collect_registry({'schemaVersion':1,'tokens':tokens},rpc_factory=lambda url,**kw:rpc)
+  self.assertEqual(out['collection']['statusCounts'],{'ok':5})
+  for r in out['tokens'].values():self.assertTrue(r['coverage']['complete']);self.assertEqual(r['coverage']['matchedCount'],0)
+ def test_auth_or_rate_limits_never_trigger_address_split(self):
+  class Auth(FakeRPC):
+   def _method(self,method,params):
+    if method=='eth_getLogs':self.records.append((method,params));raise c.Unavailable('rpc_http_error')
+    return super()._method(method,params)
+  rpc=Auth('bsc');tokens=[token('AUTH%dUSDT'%i,address='0x'+format(i+1,'040x'))for i in range(5)]
+  out=c.collect_registry({'schemaVersion':1,'tokens':tokens},rpc_factory=lambda url,**kw:rpc)
+  self.assertEqual(out['collection']['statusCounts'],{'unavailable':5});self.assertEqual(sum(m=='eth_getLogs'for m,p in rpc.records),1)

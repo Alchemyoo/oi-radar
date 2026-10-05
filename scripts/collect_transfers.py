@@ -150,7 +150,7 @@ class RPC:
                 raise Unavailable('response_too_large')
             return json.loads(raw)
         except HTTPError as e:
-            reason = 'rate_limited' if e.code == 429 else 'rpc_http_error'
+            reason = 'rate_limited' if e.code == 429 else 'rpc_http_' + str(e.code) if e.code in (400, 413) else 'rpc_http_error'
         except URLError as e:
             reason = 'rpc_timeout' if isinstance(e.reason, TimeoutError) else 'rpc_network_error'
         except TimeoutError:
@@ -352,6 +352,15 @@ def collect_group(rpc, rows, start, end, anchor, start_time, end_time, cache):
                 row['coverage'].update(complete=True, matchedCount=len(matches),
                                        displayTruncated=len(matches) > 50)
     except Unavailable as e:
+        # Provider filter/response limits are address-local, not proof of no logs.
+        # Split only bounded recoverable shape/cap errors; never evade 429/auth failures.
+        if str(e) in ('rpc_http_400', 'rpc_http_413', 'log_limit_or_invalid_response', 'response_too_large') and len(by_address) > 1:
+            addresses = list(by_address)
+            cut = len(addresses) // 2
+            for half in (addresses[:cut], addresses[cut:]):
+                subset = [r for address in half for r in by_address[address]]
+                collect_group(rpc, subset, start, end, anchor, start_time, end_time, cache)
+            return
         for row in rows:
             if row['reason'] in ('not_collected', None):
                 fail(row, str(e))
