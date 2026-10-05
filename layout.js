@@ -50,17 +50,17 @@ function layoutBack(){
   const r=Layout.returnTo||{view:'market',op:'strong',scroll:0};
   layoutOp(r.op);layoutNavigate(r.view,true);$('#main').scrollTop=r.scroll;
 }
-function layoutFavoritesChanged(){
+function layoutFavoritesChanged(render=true){
   const n=S.fav.size,b=$('#watchCount');if(!b)return;
   b.textContent=n;b.hidden=!n;
   $('#watchEmpty').hidden=!!n;
   $('#watchSummary').textContent=n?`${n} 个自选 · 星标可移除，点击币种看详情`:'先在市场点击 ☆，这里会集中显示';
   // Keep existing samples; remove deleted symbols and enroll new favourites.
+  S.rt.ctl?.abort();S.rt.loading=false;S.rt.job=null;
   S.rt.generation=(S.rt.generation||0)+1;
   for(const sym of [...S.rt.last.keys()])if(!S.fav.has(sym)){S.rt.last.delete(sym);S.rt.hist.delete(sym)}
   for(const sym of S.fav)if(!S.rt.last.has(sym))S.rt.last.set(sym,S.oi.get(sym)||0);
-  rtBuild();ovMeta();ovRender();
-  if(S.fd.rows)fdRender();
+  rtBuild();if(render){ovMeta();ovRender();if(S.fd.rows)fdRender()}
 }
 function layoutInit(){
   const main=$('#main');
@@ -90,5 +90,5 @@ function layoutInit(){
   [...card.childNodes].forEach(n=>{if(n!==execution)evidence.append(n)});
   card.append(execution,evidence);execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   $('#fdStat').insertAdjacentHTML('afterend','<div class="banner" id="fdBan"></div>');
-  layoutOp('strong');layoutFavoritesChanged();layoutNavigate('market');
+  layoutOp('strong');layoutFavoritesChanged(false);layoutNavigate('market');
 }

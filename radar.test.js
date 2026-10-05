@@ -24,6 +24,7 @@ function makeCtx(extra = {}, clock = {now: NOW}) {
   }
   const ctx = vm.createContext({
     Date: FakeDate, DAY, console, Promise, JSON, Math, Map, Set, Object, Array,
+    AbortController,
     dstr: m => new Date(m).toISOString().slice(0, 10),
     pool: async (items, n, fn) => { for (let i = 0; i < items.length; i++) await fn(items[i], i); },
     ...extra

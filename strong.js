@@ -294,7 +294,7 @@
     return true;
   }
 
-  function stBind() {
+  function stBind(render=true) {
     const st = state();
     const bind = (sel, event, fn) => { const el = $(sel); if (el) el[event] = fn; };
     bind('#stGo', 'onclick', stScan);
@@ -339,7 +339,7 @@
       const link = e.target && e.target.closest && e.target.closest('[data-st-sym]');
       if (link) jumpSym(link.dataset.stSym);
     });
-    stRender();
+    if (render) stRender();
   }
 
   /* Globals needed by the parent classic script and Node vm tests. */

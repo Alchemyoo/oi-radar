@@ -415,6 +415,30 @@ const DAY=86400000;
 const utcToday0=()=>{const n=new Date();return Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate())};
 const dstr=ms=>new Date(ms).toISOString().slice(0,10);
 
+/* ---------- bounded request/DOM reuse ---------- */
+const publicCache=new Map();
+function reusePublic(key,ttl,loader,force=false){
+  const old=publicCache.get(key),now=Date.now();
+  if(old?.pending)return old.pending;
+  if(!force&&old&&old.expires>now)return Promise.resolve(old.value);
+  const entry={expires:0,value:null,pending:null};
+  const pending=Promise.resolve().then(loader).then(value=>{entry.value=value;entry.expires=Date.now()+ttl;entry.pending=null;return value},error=>{if(publicCache.get(key)===entry)publicCache.delete(key);throw error});
+  entry.pending=pending;publicCache.set(key,entry);return pending;
+}
+function renderTableRows(body,keys,markup,empty){
+  if(!body)return;
+  const shape=JSON.stringify(keys),full=markup.length?markup.join(''):empty;
+  if(body._tableHTML===full)return;
+  if(body._tableShape===shape&&body.children.length===markup.length&&markup.length){
+    for(let i=0;i<markup.length;i++)if(body._tableRows[i]!==markup[i]){
+      const html=markup[i].replace(/^<tr(?:\s[^>]*)?>/,'').replace(/<\/tr>$/,'');
+      body.children[i].innerHTML=html;
+    }
+  }else body.innerHTML=full;
+  body._tableShape=shape;body._tableRows=markup;body._tableHTML=full;
+}
+const setTextFast=(e,value)=>{if(e&&e.textContent!==String(value))e.textContent=String(value)};
+
 /* ---------- 状态 ---------- */
 const S={
   syms:[],symSet:new Set(),tick:{},
@@ -441,11 +465,12 @@ function abortActiveRequests(){for(const ctl of activeRequests)ctl.abort()}
 function fetchX(url,as,timeout,scope){
   if(apiCooldownUntil>Date.now())return Promise.reject(Object.assign(new Error('API 冷却中'),{status:429,cooldown:true}));
   const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),timeout||20000);activeRequests.add(ctl);
-  if(scope?.signal) scope.signal.addEventListener('abort',()=>ctl.abort(),{once:true});
+  const cancel=()=>ctl.abort();
+  if(scope?.signal?.aborted)cancel();else if(scope?.signal)scope.signal.addEventListener('abort',cancel,{once:true});
   return fetch(url,{signal:ctl.signal}).then(r=>{
     if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;e.retryAfter=r.headers.get('Retry-After');if(r.status===429||r.status===418){const sec=Number(e.retryAfter)||30;apiCooldownUntil=Math.max(apiCooldownUntil,Date.now()+Math.min(sec,300)*1000)}throw e}
     return as==='blob'?r.blob():r.json();
-  }).finally(()=>{clearTimeout(t);activeRequests.delete(ctl)});
+  }).finally(()=>{clearTimeout(t);activeRequests.delete(ctl);scope?.signal?.removeEventListener('abort',cancel)});
 }
 const jget=(u,to,scope)=>fetchX(u,'json',to,scope);
 const bget=(u,to,scope)=>fetchX(u,'blob',to,scope);
@@ -518,12 +543,12 @@ function fetchDay(sym,day){                       /* → Promise<rows>，失败�
   return pr;
 }
 const API='https://www.binance.com';
-async function loadSyms(){
-  const d=await jget(API+'/fapi/v1/exchangeInfo',30000);
+async function loadSyms(force=false){
+  const d=await reusePublic('symbols',15*60*1000,()=>jget(API+'/fapi/v1/exchangeInfo',30000),force);
   return (d.symbols||[]).filter(s=>s.contractType==='PERPETUAL'&&s.status==='TRADING'&&s.quoteAsset==='USDT').map(s=>s.symbol);
 }
-async function loadTickers(){
-  const d=await jget(API+'/fapi/v1/ticker/24hr',30000);
+async function loadTickers(force=false){
+  const d=await reusePublic('tickers',1000,()=>jget(API+'/fapi/v1/ticker/24hr',30000),force);
   const m={};
   for(const t of d)m[t.symbol]={px:+t.lastPrice,chg:+t.priceChangePercent,vol:+t.quoteVolume};
   return m;
@@ -560,8 +585,8 @@ function ovFiltered(){
   let l=S.ov.list.filter(r=>!S.ov.favOnly||f.has(r.sym));
   if(q)l=l.filter(r=>r.sym.includes(q));
   const k=S.ov.sort,d=S.ov.dir;
-  const gv=r=>k==='oi'?(S.oi.get(r.sym)||0)*r.px:(k==='oic'?(S.oi.get(r.sym)||0):r[k]);
-  l.sort((a,b)=>k==='sym'?d*a.sym.localeCompare(b.sym):d*(gv(a)-gv(b)));
+  const gv=r=>k==='oi'?(S.oi.get(r.sym)==null?null:S.oi.get(r.sym)*r.px):(k==='oic'?S.oi.get(r.sym):r[k]);
+  l.sort((a,b)=>k==='sym'?d*a.sym.localeCompare(b.sym):gv(a)==null?(gv(b)==null?0:1):gv(b)==null?-1:d*(gv(a)-gv(b)));
   return l;
 }
 function ovRender(){
@@ -575,12 +600,13 @@ function ovRender(){
     th.classList.toggle('sa',on&&S.ov.dir===1);
     th.classList.toggle('sd',on&&S.ov.dir===-1);
   });
-  tb.innerHTML=rows.map(r=>{
+  const markup=rows.map(r=>{
     const oiV=S.oi.get(r.sym);
     const oi=oiV!=null&&r.px?fC(oiV*r.px):'—',oic=oiV!=null?fN(oiV,0):'—';
     return `<tr><td><div class="c-sym"><button class="star${S.fav.has(r.sym)?' on':''}" data-fav="${r.sym}">${S.fav.has(r.sym)?'★':'☆'}</button><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></div></td>`+
     `<td>${fPrice(r.px)}</td><td class="${clsP(r.chg)}">${fP(r.chg/100)}</td><td>${fC(r.vol)}</td><td>${oi}</td><td>${oic}</td></tr>`;
-  }).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:18px">无匹配</td></tr>`;
+  });
+  renderTableRows(tb,rows.map(r=>r.sym),markup,`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:18px">无匹配</td></tr>`);
 }
 function ovMeta(){
   const n=S.ov.list.length;
@@ -600,17 +626,21 @@ async function ensureOiAll(){
     S.oiLoading=false;ovRender();
   }
 }
-async function bootOverview(){
-  $('#ovCount').textContent='加载中…';
+async function bootOverview(force=false){
+  if(S.ov.loading)return S.ov.promise;
+  S.ov.loading=true;$('#ovRefresh').disabled=true;
+  const job=(async()=>{
+  setTextFast($('#ovCount'),'加载中…');
   try{
-    const [syms,tick]=await Promise.all([loadSyms(),loadTickers()]);
+    const [syms,tick]=await Promise.all([loadSyms(force),loadTickers(force)]);
     S.syms=syms;S.symSet=new Set(syms);
     S.ov.list=syms.filter(s=>tick[s]).map(s=>({sym:s,px:tick[s].px,chg:tick[s].chg,vol:tick[s].vol,oi:null}));
     S.tick=tick;S.ov.ready=true;setDot('ok');ovMeta();ovRender();
   }catch(e){
-    setDot('err');$('#ovCount').textContent='加载失败，点 ↻ 重试';
+    setDot('err');setTextFast($('#ovCount'),S.ov.ready?'刷新失败，保留上一快照':'加载失败，点 ↻ 重试');
     toast('总览加载失败：'+e.message);
-  }
+  }finally{S.ov.loading=false;S.ov.promise=null;$('#ovRefresh').disabled=false}
+  })();S.ov.promise=job;return job;
 }
 
 /* ================= 详情 ================= */
@@ -1034,9 +1064,10 @@ function bind(){
   $('#ovSearch').oninput=e=>{S.ov.q=e.target.value;S.ov.page=1;ovRender()};
   $('#ovFavBtn').onclick=()=>showView(Layout.current==='watch'?'market':'watch');
   $('#ovRefresh').onclick=()=>{
-    S.oi.clear();S.oiAll=false;S.ov.ready=false;
+    if(S.ov.loading)return;
+    S.oi.clear();S.oiAll=false;
     $('#ovNote').textContent='OI 为实时快照，点 OI 列排序会全量加载';
-    bootOverview();
+    bootOverview(true);
   };
   $$('#ovSize button').forEach(b=>b.onclick=()=>{
     S.ov.size=+b.dataset.n;S.ov.page=1;store.set('oif_ovsize',S.ov.size);
@@ -1295,33 +1326,35 @@ function fdMeta(){
 function rtView(){return S.rt.on}
 async function rtPoll(){
   if(!S.rt.on||S.rt.loading)return;
-  S.rt.loading=true;
-  try{await rtPollRequest()}finally{S.rt.loading=false}
+  const job={};S.rt.job=job;S.rt.loading=true;
+  try{await rtPollRequest()}finally{if(S.rt.job===job){S.rt.loading=false;S.rt.job=null}}
 }
 async function rtPollRequest(){
   if(!S.rt.on)return;
-  const generation=S.rt.generation||0;
-  const now=Date.now();
+  const generation=S.rt.generation||0,ctl=new AbortController();S.rt.ctl=ctl;
+  const current=()=>S.rt.on&&!ctl.signal.aborted&&generation===(S.rt.generation||0);
   const tracked=[...S.rt.last.keys()];
   if(!tracked.length)return;
-  const m={};
-  let err=0;
+  let valid=0,queued=false;const pendingAlerts=[];
+  const emit=()=>{
+    if(!current()||!pendingAlerts.length)return;
+    pendingAlerts.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
+    const a=pendingAlerts[0],px=S.tick[a.sym]?.px,n=pendingAlerts.length;pendingAlerts.length=0;
+    toast(`${a.sym.replace('USDT','')} ${a.win}h OI ${a.pct>0?'激增':'骤降'} ${Math.abs(a.pct).toFixed(1)}%${px?' · $'+fPrice(px):''}${n>1?` 等${n}个 OI 提醒`:''}`);
+  };
   await pool(tracked,8,async s=>{
+    if(!current())return;
     try{
-      const d=await jget(API+'/fapi/v1/openInterest?symbol='+s,12000);
-      m[s]=+d.openInterest;
-    }catch(e){err++}
-  });
-  if(!S.rt.on||generation!==(S.rt.generation||0)||!Object.keys(m).length)return;
-  const alerts=OiRadar.rtApplySnapshot({last:S.rt.last,hist:S.rt.hist,lastAlertAt:S.rt.lastAlertAt,
-    win:S.rt.win,thresh:S.rt.thresh,intMs:S.rt.int*1000},m,now);
-  if(alerts.length){
-    alerts.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
-    const a=alerts[0],px=S.tick[a.sym]?S.tick[a.sym].px:null;
-    toast(`${a.sym.replace('USDT','')} ${a.win}h OI ${a.pct>0?'激增':'骤降'} ${Math.abs(a.pct).toFixed(1)}%${px?' · $'+fPrice(px):''}${alerts.length>1?` 等${alerts.length}个 OI 提醒`:''}`);
-  }
-  S.rt.snapT=now;
-  rtBuild();
+      const d=await jget(API+'/fapi/v1/openInterest?symbol='+encodeURIComponent(s),12000,{signal:ctl.signal});
+      const value=Number(d.openInterest);if(!current()||!Number.isFinite(value)||value<=0)return;
+      const receivedAt=Date.now();
+      const alerts=OiRadar.rtApplySnapshot({last:S.rt.last,hist:S.rt.hist,lastAlertAt:S.rt.lastAlertAt,
+        win:S.rt.win,thresh:S.rt.thresh,intMs:S.rt.int*1000},{[s]:value},receivedAt);
+      valid++;S.rt.snapT=receivedAt;
+      if(alerts.length){pendingAlerts.push(...alerts);if(!queued){queued=true;Promise.resolve().then(()=>{queued=false;emit()})}}
+    }catch(e){}
+  },()=>!current());
+  if(current()&&valid){emit();rtBuild()}
 }
 function rtBuild(){
   S.rt.rows=OiRadar.rtRows(S.rt.hist,S.tick,S.rt.win);
@@ -1331,7 +1364,7 @@ function rtRender(){
   const el=$('#rtRows');
   if(!el)return;
   const rows=S.rt.rows.slice(0,30);
-  el.innerHTML=rows.map(r=>
+  const markup=rows.map(r=>
     `<tr><td><div class="c-sym"><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></div></td>`+
     (r.ready?`<td class="${clsP(r.d1)}">${fP(r.d1/100)}</td>`
       :`<td class="mut" title="预热中：采样尚未覆盖所选窗口">${r.dPart!=null?'~'+fP(r.dPart/100):'—'}</td>`)+
@@ -1339,12 +1372,14 @@ function rtRender(){
     `<td>${r.px?fPrice(r.px):'—'}</td>`+
     `<td>${r.oiv!=null?fC(r.oiv):'—'}</td>`+
     `<td class="mut" title="${r.n}个采样点">${r.ready?'✓ '+S.rt.win+'h':'预热 '+Math.floor(r.cover*100)+'%'}</td></tr>`
-  ).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后每 60s 采样；窗口覆盖满后才按窗口变化提醒</td></tr>`;
+  );
+  renderTableRows(el,rows.map(r=>r.sym),markup,`<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后每 60s 采样；窗口覆盖满后才按窗口变化提醒</td></tr>`);
   const cv=OiRadar.rtCoverage(S.rt.rows);
   $('#rtSince').textContent=S.rt.snapT?`窗口 ${S.rt.win}h · 就绪 ${cv.ready}/${cv.total}${cv.ready<cv.total?' · 最低覆盖 '+Math.floor(cv.minCover*100)+'%':''} · ${new Date(S.rt.snapT).toISOString().slice(11,16)} UTC`:'';
 }
 function rtToggle(on){
   if(on&&!S.rt.last.size){toast('先在市场添加自选币种');return}
+  S.rt.ctl?.abort();S.rt.loading=false;S.rt.job=null;
   clearInterval(S.rt.timer);S.rt.timer=null;
   S.rt.generation=(S.rt.generation||0)+1;
   S.rt.on=on;
@@ -1360,6 +1395,7 @@ function rtToggle(on){
   }
 }
 function rtTrackFromFav(){
+  S.rt.ctl?.abort();S.rt.loading=false;S.rt.job=null;
   S.rt.generation=(S.rt.generation||0)+1;
   if(!S.fav.size){toast('自选为空，先在市场点击 ☆ 添加币种');return}
   S.rt.last.clear();S.rt.hist.clear();S.rt.rows=[];
@@ -1786,6 +1822,6 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 </script>
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-4"></script>
-<script>stBind();layoutInit();</script>
+<script>stBind(false);layoutInit();</script>
 </body>
 </html>
