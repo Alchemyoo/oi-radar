@@ -420,7 +420,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clea
 function stamp(){const n=new Date();$('#htime').textContent=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2)}
 function setDot(st){$('#netDot').className='dot'+(st==='err'?' err':(st==='ok'?' ok':''))}
 function ban(id,kind,msg){const b=$(id);if(!msg){b.classList.remove('on');return}b.className='banner on '+kind;b.innerHTML=msg}
-const DAY=86400000;
+const MIN=60000,DAY=86400000;
 const utcToday0=()=>{const n=new Date();return Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate())};
 const dstr=ms=>new Date(ms).toISOString().slice(0,10);
 
