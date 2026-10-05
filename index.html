@@ -1900,6 +1900,6 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-5"></script>
 <script src="oi-cap-radar.js?v=20261005-1"></script>
-<script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:()=>window.open('https://github.com/Alchemyoo/oi-radar/actions/workflows/oi-radar-cache.yml','_blank','noopener'),getUniverse:()=>S.ov.list,onSymbol:jumpSym});</script>
+<script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,onSymbol:jumpSym});</script>
 </body>
 </html>

@@ -23,3 +23,5 @@ test('cache refresh loads genuine supplied snapshot without browser external fet
 test('stop during cache request cannot apply old result',async()=>{let resolve;const x=R.init(host(),{cacheURL:'oi-radar-live.json',fetchJSON:()=>new Promise(r=>resolve=r)});const p=x.refresh();x.stop();resolve(cache());await p;a.equal(x.state.rows.length,0);a.equal(x.state.running,false)});
 
 test('expired displayed snapshot removes both ranks instead of retaining stale claims',async()=>{const h=host(),x=R.init(h,{cacheURL:'oi-radar-live.json',fetchJSON:async()=>cache()});await x.refresh();a.equal(x.state.rows.length,1);x.state.expiresAt=Date.now()-1;x.expireSnapshot();a.equal(x.state.rows.length,0);a.match(h.innerHTML,/已过期/)});
+
+test('worker collection UI stays in-app and reports progress',async()=>{const h=host();const x=R.init(h,{onCollect:true,fetchJSON:async url=>url.includes('/status/latest')?{run:{id:7,created_at:new Date().toISOString()}}:url.includes('/status?run=7')?{run:{id:7,status:'in_progress',created_at:new Date().toISOString()}}:cache()});a.match(h.innerHTML,/立即采集/);a.equal(h.innerHTML.includes('github.com'),false);a.equal(typeof x.collect,'function')});
