@@ -28,22 +28,23 @@ jobs:
         with:
           python-version: '3.12'
       - name: Offline collector tests
-        run: python -m unittest discover -s scripts -p test_onchain.py -v
-      - name: Collect public base-side pool snapshots
-        run: python scripts/collect_onchain.py
+        run: python -m unittest discover -s scripts -p 'test*.py' -v
+      # Pipeline runs scripts/collect_onchain.py and scripts/collect_transfers.py.
+      - name: Collect all mapped perpetual DEX and Transfer evidence
+        run: python scripts/collect_pipeline.py
       - name: Commit only changed on-chain data
         shell: bash
         run: |
           set -euo pipefail
-          git add -- data/onchain.json data/onchain-history.json
-          if git diff --cached --quiet -- data/onchain.json data/onchain-history.json; then
+          git add -- data/onchain.json data/onchain-history.json data/transfers.json data/onchain-coverage.json
+          if git diff --cached --quiet -- data/onchain.json data/onchain-history.json data/transfers.json data/onchain-coverage.json; then
             echo 'No on-chain data changes.'
             exit 0
           fi
           git -c user.name='github-actions[bot]' \
               -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
               commit --only -m 'data: refresh on-chain evidence cache' \
-              -- data/onchain.json data/onchain-history.json
+              -- data/onchain.json data/onchain-history.json data/transfers.json data/onchain-coverage.json
           git push origin HEAD:main
       - name: Request legacy Pages rebuild for bot data commit
         env:
