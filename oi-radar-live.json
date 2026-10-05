@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": 1791204657334,
+  "generatedAt": 1791205040918,
   "expiresAt": 1791205500000,
-  "serverTime": 1791204652937,
+  "serverTime": 1791205010688,
   "window": {
     "start": 1791201000000,
     "end": 1791204600000
   },
-  "publicationLagMs": 52937,
+  "publicationLagMs": 410688,
   "scope": {
     "type": "quoteVolumeTop",
     "limit": 50,
@@ -33,8 +33,8 @@
       "1000PEPEUSDT",
       "BTWUSDT",
       "MUBARAKUSDT",
-      "STRKUSDT",
       "MOVRUSDT",
+      "STRKUSDT",
       "FETUSDT",
       "UNIUSDT",
       "TAOUSDT",
@@ -46,8 +46,8 @@
       "LINKUSDT",
       "BEAMXUSDT",
       "LTCUSDT",
-      "NILUSDT",
       "RLCUSDT",
+      "NILUSDT",
       "龙虾USDT",
       "PENGUUSDT",
       "FILUSDT",
@@ -76,10 +76,58 @@
       "coinStart": 96930.781,
       "coinEnd": 96894.972,
       "sym": "BTCUSDT",
-      "ratio": 0.48219682880574954,
-      "marketCap": 1725053308911.7688,
-      "capTime": 1791204580000.0,
+      "ratio": 0.48197888949783496,
+      "marketCap": 1725833336694.0059,
+      "capTime": 1791204940000.0,
       "capId": "bitcoin",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 0.1901304516831681,
+      "notional": 6321975940.14568,
+      "coinStart": 2329213.948,
+      "coinEnd": 2333642.493,
+      "sym": "ETHUSDT",
+      "ratio": 1.9102606515783036,
+      "marketCap": 330948341260.25214,
+      "capTime": 1791204940000.0,
+      "capId": "ethereum",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.08384032417547704,
+      "notional": 1038267890.7827,
+      "coinStart": 8632874.54,
+      "coinEnd": 8625636.71,
+      "sym": "SOLUSDT",
+      "ratio": 1.4660587017228088,
+      "marketCap": 70820349114.43864,
+      "capTime": 1791204940000.0,
+      "capId": "solana",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -1.1336584769782498,
+      "notional": 634936342.9567362,
+      "coinStart": 485749.819,
+      "coinEnd": 480243.075,
+      "sym": "ZECUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.11496187627950682,
+      "notional": 481570868.98092,
+      "coinStart": 319796450.7,
+      "coinEnd": 319428806.7,
+      "sym": "XRPUSDT",
+      "ratio": 0.5058089794902891,
+      "marketCap": 95208050570.04047,
+      "capTime": 1791204940000.0,
+      "capId": "ripple",
       "source": "Binance openInterestHist"
     },
     {
@@ -88,9 +136,9 @@
       "coinStart": 55207969.0,
       "coinEnd": 55120521.0,
       "sym": "NEARUSDT",
-      "ratio": 4.215346680761865,
-      "marketCap": 6545815920.887734,
-      "capTime": 1791204580000.0,
+      "ratio": 4.198519896950394,
+      "marketCap": 6572050172.975111,
+      "capTime": 1791204940000.0,
       "capId": "near",
       "source": "Binance openInterestHist"
     },
@@ -100,9 +148,9 @@
       "coinStart": 137152597.8,
       "coinEnd": 137064099.5,
       "sym": "SUIUSDT",
-      "ratio": 3.329565104734675,
-      "marketCap": 5028137463.915565,
-      "capTime": 1791204580000.0,
+      "ratio": 3.3287174598663642,
+      "marketCap": 5029417859.43421,
+      "capTime": 1791204940000.0,
       "capId": "sui",
       "source": "Binance openInterestHist"
     },
@@ -112,10 +160,22 @@
       "coinStart": 3148827074.0,
       "coinEnd": 3136500795.0,
       "sym": "DOGEUSDT",
-      "ratio": 2.008359398961384,
-      "marketCap": 14937879206.127012,
-      "capTime": 1791204580000.0,
+      "ratio": 2.008046980613705,
+      "marketCap": 14940203288.971916,
+      "capTime": 1791204940000.0,
       "capId": "dogecoin",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 1.6279790164601682,
+      "notional": 14133756.02690468,
+      "coinStart": 59708343.3,
+      "coinEnd": 60680382.6,
+      "sym": "GTCUSDT",
+      "ratio": 70.10826661791957,
+      "marketCap": 20159899.408056557,
+      "capTime": 1791204940000.0,
+      "capId": "gitcoin",
       "source": "Binance openInterestHist"
     },
     {
@@ -136,9 +196,9 @@
       "coinStart": 474109041.0,
       "coinEnd": 474976531.0,
       "sym": "ADAUSDT",
-      "ratio": 1.2657063872723107,
-      "marketCap": 10180965677.040243,
-      "capTime": 1791204580000.0,
+      "ratio": 1.2622546343285466,
+      "marketCap": 10208806476.582863,
+      "capTime": 1791204940000.0,
       "capId": "cardano",
       "source": "Binance openInterestHist"
     },
@@ -148,10 +208,22 @@
       "coinStart": 614578.0,
       "coinEnd": 611484.14,
       "sym": "BNBUSDT",
-      "ratio": 0.45971338537934636,
-      "marketCap": 104905202691.90535,
-      "capTime": 1791204580000.0,
+      "ratio": 0.45958787468502194,
+      "marketCap": 104933851674.07689,
+      "capTime": 1791204940000.0,
       "capId": "binancecoin",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.6135273669266694,
+      "notional": 143647314.1629651,
+      "coinStart": 22512779453.0,
+      "coinEnd": 22374657390.0,
+      "sym": "PUMPUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
       "source": "Binance openInterestHist"
     },
     {
@@ -160,6 +232,18 @@
       "coinStart": 197609.4,
       "coinEnd": 195912.5,
       "sym": "QNTUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.08006400250494261,
+      "notional": 149798162.95735,
+      "coinStart": 593054288.0,
+      "coinEnd": 592579465.0,
+      "sym": "ENAUSDT",
       "ratio": null,
       "marketCap": null,
       "capTime": null,
@@ -179,6 +263,42 @@
       "source": "Binance openInterestHist"
     },
     {
+      "growth": -0.9004624395132499,
+      "notional": 129312963.844,
+      "coinStart": 230544097.0,
+      "coinEnd": 228468134.0,
+      "sym": "WLDUSDT",
+      "ratio": 6.003063560660378,
+      "marketCap": 2154116186.4655437,
+      "capTime": 1791204940000.0,
+      "capId": "worldcoin-wld",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.5686918640884109,
+      "notional": 19872180.5802282,
+      "coinStart": 347244813.0,
+      "coinEnd": 345270060.0,
+      "sym": "AINUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.05299257283852832,
+      "notional": 88192219.101204,
+      "coinStart": 19692684165.0,
+      "coinEnd": 19682248505.0,
+      "sym": "1000PEPEUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
       "growth": 0.47539133681273604,
       "notional": 103532654.36965452,
       "coinStart": 84374697.0,
@@ -191,11 +311,11 @@
       "source": "Binance openInterestHist"
     },
     {
-      "growth": -2.9385306193698613,
-      "notional": 21847471.72162041,
-      "coinStart": 409675785.6,
-      "coinEnd": 397637337.2,
-      "sym": "STRKUSDT",
+      "growth": -0.15065213654759102,
+      "notional": 31310614.60098,
+      "coinStart": 408677908.0,
+      "coinEnd": 408062226.0,
+      "sym": "MUBARAKUSDT",
       "ratio": null,
       "marketCap": null,
       "capTime": null,
@@ -208,6 +328,18 @@
       "coinStart": 5606658.1,
       "coinEnd": 5580223.02,
       "sym": "MOVRUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -2.9385306193698613,
+      "notional": 21847471.72162041,
+      "coinStart": 409675785.6,
+      "coinEnd": 397637337.2,
+      "sym": "STRKUSDT",
       "ratio": null,
       "marketCap": null,
       "capTime": null,
@@ -232,10 +364,34 @@
       "coinStart": 28850883.0,
       "coinEnd": 28673376.0,
       "sym": "UNIUSDT",
-      "ratio": 4.587025319133561,
-      "marketCap": 5573640640.658299,
-      "capTime": 1791204580000.0,
+      "ratio": 4.579372925439379,
+      "marketCap": 5582954512.488933,
+      "capTime": 1791204930000.0,
       "capId": "uniswap",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 0.12732045883105947,
+      "notional": 81877062.35706106,
+      "coinStart": 270365.818,
+      "coinEnd": 270710.049,
+      "sym": "TAOUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.29299426701229203,
+      "notional": 111901711.62,
+      "coinStart": 10268119.0,
+      "coinEnd": 10238034.0,
+      "sym": "AVAXUSDT",
+      "ratio": 2.311629944499648,
+      "marketCap": 4840814243.91745,
+      "capTime": 1791204940000.0,
+      "capId": "avalanche-2",
       "source": "Binance openInterestHist"
     },
     {
@@ -248,6 +404,18 @@
       "marketCap": null,
       "capTime": null,
       "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.20543668494591438,
+      "notional": 84837288.778,
+      "coinStart": 469731.1,
+      "coinEnd": 468766.1,
+      "sym": "AAVEUSDT",
+      "ratio": 3.030451714011351,
+      "marketCap": 2799493170.7954025,
+      "capTime": 1791204930000.0,
+      "capId": "aave",
       "source": "Binance openInterestHist"
     },
     {
@@ -275,6 +443,18 @@
       "source": "Binance openInterestHist"
     },
     {
+      "growth": -0.004397297954006341,
+      "notional": 135677453.51177153,
+      "coinStart": 9635917.43,
+      "coinEnd": 9635493.71,
+      "sym": "LINKUSDT",
+      "ratio": 1.2890357337338585,
+      "marketCap": 10525499795.010668,
+      "capTime": 1791204930000.0,
+      "capId": "chainlink",
+      "source": "Binance openInterestHist"
+    },
+    {
       "growth": 0.446180716482214,
       "notional": 11405557.84169607,
       "coinStart": 4424117016.0,
@@ -287,11 +467,35 @@
       "source": "Binance openInterestHist"
     },
     {
+      "growth": -0.5589072698845343,
+      "notional": 99544126.51849,
+      "coinStart": 1418500.962,
+      "coinEnd": 1410572.857,
+      "sym": "LTCUSDT",
+      "ratio": 1.8114549713136388,
+      "marketCap": 5495258126.471792,
+      "capTime": 1791204940000.0,
+      "capId": "litecoin",
+      "source": "Binance openInterestHist"
+    },
+    {
       "growth": 49.13134531002781,
       "notional": 8670273.5154,
       "coinStart": 10899607.3,
       "coinEnd": 16254731.0,
       "sym": "RLCUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.9658399809813756,
+      "notional": 9505614.629984,
+      "coinStart": 100149405.6,
+      "coinEnd": 99182122.6,
+      "sym": "NILUSDT",
       "ratio": null,
       "marketCap": null,
       "capTime": null,
@@ -328,9 +532,9 @@
       "coinStart": 54089615.1,
       "coinEnd": 53924058.8,
       "sym": "FILUSDT",
-      "ratio": 6.477460119295499,
-      "marketCap": 905986857.4794282,
-      "capTime": 1791204580000.0,
+      "ratio": 6.459153898782009,
+      "marketCap": 908554561.4628352,
+      "capTime": 1791204940000.0,
       "capId": "filecoin",
       "source": "Binance openInterestHist"
     },
@@ -340,6 +544,18 @@
       "coinStart": 247583192.0,
       "coinEnd": 246908582.0,
       "sym": "XLMUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.33226946169125915,
+      "notional": 60469814.94316381,
+      "coinStart": 29517082.16,
+      "coinEnd": 29419005.91,
+      "sym": "TRUMPUSDT",
       "ratio": null,
       "marketCap": null,
       "capTime": null,
@@ -364,10 +580,22 @@
       "coinStart": 292271965.9,
       "coinEnd": 291575073.4,
       "sym": "ARBUSDT",
-      "ratio": 4.297194249619817,
-      "marketCap": 1396669404.6565752,
-      "capTime": 1791204580000.0,
+      "ratio": 4.291729839058597,
+      "marketCap": 1398447702.7628262,
+      "capTime": 1791204930000.0,
       "capId": "arbitrum",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.2209593259526521,
+      "notional": 114664350.51336,
+      "coinStart": 364866.247,
+      "coinEnd": 364060.041,
+      "sym": "BCHUSDT",
+      "ratio": 1.810280092893314,
+      "marketCap": 6334066808.970735,
+      "capTime": 1791204940000.0,
+      "capId": "bitcoin-cash",
       "source": "Binance openInterestHist"
     },
     {
@@ -383,112 +611,67 @@
       "source": "Binance openInterestHist"
     },
     {
+      "growth": -0.5243889638460786,
+      "notional": 19891356.29413515,
+      "coinStart": 23356441.2,
+      "coinEnd": 23233962.6,
+      "sym": "VIRTUALUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
       "growth": -1.0331486793786149,
       "notional": 38604260.60429,
       "coinStart": 32552168.6,
       "coinEnd": 32215856.3,
       "sym": "DOTUSDT",
-      "ratio": 1.8864258060910952,
-      "marketCap": 2046423478.709865,
-      "capTime": 1791204580000.0,
+      "ratio": 1.8851320862603562,
+      "marketCap": 2047827888.86011,
+      "capTime": 1791204940000.0,
       "capId": "polkadot",
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": -0.08606823220337345,
+      "notional": 38271512.15567268,
+      "coinStart": 96554789.0,
+      "coinEnd": 96471686.0,
+      "sym": "PONSUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 0.8628100051211396,
+      "notional": 9998742.94654232,
+      "coinStart": 24219237.0,
+      "coinEnd": 24428203.0,
+      "sym": "BRUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 0.3306994701037347,
+      "notional": 32118936.58838447,
+      "coinStart": 5381532663.0,
+      "coinEnd": 5399329363.0,
+      "sym": "1000SHIBUSDT",
+      "ratio": null,
+      "marketCap": null,
+      "capTime": null,
+      "capId": null,
       "source": "Binance openInterestHist"
     }
   ],
-  "errors": [
-    {
-      "sym": "ETHUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "SOLUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "ZECUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "XRPUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "GTCUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "PUMPUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "ENAUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "WLDUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "AINUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "1000PEPEUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "MUBARAKUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "TAOUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "AVAXUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "AAVEUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "LINKUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "LTCUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "NILUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "TRUMPUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "BCHUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "VIRTUALUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "PONSUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "BRUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    },
-    {
-      "sym": "1000SHIBUSDT",
-      "reason": "ValueError: Exact 1H endpoint missing or duplicate"
-    }
-  ],
+  "errors": [],
   "capError": "",
   "stoppedForRateLimit": false
 }

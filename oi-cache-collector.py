@@ -29,30 +29,46 @@ def collect(limit):
  syms={x['symbol'] for x in ex['symbols'] if x.get('status')=='TRADING' and x.get('contractType')=='PERPETUAL' and x.get('quoteAsset')=='USDT'}
  tick=get(BASE+'/fapi/v1/ticker/24hr');universe=sorted([x for x in tick if x.get('symbol') in syms],key=lambda x:float(x['quoteVolume']),reverse=True)[:limit]
  def hist(sym):return get(BASE+'/futures/data/openInterestHist?symbol='+urllib.parse.quote(sym,safe='')+'&period=5m&limit=16')
- anchor=hist('BTCUSDT');end=select_end(anchor,clock);start=end-3600000
  ids=list({IDS[x['symbol'][:-4]] for x in universe if x['symbol'][:-4] in IDS})
  cap_error='';caps={}
  try:
   if ids:caps=get('https://api.coingecko.com/api/v3/simple/price?ids='+','.join(sorted(ids))+'&vs_currencies=usd&include_market_cap=true&include_last_updated_at=true')
  except Exception as e:cap_error=type(e).__name__+': '+str(e)
- rows=[];errors=[];halt=False
- def one(item):
-  sym=item['symbol'];data=anchor if sym=='BTCUSDT' else hist(sym);r=calculate(data,start,end);base=sym[:-4];asset=IDS.get(base);cap=caps.get(asset,{})
+ histories={};errors=[];halt=False
+ # Fetch each requested symbol once, bounded to three simultaneous official calls.
+ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+  pending=list(universe)
+  while pending and not halt:
+   batch=pending[:3];pending=pending[3:]
+   futs=[(x['symbol'],pool.submit(hist,x['symbol'])) for x in batch]
+   for sym,f in futs:
+    try:histories[sym]=f.result()
+    except Exception as e:
+     errors.append({'sym':sym,'reason':type(e).__name__+': '+str(e)})
+     if isinstance(e,urllib.error.HTTPError) and e.code in (429,418):halt=True
+ # Never mix per-symbol latest times: choose newest exact timestamp shared by every
+ # successfully fetched series; absent/failed symbols stay excluded and disclosed.
+ series=[(sym,rows) for sym,rows in histories.items() if rows]
+ if not series:raise ValueError('No official OI histories collected')
+ sets=[{int(r['timestamp']) for r in rows if str(r.get('timestamp','')).isdigit()} for _,rows in series]
+ common=set.intersection(*sets) if sets else set();floor=clock//300000*300000
+ ends=sorted((t for t in common if t<=floor and t-3600000 in common),reverse=True)
+ if not ends:raise ValueError('No exact common published 1H endpoint')
+ end=ends[0];start=end-3600000
+ if clock-end>600000:raise ValueError('Common official publication lag exceeds 10 minutes')
+ rows=[]
+ for item in universe:
+  sym=item['symbol'];data=histories.get(sym)
+  if not data:continue
+  try:r=calculate(data,start,end)
+  except Exception as e:
+   errors.append({'sym':sym,'reason':type(e).__name__+': '+str(e)});continue
+  asset=IDS.get(sym[:-4]);cap=caps.get(asset,{})
   try:m=float(cap.get('usd_market_cap',0));t=float(cap.get('last_updated_at',0))*1000
   except (ValueError,TypeError):m,t=0,0
   now=int(time.time()*1000);ok=math.isfinite(m) and m>0 and 0<t<=now+60000 and now-t<=900000
   r.update(sym=sym,ratio=r['notional']/m*100 if ok else None,marketCap=m if ok else None,capTime=t if ok else None,capId=asset,source='Binance openInterestHist')
-  return r
- # bounded batches allow stopping after HTTP429/418 without resubmitting the full universe
- with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-  for i in range(0,len(universe),3):
-   if halt:break
-   futs=[(x['symbol'],pool.submit(one,x)) for x in universe[i:i+3]]
-   for sym,f in futs:
-    try:rows.append(f.result())
-    except Exception as e:
-     errors.append({'sym':sym,'reason':type(e).__name__+': '+str(e)})
-     if isinstance(e,urllib.error.HTTPError) and e.code in (429,418):halt=True
+  rows.append(r)
  generated=int(time.time()*1000)
  if generated-end>900000:raise ValueError('Collection ended with stale endpoint; refusing cache')
  return {'schemaVersion':1,'generatedAt':generated,'expiresAt':min(generated+900000,end+900000),'serverTime':clock,'window':{'start':start,'end':end},'publicationLagMs':clock-end,'scope':{'type':'quoteVolumeTop','limit':limit,'symbols':[x['symbol'] for x in universe]},'sources':{'oi':'https://www.binance.com/futures/data/openInterestHist','marketCap':'https://api.coingecko.com/api/v3/simple/price','capIdentity':'explicit vetted ID registry; unmapped excluded'},'rows':rows,'errors':errors,'capError':cap_error,'stoppedForRateLimit':halt}
