@@ -14,7 +14,9 @@
 
 ## Transfer与自动流水线
 
-Transfer采集器现在遍历所有275映射，EVM按链与地址去重：Ethereum/BSC/Base/Arbitrum/Optimism/Avalanche/Polygon公开RPC，Solana/Sui明确未适配。每批最多20地址，100区块有界查询，decimals按结束块读取，日志/区块hash与链Id校验，链独立失败。180秒全局预算、90秒链预算、400个HTTP请求上限、4秒请求时限（云端POSIX时钟；iSH不支持setitimer时保留socket时限）。确认块缓冲按链配置，不承诺finality。
+Transfer采集器现在遍历所有275映射，EVM按链与地址去重：Ethereum/BSC/Base/Arbitrum/Optimism/Avalanche/Polygon公开RPC，Solana/Sui明确未适配。RPC方法批量最多20条，日志过滤最多8地址，100区块有界查询，decimals按结束块读取，日志/区块hash与链Id校验，链独立失败。180秒全局预算、90秒链运行时间、400个全局HTTP请求与140个单链请求上限、4秒请求时限（云端POSIX时钟；iSH不支持setitimer时保留socket时限）。确认块缓冲按链配置，不承诺finality。
+
+实测PublicNode的Arbitrum历史日志需个人令牌，因此改用已验证的Arbitrum官方公开RPC（arb1.arbitrum.io/rpc），没有绕过私有接口认证。高活跃代币（如USDC）在单次响应过大时按区块二分，保持同一完整起止范围，预算不足时明确失败而不截断为成功。
 
 2026-10-05T00:13:40Z手机实跑：240unavailable（218rpc_timeout、22rpc_http_error）、35unsupported；这不是成功转账覆盖。主界面保留失败原因与未知计数。Transfer过滤默认100万token单位，不是统一USD大额标准；USD估值、地址标签未知，不生成美元鲸鱼确认。
 
@@ -22,9 +24,10 @@ Actions仍计划每30分钟。collect_pipeline.py依次采集DEX、Transfer，�
 
 ## 验收
 
-- 完整Node128/128、Python90/90（后续新增测试以最终日志为准）。
+- 完整Node128/128、Python95/95，批量端点/去重/限流/失败状态/全目录DOM/多链Transfer/完整区块二分等回归通过。
 - 真WebKit：571目录、275地址、198有效DEX数据、0快捷按钮；Ethereum与Solana浏览器链接、native说明、三入口、320px无整页溢出；layout.qa.js27/27。
-- 云端首次完整pipeline与自动cron仍需发布后实跑确认，结果另记。
+- 云端完整pipeline run37255150159成功，数据时间2026-10-05T02:23:22Z：DEX198ok/72无合法池/5未适配；Transfer240ok/35未适配，169HTTP请求、71条满足token数量过滤的事件。六条有效EVM链：Ethereum180/BSC44/Base12/Arbitrum2/Avalanche1/Optimism1（含报价别名符号，不等于240个唯一合约）。
+- 缓存提交20ca1ac，Pages37255204757成功；双通道定时工作流91adfc1保持每30分钟计划。已验证手动触发完整pipeline；新版cron准点性不承诺。
 
 ## 尚未覆盖
 
