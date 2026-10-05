@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="oi-cap-radar.css?v=20261005-1">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#0a0d13">
 <title>OI 雷达 · Binance 持仓</title>
@@ -274,10 +275,11 @@ input[type=number]{text-align:right}
     <p class="mut" style="margin:4px 0 8px">当前与历史均按所选1/2/3日同端点ΔOI与复合价格收益分四类；次日收益单独统计，仅使用已完成日。n为币×日观测数，小样本不稳定；当前TopN存在幸存者/选择偏差，跨币相关且重叠窗口非独立，未扣手续费、滑点与资金费成本；不构成清算、挤压或交易指令。</p>
     <div class="pbar" id="qdBar"><i></i></div>
     <div class="banner" id="qdBan"></div>
+    <p class="mut signal-history-note">历史证据是所选日线窗口的条件统计，不是日内 15/30/60 分钟信号的胜率；n 为币×日观测数。TopN 有幸存者/选择偏差，跨币相关且重叠窗口不独立，未扣手续费、滑点与资金费，不能当作概率或交易指令。</p>
     <div id="qdCards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0"></div>
     <div class="row" style="margin:8px 0">
       <div class="seg" id="qdFilter">
-        <button data-q="squeeze" class="on">轧空候选</button><button data-q="trend">趋势拥挤</button><button data-q="flush">多头清算</button><button data-q="cover">空头回补</button>
+        <button data-q="squeeze" class="on">下跌增仓</button><button data-q="trend">上涨增仓</button><button data-q="flush">下跌减仓</button><button data-q="cover">上涨减仓</button>
       </div>
       <button class="btn mini" id="qdCsv">导出CSV</button>
     </div>
@@ -285,16 +287,22 @@ input[type=number]{text-align:right}
       <h3>交易工作台 · 5m执行 <span class="r" id="idTime"></span></h3>
       <div class="chips" id="idMarket" style="display:flex;margin:6px 0"></div>
       <div class="banner" id="idPlan"></div>
-      <p class="mut" id="idMethod" style="margin:4px 0 8px">多因子评分：市场环境20 · 动量15 · OI20 · 成交量15 · 费率10 · 观察结构20</p>
+      <p class="mut" id="idMethod" style="margin:4px 0 8px">评分是条件分，不是概率：市场环境20 · 动量15 · OI20 · 成交量15 · 费率10 · 结构/VWAP20；达到阈值只表示当前条件更齐，不代表胜率。</p>
+      <div class="signal-explain" id="idExplain">
+        <b>怎么看</b><span>价格↑ + OI↑：上涨增仓；价格↓ + OI↑：下跌增仓；价格↓ + OI↓：下跌减仓；价格↑ + OI↓：上涨减仓。</span>
+        <span>这些是价格与OI的中性共变标签，不能单由OI与价格证明多空身份或资金流；分数贡献按固定权重计算，费率缺失不加分，未满足严格覆盖/闭合端点则不评分。</span>
+      </div>
+      <div class="signal-status closed" id="idStatus" role="status" aria-live="polite">已关闭 · 不采样（默认关闭）</div>
+      <div class="signal-coverage" id="idCoverage" aria-live="polite"></div>
       <div class="row" style="margin-bottom:8px">
         <button class="btn mini pri" id="idToggle">开启日内</button>
         <div class="seg" id="idWin"><button data-w="15">15m</button><button data-w="30" class="on">30m</button><button data-w="60">60m</button></div>
         <div class="seg" id="idScore"><button data-s="60">≥60分</button><button data-s="75" class="on">≥75分</button></div>
       </div>
-      <p class="mut" style="margin:3px 0 8px">Top30监测 · 5m VWAP/ATR · OI/价格/成交量/费率多因子 · 评分≥75进入候选，状态确认后才执行</p>
+      <p class="mut" style="margin:3px 0 8px">Top30监测 · 5m VWAP/ATR · OI/价格/成交量/费率多因子 · 评分达到当前阈值才进入候选，状态确认后才执行；15/30/60 分钟只是观察窗口，不改变评分规则。</p>
       <div class="tblwrap"><table class="tbl" id="idTbl">
         <thead><tr><th>币种</th><th>剧本/状态</th><th>综合分</th><th>ΔOI</th><th>ΔP</th><th>量比</th><th>VWAP</th><th>ATR止损</th></tr></thead>
-        <tbody><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:14px">开启后等待首轮快照</td></tr></tbody>
+        <tbody><tr><td colspan="8" style="text-align:center;color:var(--dim);padding:14px">开启后等待首轮快照</td></tr></tbody>
       </table></div>
     </div>
     <div class="tblwrap"><table class="tbl" id="qdTbl">
@@ -381,7 +389,7 @@ input[type=number]{text-align:right}
 <nav id="tabbar" aria-label="主导航">
   <button data-v="market" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 19V5m0 14h18M6 14l4-5 4 3 6-8"/></svg>市场</button>
   <button data-v="opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg>机会</button>
-  <button data-v="watch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/></svg>自选<span class="nav-count" id="watchCount" hidden></span></button>
+  <button data-v="signal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>信号</button>
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
@@ -406,6 +414,7 @@ function fPrice(v){if(v==null||!isFinite(v))return '—';
   if(v>=1)return v.toFixed(3);
   return (+v.toPrecision(4)).toString()}
 const fP=(v,d=2)=>(v==null||!isFinite(v))?'—':(v>=0?'+':'')+(v*100).toFixed(d)+'%';
+const escText=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clsP=v=>(v==null)?'':(v>0?'up':(v<0?'down':''));
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2400)}
 function stamp(){const n=new Date();$('#htime').textContent=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2)}
@@ -453,7 +462,7 @@ const S={
   dt2:{chartRes:'day',chartMode:'oi'},
   qd:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:3,U:100,filter:'squeeze',agg:null},
   ws:{on:false,sock:null,retry:0,dirty:0},
-  id:{on:false,timer:null,win:30,score:75,hist:new Map(),rows:[],loading:false},
+  id:{on:false,timer:null,win:30,score:75,hist:new Map(),rows:[],coverage:[],monitorSymbols:[],closedEnd:0,loading:false,lastError:'',state:'closed',generation:0},
   market:{state:'未知',score:0,bias:0,updated:0},
 };
 function saveFav(){store.set(LSK.fav,[...S.fav]);if(typeof layoutFavoritesChanged==='function')layoutFavoritesChanged()}
@@ -1091,7 +1100,7 @@ function bind(){
   $$('#tabbar button').forEach(b=>b.onclick=()=>showView(b.dataset.v));
   /* 总览 */
   $('#ovSearch').oninput=e=>{S.ov.q=e.target.value;S.ov.page=1;ovRender()};
-  $('#ovFavBtn').onclick=()=>showView(Layout.current==='watch'?'market':'watch');
+  $('#ovFavBtn').onclick=()=>{S.ov.favOnly=!S.ov.favOnly;S.ov.page=1;layoutList('market')};
   $('#ovRefresh').onclick=()=>{
     if(S.ov.loading)return;
     S.oi.clear();S.oiAll=false;
@@ -1247,12 +1256,14 @@ function bind(){
   $$('#idWin button').forEach(b=>b.onclick=()=>{
     S.id.win=+b.dataset.w;
     $$('#idWin button').forEach(x=>x.classList.toggle('on',x===b));
-    S.id.generation=(S.id.generation||0)+1;S.id.loading=false;S.id.rows=[];S.id.coverage=[];S.idTime=0;idRender();
+    S.id.generation=(S.id.generation||0)+1;S.id.loading=false;S.id.rows=[];S.id.coverage=[];S.id.monitorSymbols=[];S.id.closedEnd=0;S.id.lastError='';S.id.state=S.id.on?'warmup':'closed';S.idTime=0;idRender();
     if(S.id.on)idPoll();
   });
   $$('#idScore button').forEach(b=>b.onclick=()=>{
     S.id.score=+b.dataset.s;
     $$('#idScore button').forEach(x=>x.classList.toggle('on',x===b));
+    if(S.id.on&&S.id.state==='ready'&&!S.id.rows.some(r=>r.score>=S.id.score))S.id.state='empty';
+    else if(S.id.on&&S.id.state==='empty'&&S.id.rows.some(r=>r.score>=S.id.score))S.id.state='ready';
     idRender();
   });
   $('#idToggle').onclick=()=>idToggle(!S.id.on);
@@ -1788,11 +1799,14 @@ function idWindow(samples,end,win){
   return {value:e&&b&&coverage>=.9&&!gap?(e.v/b.v-1)*100:null,coverage,warmup:!e||!b||coverage<.9||gap};
 }
 async function idPoll(){
-  if(!S.id.on||S.id.loading||!S.ov.ready||!S.ov.list.length)return;
+  if(!S.id.on||S.id.loading)return;
+  if(!S.ov.ready||!S.ov.list.length){S.id.state='waiting';S.id.lastError='市场未就绪，等待行情加载';idRender();return;}
   S.id.loading=true;idMarketRender();
   const generation=S.id.generation||0,win=S.id.win,now=Date.now();
   const current=()=>{if(generation!==(S.id.generation||0)||!S.id.on)return false;return true};
   const list=[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,30),rows=[],coverage=[];
+  S.id.monitorSymbols=list.map(r=>r.sym);S.id.closedEnd=0;
+  S.id.state='sampling';S.id.lastError='';idRender();
   const fm=new Map((S.fd.rows||[]).map(x=>[x.sym,x]));
   try{await pool(list,6,async r=>{
     if(!current())return;
@@ -1811,6 +1825,7 @@ async function idPoll(){
       const delta=idWindow(S.id.hist.get(r.sym),end,win);
       if(!old||delta.warmup){coverage.push(`${r.sym}: 预热/断档 ${(delta.coverage*100).toFixed(0)}%`);return}
       const dOi=delta.value,dP=(last.c/old.c-1)*100;
+      S.id.closedEnd=Math.max(S.id.closedEnd||0,end);
       const recent=ks.slice(-20),vv=recent.reduce((a,x)=>a+x.v,0),vwap=vv?recent.reduce((a,x)=>a+(x.h+x.l+x.c)/3*x.v,0)/vv:last.c;
       const trs=ks.slice(-15).map((x,i,a)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),atr=trs.reduce((a,b)=>a+b,0)/trs.length;
       const vols=ks.slice(-21,-1),av=vols.reduce((a,x)=>a+x.v,0)/vols.length,vr=av?last.v/av:0,q=idQuad(dOi,dP);
@@ -1828,27 +1843,63 @@ async function idPoll(){
     }catch(e){if(current())coverage.push(`${r.sym}: 数据请求失败`)}
   },()=>!current());
   if(!current())return;
-  S.id.rows=rows;S.id.coverage=coverage;S.idTime=Date.now();idMarketRender();idRender();
-  }finally{if(current())S.id.loading=false}
+  S.id.rows=rows;S.id.coverage=coverage;S.idTime=Date.now();
+  const qualified=rows.filter(r=>r.score>=S.id.score), failedCount=coverage.filter(x=>/失败|请求/.test(x)).length;
+  const unusable=coverage.filter(x=>/失败|请求|K线不足|预热|断档/.test(x)).length;
+  S.id.state=qualified.length?'ready':(failedCount===list.length?'error':(unusable===list.length?'warmup':'empty'));
+  if(S.id.state==='error')S.id.lastError=`Top30 数据请求失败（${failedCount}/${list.length}）`;
+  idMarketRender();idRender();
+  }catch(e){if(current()){S.id.state='error';S.id.lastError=e?.message||'请求失败';idRender()}}
+  finally{if(current())S.id.loading=false}
 }
 function loadKlines5(sym,limit){
   return jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=5m&limit=${Math.min(150,limit)}`,20000).then(d=>d.map(k=>({t:k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]})));
 }
+function idStatusText(){
+  const win=S.id.win||30, list=(S.id.monitorSymbols||[]).length||Math.min(30,S.ov.list?.length||30), rows=S.id.rows||[];
+  const failed=(S.id.coverage||[]).filter(x=>/失败|请求/.test(x)).length;
+  const invalid=(S.id.coverage||[]).filter(x=>/K线不足|预热|断档/.test(x)).length;
+  const valid=rows.length, ends=(S.id.closedEnd||Math.floor(Date.now()/300000)*300000), spans=(S.id.monitorSymbols||[]).map(sym=>{
+    const a=(S.id.hist?.get?.(sym)||[]).filter(x=>x.t<=ends&&(x.observedAt??x.t)<=ends&&Number.isFinite(x.v)&&x.v>0).sort((x,y)=>x.t-y.t);
+    if(a.length<2||ends-a.at(-1).t>65000)return 0;
+    let i=a.length-1;while(i>0&&a[i].t-a[i-1].t<=130000)i--;
+    return Math.max(0,(a.at(-1).t-a[i].t)/60000);
+  });
+  const span=spans.length?Math.min(win,Math.floor(Math.min(...spans))):0;
+  const progress=`闭合端点进度 ${span}/${win} 分钟 · 有效样本 ${valid}/${list}（进度≠严格覆盖）`;
+  const issues=[failed?`${failed} 个请求失败`:'' ,invalid?`${invalid} 个预热/K线不足`:'' ].filter(Boolean).join(' · ');
+  const updated=S.idTime?` · 上次更新 ${new Date(S.idTime).toISOString().slice(11,16)} UTC`:'';
+  const suffix=`${issues?` · ${issues}`:''}${updated}`;
+  if(!S.id.on)return '已关闭 · 不采样（默认关闭）';
+  if(S.id.state==='waiting')return '等待行情加载 · 尚未开始采样';
+  if(S.id.state==='sampling')return `采样中 · ${progress}${suffix}`;
+  if(S.id.state==='error')return `失败 · ${S.id.lastError||'请求失败'} · 可重试 · ${progress}${suffix}`;
+  if(S.id.state==='warmup')return `预热中 · ${progress} · 尚未使用未闭合端点${suffix}`;
+  if(S.id.state==='ready')return `有效结果 · ${progress} · 当前阈值 ≥${S.id.score} 分${suffix}`;
+  if(S.id.state==='empty')return `已采样 · ${progress} · 当前无满足 ≥${S.id.score} 分的样本${suffix}`;
+  return `等待开启 · ${progress}`;
+}
 function idRender(){
-  const tb=$('#idTbl tbody');if(!tb)return;const rows=(S.id.rows||[]).filter(r=>r.score>=S.id.score).sort((a,b)=>b.score-a.score||Math.abs(b.dP)-Math.abs(a.dP));
+  const tb=$('#idTbl tbody');if(!tb)return;const raw=S.id.rows||[],rows=raw.filter(r=>r.score>=S.id.score).sort((a,b)=>b.score-a.score||Math.abs(b.dP)-Math.abs(a.dP));
+  if(S.id.on&&['ready','empty'].includes(S.id.state))S.id.state=rows.length?'ready':'empty';
   $('#idTime').textContent=S.idTime?new Date(S.idTime).toISOString().slice(11,16)+' UTC':'';
-  tb.innerHTML=rows.map(r=>`<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td><td><b>${r.script}</b><br><span class="mut">${r.state}</span></td><td><span class="bdg pick">${r.score}/100</span></td><td class="${clsP(r.dOi)}">${fP(r.dOi/100)}</td><td class="${clsP(r.dP)}">${fP(r.dP/100)}</td><td>${r.vr.toFixed(1)}x</td><td>${fPrice(r.vwap)}</td><td>${fPrice(r.atr)} (${r.px?((r.atr/r.px)*100).toFixed(2):'—'}%)</td></tr>`).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:14px">${S.id.on?(S.id.coverage?.length?'预热/数据不足：'+S.id.coverage.join('；'):'暂无达到评分阈值的观察样本'):'开启后等待窗口预热'}</td></tr>`;
+  const status=$('#idStatus');if(status){status.className='signal-status '+(S.id.state||'closed');status.textContent=idStatusText()}
+  const cov=$('#idCoverage');if(cov){cov.innerHTML=(S.id.coverage||[]).length?'<b>逐币覆盖</b>'+S.id.coverage.map(x=>`<span>${escText(x)}</span>`).join(''):''}
+  const empty=S.id.state==='empty'?'已完成采样，但没有满足当前阈值的样本（不是无数据）。':S.id.state==='error'?'数据请求失败，未用失败样本评分；请稍后重试。':S.id.state==='warmup'?'正在收集已闭合的 5m 端点，预热完成前不显示候选。':S.id.on?'暂无达到评分阈值的观察样本':'开启后等待窗口预热';
+  tb.innerHTML=rows.map(r=>`<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td><td><b>${r.script}</b><br><span class="mut">${r.state}</span></td><td><span class="bdg pick">${r.score}/100</span></td><td class="${clsP(r.dOi)}">${fP(r.dOi/100)}</td><td class="${clsP(r.dP)}">${fP(r.dP/100)}</td><td>${r.vr.toFixed(1)}x</td><td>${fPrice(r.vwap)}</td><td>${fPrice(r.atr)} (${r.px?((r.atr/r.px)*100).toFixed(2):'—'}%)</td></tr>`).join('')||`<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:14px">${empty}</td></tr>`;
 }
 function idToggle(on){
   S.id.generation=(S.id.generation||0)+1;clearInterval(S.id.timer);S.id.timer=null;S.id.loading=false;
   S.id.on=on;const b=$('#idToggle');b.textContent=on?'暂停日内':'开启日内';b.classList.toggle('pri',on);
-  S.id.hist.clear();S.id.rows=[];S.id.coverage=[];S.idTime=0;idRender();
+  S.id.hist.clear();S.id.rows=[];S.id.coverage=[];S.id.monitorSymbols=[];S.id.closedEnd=0;S.id.lastError='';S.id.state=on?'warmup':'closed';S.idTime=0;idRender();
   if(on){idPoll();S.id.timer=setInterval(idPoll,60000);toast('日内观察开启：Top30，每60秒采样，等待窗口预热')}
+  else toast('日内观察已暂停：不再采样')
 }
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261003-1"></script>
-<script src="layout.js?v=20261005-4"></script>
-<script>stBind(false);layoutInit();</script>
+<script src="layout.js?v=20261005-5"></script>
+<script src="oi-cap-radar.js?v=20261005-1"></script>
+<script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:()=>window.open('https://github.com/Alchemyoo/oi-radar/actions/workflows/oi-radar-cache.yml','_blank','noopener'),getUniverse:()=>S.ov.list,onSymbol:jumpSym});</script>
 </body>
 </html>

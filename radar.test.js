@@ -400,7 +400,7 @@ test('index.html rtPollRequest: window alert fires once, lastAlertAt blocks repe
 
 /* ======================= 5. things that must not change ======================= */
 test('static: three entries kept, scripts wired and old buggy paths gone', () => {
-  for (const v of ['market', 'opportunity', 'watch']) assert.ok(html.includes(`data-v="${v}"`), v);
+  for (const v of ['market', 'opportunity', 'signal']) assert.ok(html.includes(`data-v="${v}"`), v);
   assert.ok(html.indexOf('src="radar.js') > 0 && html.indexOf('src="radar.js') < html.indexOf("<script>\n'use strict';"));
   for (const bad of ['oif_scanchecked', 'lastAgo', 'S.tick[r.sym]&&S.tick[r.sym].px', 'loadKlines(sym,S.sc.W+1)'])
     assert.ok(!html.includes(bad), 'still present: ' + bad);

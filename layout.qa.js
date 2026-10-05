@@ -10,25 +10,27 @@
   check('correct radar header',$('#rtCard h3').textContent.startsWith('实时 OI 雷达'));
   check('no automatic monitoring',!S.rt.on&&!S.id.on);
   S.fav.clear();saveFav();layoutNavigate('watch');
-  check('empty state',!$('#watchEmpty').hidden);rtToggle(true);
+  check('watch compatibility uses market',Layout.current==='market'&&S.ov.favOnly);rtToggle(true);
   check('empty radar blocked',!S.rt.on);
-  layoutNavigate('market');S.ov.q='BTC';S.ov.page=1;ovRender();
+  layoutNavigate('market');S.ov.favOnly=false;S.ov.q='BTC';S.ov.page=1;ovRender();
   S.fav.add('ETHUSDT');saveFav();layoutNavigate('watch');
-  check('separate watch search',S.ov.q==='');
+  check('favorite filter retains market search',S.ov.q==='BTC');S.ov.q='';$('#ovSearch').value='';ovRender();
   check('only favorites',ovFiltered().length===1&&ovFiltered()[0].sym==='ETHUSDT');
-  check('watch title',$('#ovTitle').textContent.startsWith('自选行情'));
+  check('favorite title',$('#ovTitle').textContent.startsWith('收藏行情'));
   check('automatic radar enrollment',S.rt.last.has('ETHUSDT'));
-  layoutNavigate('market');check('market search restored',S.ov.q==='BTC'&&!S.ov.favOnly);
+  S.ov.favOnly=false;S.ov.q='BTC';Layout.lists.market.q='BTC';layoutNavigate('market');check('market search retained',S.ov.q==='BTC'&&!S.ov.favOnly);
   layoutNavigate('opportunity');
-  for(const k of ['strong','scan','signal']){layoutOp(k);check(k+' exclusive visibility',['strong','scan','signal'].every(x=>$('#v-'+x).hidden===(x!==k)))}
+  for(const k of ['strong','scan']){layoutOp(k);check(k+' exclusive visibility',['strong','scan'].every(x=>$('#v-'+x).hidden===(x!==k)))}
+  layoutNavigate('signal');check('signal is primary',Layout.current==='signal'&&$('#v-signal').classList.contains('on'));check('radar host exists',!!$('#oiMarketCapRadar'));
+  layoutNavigate('detail');layoutBack();check('detail returns to signal',Layout.current==='signal');
   check('evidence folded',!$('#signalEvidence').open&&$('#signalEvidence').contains($('#qdTbl')));
   check('execution first',$('#v-signal .card').firstElementChild.contains($('#idToggle')));
-  layoutOp('scan');$('#main').scrollTop=120;const y=$('#main').scrollTop;
+  layoutNavigate('opportunity');layoutOp('scan');$('#main').scrollTop=120;const y=$('#main').scrollTop;
   layoutNavigate('detail');check('detail source',Layout.returnTo.view==='opportunity'&&Layout.returnTo.op==='scan');
   layoutBack();check('source and scroll restored',Layout.current==='opportunity'&&Layout.op==='scan'&&$('#main').scrollTop===y);
   layoutNavigate('watch');S.fav.clear();saveFav();
   check('remove last favorite clears monitoring',!S.rt.last.size&&!S.rt.rows.length);
-  for(let i=0;i<20;i++)layoutNavigate(['market','watch','opportunity'][i%3]);
+  for(let i=0;i<20;i++)layoutNavigate(['market','signal','opportunity'][i%3]);
   check('repeated switching preserves DOM',$$('[id]').every((e,i,a)=>a.findIndex(x=>x.id===e.id)===i));
   const originalJget=fetchX;let resolve;let requests=0;
   try{

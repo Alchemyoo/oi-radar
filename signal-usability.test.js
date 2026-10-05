@@ -1,0 +1,35 @@
+'use strict';
+// Independent second-review tests: real functions in a VM, bounded mocks only.
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const NOW=Date.UTC(2026,9,4,12),MIN=60000;
+function fn(name){const m=new RegExp('function '+name+'\\s*\\(').exec(html);assert.ok(m,`missing ${name}`);let i=html.indexOf('{',m.index),d=0;for(let j=i;j<html.length;j++){if(html[j]==='{')d++;else if(html[j]==='}'&&!--d)return html.slice(m.index,j+1)}throw Error('unbalanced '+name)}
+function nodes(){const m=new Map();return {m,get:s=>{if(!m.has(s))m.set(s,{textContent:'',innerHTML:'',className:'',style:{},classList:{toggle(){}}});return m.get(s)}}}
+function bars(ok=true){if(!ok)return [];return Array.from({length:40},(_,i)=>({t:NOW-(40-i)*5*MIN,o:100,h:101,l:99,c:100,v:10}));}
+function build(opts={}){
+ const ns=nodes(), symbols=opts.symbols||['AUSDT'];
+ const id={on:true,loading:false,generation:1,win:30,score:75,hist:new Map(),rows:[],coverage:[],monitorSymbols:symbols,closedEnd:0,lastError:'',state:'warmup'};
+ const c={Date:class extends Date{static now(){return NOW}},Map,Math,Number,Array,Object,JSON,Promise,MIN,API:'https://example.invalid',S:{id,ov:{ready:true,list:symbols.map((sym,i)=>({sym,vol:100-i}))},fd:{rows:[]},market:{bias:0},tick:{}},QUADS:{trend:{name:'上涨增仓'},squeeze:{name:'下跌增仓'},flush:{name:'下跌减仓'},cover:{name:'上涨减仓'}},$:(s)=>ns.get(s),pool:async(a,n,f)=>{for(const x of a)await f(x)},idMarketRender(){},idRender(){},toast(){},setInterval(){return 1},clearInterval(){},jget:async(url)=>{const sym=decodeURIComponent(url.match(/symbol=([^&]+)/)?.[1]||'');if(opts.fail?.includes(sym))throw Error(opts.error||'<img onerror=1>');return {openInterest:'100',time:NOW}},loadKlines5:async(sym)=>opts.short?.includes(sym)?[]:bars(true),escText:v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])),fP:(v)=>String(v),clsP:()=>'',fPrice:(v)=>String(v),fC:(v)=>String(v),fN:(v)=>String(v)};
+  vm.createContext(c);const src=html.slice(html.indexOf('function idQuad('),html.indexOf("$('#idTbl')"));vm.runInContext(src,c);c.loadKlines5=async sym=>opts.short?.includes(sym)?[]:bars(true);return {c,ns,id,symbols};
+}
+function seedReady(x,score=40){x.id.hist.set('AUSDT',Array.from({length:31},(_,i)=>({t:NOW-(30-i)*MIN,v:100})));x.id.rows=[{sym:'AUSDT',score,dP:0,dOi:0,vr:1,vwap:100,atr:1,px:100,script:'上涨增仓',state:'ok'}];x.id.state='ready';x.id.monitorSymbols=['AUSDT'];}
+
+test('idPoll does not call low-score rows ready, and threshold switch updates state',async()=>{const x=build();x.id.hist.set('AUSDT',Array.from({length:31},(_,i)=>({t:NOW-(30-i)*MIN,v:100})));await x.c.idPoll();assert.equal(x.id.rows.length,1);assert.ok(x.id.rows[0].score<75);assert.equal(x.id.state,'empty');seedReady(x,70);x.id.score=75;x.c.idRender();assert.match(x.c.idStatusText(),/无满足.*75/);x.id.score=60;x.c.idRender();assert.match(x.c.idStatusText(),/有效结果/)});
+
+test('partial failures, partial warmup and K-line shortage remain explicit per symbol',async()=>{const x=build({symbols:['AUSDT','BUSDT'],fail:['BUSDT'],short:['AUSDT']});await x.c.idPoll();assert.equal(x.id.rows.length,0);assert.equal(x.id.state,'warmup');assert.equal(x.id.coverage.length,2);assert.match(x.id.coverage.join('|'),/K线不足/);assert.match(x.id.coverage.join('|'),/请求失败/);assert.match(x.c.idStatusText(),/1 个请求失败/);});
+
+test('all failures are error, not warmup or ready',async()=>{const x=build({symbols:['AUSDT','BUSDT'],fail:['AUSDT','BUSDT']});await x.c.idPoll();assert.equal(x.id.state,'error');assert.match(x.c.idStatusText(),/失败/);assert.match(x.c.idStatusText(),/可重试/)});
+
+test('no sample and long gap cannot fake elapsed warmup; closed progress is capped',()=>{const x=build();x.id.hist=new Map();x.id.state='warmup';assert.match(x.c.idStatusText(),/闭合端点进度 0\/30/);x.id.hist.set('AUSDT',[{t:NOW-2*60*MIN,v:100},{t:NOW,v:100}]);assert.match(x.c.idStatusText(),/闭合端点进度 0\/30/);x.id.hist.set('AUSDT',Array.from({length:31},(_,i)=>({t:NOW-(30-i)*MIN,v:100})));assert.match(x.c.idStatusText(),/闭合端点进度 30\/30/);assert.doesNotMatch(x.c.idStatusText(),/覆盖 1\/1/)});
+
+test('malicious lastError is text, not HTML',()=>{const x=build();x.id.state='error';x.id.lastError='<img src=x onerror=alert(1)>';x.c.idRender();const n=x.ns.get('#idStatus');assert.equal(n.innerHTML,'');assert.match(n.textContent,/&lt;img|<img/);assert.match(fs.readFileSync(__dirname+'/index.html','utf8'),/status\.textContent=idStatusText\(\)/)});
+
+test('neutral quadrant explanation and practical labels avoid unsupported identities',()=>{assert.match(html,/上涨增仓；价格↓ \+ OI↑：下跌增仓/);assert.match(html,/不能单由OI与价格证明多空身份或资金流/);for(const bad of ['空头增仓','回补','趋势拥挤'])assert.doesNotMatch(html,new RegExp(bad));assert.match(html,/colspan="8"[^>]*>开启后等待首轮快照/)});
+
+test('generation remains a hard guard and strict endpoints remain',()=>{assert.match(html,/generation!==\(S\.id\.generation\|\|0\)/);assert.match(html,/coverage>=\.9&&!gap/);assert.match(html,/t>now\+60000/)});
+
+test('enabled before market load waits honestly and issues no requests',async()=>{const x=build();x.c.S.ov.ready=false;await x.c.idPoll();assert.equal(x.id.state,'waiting');assert.match(x.c.idStatusText(),/等待行情加载/);assert.equal(x.id.hist.size,0)});
+test('one missing monitored symbol prevents full warmup progress',()=>{const x=build({symbols:['AUSDT','BUSDT']});x.id.hist.set('AUSDT',Array.from({length:31},(_,i)=>({t:NOW-(30-i)*MIN,v:100})));assert.match(x.c.idStatusText(),/进度 0\/30/)});
