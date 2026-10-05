@@ -37,8 +37,46 @@ async function request(url,signal){const ctl=new AbortController(),abort=()=>ctl
 }
 function init(host,deps={}){
  if(!host)return null;let generation=0,ctl=null,cooldown=0,expiryTimer=null,pollTimer=null;
- async function collect(){if(state.collecting)return;state.collecting=true;state.collectMessage='正在向官方数据源发起采集…';render();try{const r=await fetch(COLLECTOR+'/collect',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});const d=await r.json();if(!r.ok)throw Error(d.error||'触发采集失败');state.activeRunId=d.previousRunId||0;state.collectMessage=d.message||'采集已启动';render();clearInterval(pollTimer);pollTimer=setInterval(checkRun,4000);await checkRun()}catch(e){state.collecting=false;state.collectMessage='采集触发失败：'+e.message;render()}}
- async function checkRun(){try{if(!state.activeRunId){const q=await fetch(COLLECTOR+'/status/latest'),latest=await q.json();if(!q.ok)throw Error(latest.error||'状态查询失败');const candidate=latest.run;if(!candidate||Date.parse(candidate.created_at)<state.collectStartedAt){state.collectMessage='已提交，等待 GitHub 排队…';render();return}state.activeRunId=candidate.id}const r=await fetch(COLLECTOR+'/status?run='+encodeURIComponent(state.activeRunId));const d=await r.json();if(!r.ok)throw Error(d.error||'状态查询失败');const run=d.run;if(!run){state.collectMessage='等待采集任务排队…';render();return}state.collectMessage=run.status==='completed'?(run.conclusion==='success'?'采集完成，正在等待网页缓存发布…':'采集失败：'+(run.conclusion||'未知')):'采集中 · '+(run.status==='queued'?'排队中':'运行中');render();if(run.status==='completed'&&run.conclusion!=='success'){clearInterval(pollTimer);state.collecting=false;state.activeRunId=0;return}if(run.status==='completed'&&run.conclusion==='success'){const snap=await get((deps.cacheURL||'oi-radar-live.json')+'?t='+Date.now());if(!finite(snap.generatedAt)||snap.generatedAt<Date.parse(run.created_at)){state.collectMessage='采集成功，GitHub Pages 正在更新缓存…';render();return}clearInterval(pollTimer);state.collecting=false;state.activeRunId=0;await refresh()}}catch(e){state.collectMessage='状态查询失败：'+e.message;render()}}
+ const sleep=deps.sleep||((ms)=>new Promise(resolve=>setTimeout(resolve,ms)));
+ const collectFetch=deps.collectFetch||fetch;
+ let checking=false,collectEpoch=0;
+ async function collectAPI(path,body){
+  const r=await collectFetch(COLLECTOR+path,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(20000)});
+  const d=await r.json();if(!r.ok)throw Error(d.error||'采集服务请求失败');return d;
+ }
+ function finishCollect(message){clearInterval(pollTimer);pollTimer=null;state.collecting=false;state.collectMessage=message;render()}
+ async function collect(){
+  if(state.collecting||state.running)return;
+  const epoch=++collectEpoch;state.collecting=true;state.collectStartedAt=Date.now();state.collectMessage='正在提交采集请求…';state.activeRunId=0;state.previousRunId=0;state.beforeCollect=state.updated;render();
+  try{
+   const d=await collectAPI('/collect',{limit:state.range});if(epoch!==collectEpoch)return;
+   state.previousRunId=d.previousRunId||0;state.acceptedAt=d.acceptedAt||state.collectStartedAt;state.collectMessage='已提交，等待任务排队…';render();
+   clearInterval(pollTimer);pollTimer=setInterval(checkRun,4000);pollTimer?.unref?.();await checkRun();
+  }catch(e){if(epoch===collectEpoch)finishCollect('采集触发失败：'+e.message)}
+ }
+ async function checkRun(){
+  if(checking||!state.collecting)return;checking=true;const epoch=collectEpoch;
+  try{
+   if(Date.now()-state.collectStartedAt>12*60000){finishCollect('等待超时：云端任务可能仍运行，请稍后刷新缓存；未自动重发');return}
+   if(!state.activeRunId){
+    const d=await collectAPI('/status/latest');if(epoch!==collectEpoch)return;
+    const candidates=d.runs||[d.run].filter(Boolean),run=candidates.find(x=>x.id>state.previousRunId&&x.event==='workflow_dispatch'&&Date.parse(x.created_at)>=Math.floor(state.acceptedAt/1000)*1000);
+    if(!run){state.collectMessage='已提交，等待任务排队…';render();return}state.activeRunId=run.id;
+   }
+   const d=await collectAPI('/status?run='+state.activeRunId);if(epoch!==collectEpoch)return;const run=d.run;
+   if(!run||run.id!==state.activeRunId)throw Error('任务编号不一致');
+   if(run.status!=='completed'){state.collectMessage='采集中 · '+(run.status==='queued'?'排队中':'运行中');render();return}
+   if(run.conclusion!=='success'){finishCollect('采集未成功：'+(run.conclusion||'未知'));return}
+   state.collectMessage='采集完成，等待网页新缓存发布…';render();
+   const url=(deps.cacheURL||'oi-radar-live.json')+'?t='+Date.now(),raw=await get(url);if(epoch!==collectEpoch)return;
+   if(!finite(raw.generatedAt)||raw.generatedAt<state.acceptedAt||raw.generatedAt<=state.beforeCollect){render();return}
+   const cache=validateCache(raw,Date.now(),state.range);
+   clearTimeout(expiryTimer);Object.assign(state,cache,{done:cache.rows.length+cache.errors.length});
+   expiryTimer=setTimeout(expireSnapshot,Math.max(1,cache.expiresAt-Date.now()+1));expiryTimer?.unref?.();
+   finishCollect('采集成功 · 最新双榜已更新');
+  }catch(e){if(epoch===collectEpoch){state.collectMessage='等待重试 · '+e.message;render()}}
+  finally{checking=false}
+ }
  function expireSnapshot(){if(state.source==='官方API → 同源缓存'&&state.expiresAt&&Date.now()>=state.expiresAt){state.rows=[];state.capError='官方OI快照已过期，已撤下双榜；请更新，不代表无异动';render();}}
  const state={running:false,range:50,rows:[],errors:[],capError:'',updated:0,w:null,total:0,done:0,source:'浏览器直连',publicationLagMs:0};
  const get=deps.fetchJSON||request;
@@ -47,10 +85,10 @@ function init(host,deps={}){
   const r=ranks(state.rows),set=new Set(r.resonance);
   const line=(x,kind)=>`<li><button type="button" data-cap-symbol="${esc(x.sym)}" class="${set.has(x.sym)?'resonant':''}">${symbol(x.sym)} ${set.has(x.sym)?'<small>共振</small>':''}</button><b class="${kind}">${kind==='growth'?'+':''}${(kind==='growth'?x.growth:x.ratio).toFixed(1)}%</b></li>`;
   const coverage=state.rows.filter(x=>finite(x.ratio)).length;
-  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值雷达</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><div class="cap-resonance"><strong>${r.resonance.length?r.resonance.map(symbol).join(' · '):'暂无共振'}</strong><span>双榜共振</span></div><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两榜交集只是排名重合。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${state.running?'更新中':state.collecting?'采集任务运行中':state.collectMessage||'手动更新'} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}<footer><button data-cap-action="refresh" ${state.running?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running?'':'disabled'}>停止</button></footer></section>`;
+  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值雷达</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><div class="cap-resonance"><strong>${r.resonance.length?r.resonance.map(symbol).join(' · '):'暂无共振'}</strong><span>双榜共振</span></div><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两榜交集只是排名重合。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${esc(state.collecting?state.collectMessage:state.running?'更新中':state.collectMessage||'手动更新')} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}<footer><button data-cap-action="refresh" ${state.running||state.collecting?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting||state.running?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running||state.collecting?'':'disabled'}>停止</button></footer></section>`;
  }
  async function refresh(){
-  if(state.running)return;clearTimeout(expiryTimer);expiryTimer=null;state.expiresAt=0;if(Date.now()<cooldown){state.capError='接口冷却中，请稍后重试';render();return}
+  if(state.running||state.collecting)return;clearTimeout(expiryTimer);expiryTimer=null;state.expiresAt=0;if(Date.now()<cooldown){state.capError='接口冷却中，请稍后重试';render();return}
   const id=++generation;ctl=new AbortController();const signal=ctl.signal;const current=()=>id===generation&&!signal.aborted;
   state.running=true;state.rows=[];state.errors=[];state.capError='';state.updated=0;state.w=null;state.done=0;state.source='浏览器直连';state.publicationLagMs=0;
   const universe=(deps.getUniverse?.()||[]).filter(x=>typeof x.sym==='string'&&x.sym.endsWith('USDT')).sort((a,b)=>(b.vol||0)-(a.vol||0)).slice(0,state.range);
@@ -77,10 +115,10 @@ function init(host,deps={}){
   }catch(e){if(id===generation&&e.name!=='AbortError')state.capError=e.message}
   finally{if(id===generation){state.running=false;if(state.source!=='官方API → 同源缓存')state.updated=Date.now();render()}}
  }
- function stop(){generation++;ctl?.abort();state.running=false;state.capError='已停止，结果仅覆盖已完成币种';render()}
- host.addEventListener('click',e=>{const b=e.target.closest('[data-cap-action],[data-cap-symbol]');if(!b)return;if(b.dataset.capSymbol)deps.onSymbol?.(b.dataset.capSymbol);else if(b.dataset.capAction==='refresh')refresh();else if(b.dataset.capAction==='collect'){state.collectStartedAt=Date.now();state.activeRunSeen=false;collect();}else if(b.dataset.capAction==='stop')stop();else{state.settings=!state.settings;render()}});
- host.addEventListener('change',e=>{if(e.target.matches('[data-cap-range]')){if(state.running)stop();state.range=Number(e.target.value)===100?100:50;state.rows=[];state.errors=[];state.done=0;state.total=0;state.w=null;state.updated=0;render()}});
- render();return {refresh,stop,state,expireSnapshot,collect};
+ function stop(){if(state.collecting){collectEpoch++;finishCollect('已停止等待；已提交的云端采集未取消')}generation++;ctl?.abort();state.running=false;state.capError='已停止，结果仅覆盖已完成币种';render()}
+ host.addEventListener('click',e=>{const b=e.target.closest('[data-cap-action],[data-cap-symbol]');if(!b)return;if(b.dataset.capSymbol)deps.onSymbol?.(b.dataset.capSymbol);else if(b.dataset.capAction==='refresh')refresh();else if(b.dataset.capAction==='collect')collect();else if(b.dataset.capAction==='stop')stop();else{state.settings=!state.settings;render()}});
+ host.addEventListener('change',e=>{if(e.target.matches('[data-cap-range]')){if(state.running||state.collecting)stop();state.range=Number(e.target.value)===100?100:50;state.rows=[];state.errors=[];state.done=0;state.total=0;state.w=null;state.updated=0;render()}});
+ render();return {refresh,stop,state,expireSnapshot,collect,checkRun};
 }
 const api={identity,windowAt,sample,ranks,validateCache,init};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.OiCapRadar=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
