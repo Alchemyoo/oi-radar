@@ -834,15 +834,15 @@ const dailyEnd=rows=>{                    /* 5分钟行 → 日末 OI 序列 */
   for(const r of rows)m.set(dstr(r.t),r.oiv);
   return [...m.entries()].map(([d,v])=>({t:Date.parse(d+'T00:00:00Z'),oiv:v}));
 };
-async function scOne(sym,win){                /* OI 与价格共用 win 的同一对端点 */
-  const R=OiRadar,wantZ=S.sc.mode==='z';
+async function scOne(sym,win,ctx=S.sc){        /* OI 与价格共用 win 的同一对端点 */
+  const R=OiRadar,wantZ=ctx.mode==='z',stopped=()=>ctx.stop===true;
   let hit=null,src='hist';
-  const histN=wantZ?Math.min(40,S.sc.W+32):S.sc.W+4;
-  if(!S.sc.noHist){                       /* 快路径：openInterestHist（浏览器 CORS 受限时自动跳过） */
+  const histN=wantZ?Math.min(40,win.W+32):win.W+4;
+  if(!ctx.noHist&&!stopped()){              /* 本轮降级状态独立于其他模块 */
     try{hit=R.scOiFromHist(await loadOiHist(sym,histN),win)}
-    catch(e){if(e&&e.name==='TypeError')S.sc.noHist=true}
+    catch(e){if(e&&e.name==='TypeError')ctx.noHist=true}
   }
-  if(!hit){                               /* 回退：归档 zip（整段单源，不混合；含 d0 取期初端点） */
+  if(!hit&&!stopped()){                    /* 回退：归档 zip（整段单源，不混合；含 d0 取期初端点） */
     src='archive';
     let adays=[win.d0,...win.days];
     if(wantZ){                            /* z 模式：向前扩 30 天做基准分布 */
@@ -851,14 +851,14 @@ async function scOne(sym,win){                /* OI 与价格共用 win 的同�
       adays=[...base.reverse(),...adays];
     }
     const rs=[];
-    await pool(adays,3,async d=>{try{const dd=await fetchDay(sym,d);rs.push(...dd)}catch(e){}});
+    await pool(adays,3,async d=>{if(stopped())return;try{const dd=await fetchDay(sym,d);rs.push(...dd)}catch(e){}},stopped);
     rs.sort((a,b)=>a.t-b.t);
     hit=R.scOiFromArchive(rs,win);
   }
   let px=null;                            /* 价格取同窗口端点收盘价，不用当日未完成 K 线 */
-  try{px=R.scPriceChange(await loadKlines(sym,S.sc.W+3),win,Date.now())}catch(e){}
+  if(!stopped())try{px=R.scPriceChange(await loadKlines(sym,win.W+3),win,Date.now())}catch(e){}
   if(!hit)return {oiS:null,oiE:null,px,src,z:null};
-  const z=wantZ?R.scZ(hit.seq,hit.oiS,hit.oiE,S.sc.W):null;
+  const z=wantZ?R.scZ(hit.seq,hit.oiS,hit.oiE,win.W):null;
   return {oiS:hit.oiS,oiE:hit.oiE,coinS:hit.coinS,coinE:hit.coinE,px,src,z};
 }
 async function scGo(){
@@ -869,7 +869,10 @@ async function scGo(){
   if(S.sc.U>0)list=list.slice(0,S.sc.U);
   const win=OiRadar.scWindow(S.sc.W,Date.now());
   S.sc.run=true;S.sc.stop=false;S.sc.rows=[];S.sc.err=0;S.sc.done=0;S.sc.total=list.length;
+  const ctx={mode:S.sc.mode||'pct',W:win.W,U:S.sc.U,noHist:false,get stop(){return S.sc.stop}};
+  S.sc.config=ctx;S.sc.noHist=false;          /* 降级仅限本轮；不与象限模块共用 */
   S.sc.win=win;S.sc.t0=Date.now();S.sc.scanId=null;S.sc.next=null;S.sc.nextStat=null;
+  scRender();
   $('#scGo').disabled=true;$('#scStop').disabled=false;
   $('#scBar').classList.add('on');$('#scBar i').style.width='0%';
   $('#scChips').style.display='none';
@@ -878,15 +881,20 @@ async function scGo(){
   await pool(list,5,async r=>{
     if(S.sc.stop)return;
     try{
-      const {oiS,oiE,coinS,coinE,px,z}=await scOne(r.sym,win);
-      if(oiS==null||oiE==null){S.sc.err++}
+      const data=await scOne(r.sym,win,ctx);
+      if(S.sc.stop)return;                /* 停止时丢弃未完成结果 */
+      const {oiS,oiE,coinS,coinE,src}=data,fin=Number.isFinite;
+      const px=fin(data.px)?data.px:null,z=fin(data.z)?data.z:null;
+      const net=(oiE/oiS-1)*100,flow=oiE-oiS;
+      if(!fin(oiS)||!fin(oiE)||oiS<=0||oiE<=0||!fin(net)||!fin(flow)){S.sc.err++}
       else{
-        const net=(oiE/oiS-1)*100;
-        const coinNet=coinS>0&&coinE!=null?(coinE/coinS-1)*100:null;
-        const netOk=S.sc.mode==='z'?(z!=null&&z>=p.oiPct):(coinNet!=null&&coinNet>=p.oiPct);
-        const flow=oiE-oiS;
-        S.sc.rows.push({sym:r.sym,oiS,oiE,coinS,coinE,coinNet,flow,net,px,z,
-          pick:netOk&&px!=null&&Math.abs(px)<=p.pxPct&&oiS>=p.minOi});
+        const rawCoin=fin(coinS)&&coinS>0&&fin(coinE)&&coinE>0?(coinE/coinS-1)*100:null;
+        const coinNet=fin(rawCoin)?rawCoin:null;
+        const complete=px!=null&&(ctx.mode==='z'?z!=null:coinNet!=null);
+        if(!complete)S.sc.err++;           /* 价格/币数/基准缺失不冒充成功零入选 */
+        const netOk=ctx.mode==='z'?(z!=null&&z>=p.oiPct):(coinNet!=null&&coinNet>=p.oiPct);
+        S.sc.rows.push({sym:r.sym,oiS,oiE,coinS,coinE,coinNet,flow,net,px,z,src,
+          pick:complete&&netOk&&Math.abs(px)<=p.pxPct&&oiS>=p.minOi});
       }
     }catch(e){S.sc.err++}
     S.sc.done++;
@@ -894,23 +902,40 @@ async function scGo(){
     $('#scStat').textContent=`${S.sc.done}/${S.sc.total}`+(S.sc.err?` · 失败${S.sc.err}`:'');
     if(S.sc.done%20===0)scRender();
   });
-  S.sc.run=false;
+  S.sc.run=false;S.sc.noHist=ctx.noHist;
   $('#scGo').disabled=false;$('#scStop').disabled=true;
   $('#scBar').classList.remove('on');
   scRender();scMeta();
-  $('#scStat').textContent=`完成 ${S.sc.done} · 失败 ${S.sc.err}`+(S.sc.noHist?' · 归档源':'');
+  $('#scStat').textContent=`${S.sc.stop?'已停止':'完成'} ${S.sc.done}/${S.sc.total} · 失败 ${S.sc.err}`;
   if(S.sc.stop)toast('扫描已停止');
   scSave();scNextCheck();
 }
 function scSave(){
   const win=S.sc.win||OiRadar.scWindow(S.sc.W,Date.now());
+  const config=S.sc.config||S.sc;
   const rec={
-    t:S.sc.t0||Date.now(),W:S.sc.W,U:S.sc.U,mode:S.sc.mode||'pct',params:S.sc.params,
+    t:S.sc.t0||Date.now(),W:win.W,U:config.U,mode:config.mode||'pct',params:S.sc.params,
     days:win.days,d0:win.d0,signalDay:win.signalDay,
-    rows:S.sc.rows.map(({next,nextSt,...r})=>r),noHist:S.sc.noHist
+    rows:S.sc.rows.map(({next,nextSt,...r})=>r),noHist:S.sc.noHist,
+    err:S.sc.err,stop:S.sc.stop,done:S.sc.done,total:S.sc.total
   };
   store.set('oif_lastscan',rec);
   S.sc.scanId=OiRadar.scScanId(rec);
+}
+function scRestore(last){
+  if(!last||!Array.isArray(last.rows))return false;
+  S.sc.rows=last.rows.map(({next,nextSt,...r})=>r);
+  S.sc.W=Math.min(3,Math.max(1,last.W||3));S.sc.U=last.U??100;
+  S.sc.mode=last.mode||'pct';S.sc.params=last.params||null;
+  const count=(v,fallback)=>Number.isInteger(v)&&v>=0?v:fallback;
+  S.sc.err=count(last.err,0);S.sc.stop=last.stop===true;
+  S.sc.done=count(last.done,S.sc.rows.length);S.sc.total=count(last.total,S.sc.done);
+  S.sc.noHist=last.noHist===true;S.sc.run=false;S.sc.t0=last.t;
+  S.sc.win=OiRadar.scWindow(S.sc.W,last.t||Date.now());
+  S.sc.config={W:S.sc.W,U:S.sc.U,mode:S.sc.mode};
+  S.sc.scanId=OiRadar.scScanId(last);
+  $('#scStat').textContent=`${S.sc.stop?'已停止':'上次扫描'} ${S.sc.done}/${S.sc.total} · 失败 ${S.sc.err}`;
+  return true;
 }
 /* T+1：信号日收盘 → 下一完整 UTC 日收盘；未完成为 null；缓存按扫描 id 隔离 */
 async function scNextCheck(){
@@ -967,6 +992,8 @@ function scFiltered(){
 function scRender(){
   const tb=$('#scTbl tbody');
   const nx=v=>v==null?'—':(v>0?'+':'')+v.toFixed(2)+'%';
+  const empty=S.sc.run?'扫描中…':S.sc.err?`数据不完整：${S.sc.err} 个币种失败或缺少判定数据；不能视为零入选`:
+    S.sc.stop?'扫描已停止；结果仅覆盖已完成币种':S.sc.rows.length?'当前筛选无匹配（已有扫描数据）':'尚无扫描数据';
   tb.innerHTML=scFiltered().map(r=>
     `<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td>`+
     `<td>${fC(r.oiS)}</td><td>${fC(r.oiE)}</td>`+
@@ -977,7 +1004,7 @@ function scRender(){
     `<td class="${clsP(r.px)}">${r.px==null?'—':fP(r.px/100)}</td>`+
     `<td class="${clsP(r.next)}">${r.next==null?'—':nx(r.next)}</td>`+
     `<td>${r.pick?'<span class="bdg pick">入选</span>':''}</td></tr>`
-  ).join('')||`<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:18px">无数据</td></tr>`;
+  ).join('')||`<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:18px">${empty}</td></tr>`;
 }
 function scMeta(){
   const c=$('#scChips');
@@ -991,11 +1018,13 @@ function scMeta(){
     `<span class="chip up">名义值增 <b>${fC(inSum)}</b> (${inflow.length})</span>`+
     `<span class="chip down">名义值减 <b>${fC(Math.abs(outSum))}</b> (${outflow.length})</span>`+
     `<span class="chip">入选 <b>${S.sc.rows.filter(r=>r.pick).length}</b></span>`+
-    (S.sc.noHist?`<span class="chip">数据源：归档 zip</span>`:``);
+    (S.sc.err?`<span class="chip">数据不完整 <b>${S.sc.err}</b> · 入选数仅供已知数据参考</span>`:``)+
+    (S.sc.stop?`<span class="chip">已停止 · 覆盖 ${S.sc.done}/${S.sc.total}</span>`:``)+
+    `<span class="chip">OI 数据源：${S.sc.rows.length?[...new Set(S.sc.rows.map(r=>r.src==='hist'?'历史接口':r.src==='archive'?'归档 zip':'未知（旧记录）'))].join(' + '):'无有效样本'}</span>`;
 }
 function scCsv(){
   if(!S.sc.rows.length){toast('无可导出数据');return}
-  csvDown(`OI异动扫描_${S.sc.W}d.csv`,
+  csvDown(`OI异动扫描_${S.sc.win?.W||S.sc.W}d.csv`,
     ['币种','OI期初USDT','OI期末USDT','OI名义值变化USDT','名义值%','OI币数变化%','z值','价格%','入选'],
     scFiltered().map(r=>[r.sym,r.oiS,r.oiE,r.flow,+r.net.toFixed(2),r.coinNet==null?'':+r.coinNet.toFixed(2),r.z!=null?+r.z.toFixed(2):'',r.px!=null?+r.px.toFixed(2):'',r.pick?'是':'']));
 }
@@ -1239,15 +1268,13 @@ function init(){
   bootOverview();
   /* 恢复上次扫描 + T+1 验证 */
   const last=store.get('oif_lastscan',null);
-  if(last&&last.rows){
-    S.sc.rows=last.rows.map(({next,nextSt,...r})=>r);S.sc.W=Math.min(3,Math.max(1,last.W||3));S.sc.U=last.U||100;
-    S.sc.scanId=OiRadar.scScanId(last);
-    if(last.mode)S.sc.mode=last.mode;
-    if(last.params)S.sc.params=last.params;
+  if(scRestore(last)){
     $$('#scWin button').forEach(b=>b.classList.toggle('on',+b.dataset.w===S.sc.W));
+    $$('#scUni button').forEach(b=>b.classList.toggle('on',+b.dataset.u===S.sc.U));
     $$('#scMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===(S.sc.mode||'pct')));
     if(S.sc.mode==='z'){$('#scOiLbl').textContent='OI净变z≥';$('#scOiUnit').textContent='σ';$('#scOiPct').value=2}
-    scRender();
+    if(S.sc.params){$('#scOiPct').value=S.sc.params.oiPct;$('#scPxPct').value=S.sc.params.pxPct;$('#scMinOi').value=S.sc.params.minOi}
+    scRender();scMeta();
     setTimeout(scNextCheck,2500);
   }
 }
@@ -1508,13 +1535,13 @@ async function qdOne(sym,win){
   const histDays=30,end=utcToday0()-DAY,start=end-(histDays-1+win)*DAY;
   const days=[];for(let t=start;t<=end;t+=DAY)days.push(dstr(t));
   let seq=null;
-  if(!S.sc.noHist){
+  if(!S.qd.noHist){
     try{
       const h=await loadOiHist(sym,histDays+win+3);
       // Daily endpoint at UTC midnight represents the previous completed day close.
       const hh=h.filter(x=>x.t<=utcToday0()&&x.t%DAY===0&&x.oiv>0).map(x=>({t:x.t-DAY,oiv:x.oiv}));
       if(hh.length>=win+2)seq=hh;
-    }catch(e){if(e&&e.name==='TypeError')S.sc.noHist=true}
+    }catch(e){if(e&&e.name==='TypeError')S.qd.noHist=true}
   }
   if(!seq){
     const rs=[];await pool(days,4,async d=>{try{rs.push(...await fetchDay(sym,d))}catch(e){}});
@@ -1545,7 +1572,7 @@ async function qdGo(){
   if(!S.ov.ready||!S.ov.list.length){toast('合约列表未就绪，请稍候再扫');return}
   let list=[...S.ov.list].sort((a,b)=>b.vol-a.vol);
   if(S.qd.U>0)list=list.slice(0,S.qd.U);
-  S.qd.run=true;S.qd.stop=false;S.qd.rows=[];S.qd.err=0;S.qd.done=0;S.qd.total=list.length;
+  S.qd.run=true;S.qd.stop=false;S.qd.noHist=false;S.qd.rows=[];S.qd.err=0;S.qd.done=0;S.qd.total=list.length;
   $('#qdGo').disabled=true;$('#qdStop').disabled=false;
   $('#qdBar').classList.add('on');$('#qdBar i').style.width='0%';
   ban('#qdBan','warn',`归档源较慢：约 ${Math.round(list.length*S.qd.W*0.06)}s（${list.length}币 × ${S.qd.W}天，同会话重复扫描走缓存）`);
