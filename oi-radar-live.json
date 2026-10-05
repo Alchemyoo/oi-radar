@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": 1791216233428,
+  "generatedAt": 1791216290997,
   "expiresAt": 1791216900000,
-  "serverTime": 1791216228907,
+  "serverTime": 1791216286155,
   "window": {
     "start": 1791212400000,
     "end": 1791216000000
   },
-  "publicationLagMs": 228907,
+  "publicationLagMs": 286155,
   "scope": {
     "type": "quoteVolumeTop",
     "limit": 50,
@@ -51,8 +51,8 @@
       "龙虾USDT",
       "USUSDT",
       "XLMUSDT",
-      "ARBUSDT",
       "TRUMPUSDT",
+      "ARBUSDT",
       "BEAMXUSDT",
       "LITUSDT",
       "BCHUSDT",
@@ -539,18 +539,6 @@
       "source": "Binance openInterestHist"
     },
     {
-      "growth": 0.4014583462925936,
-      "notional": 59041968.76019816,
-      "coinStart": 289906589.5,
-      "coinEnd": 291070443.7,
-      "sym": "ARBUSDT",
-      "ratio": 4.28728424152347,
-      "marketCap": 1377141459.116735,
-      "capTime": 1791216150000.0,
-      "capId": "arbitrum",
-      "source": "Binance openInterestHist"
-    },
-    {
       "growth": 0.03426939472026547,
       "notional": 59282838.77336,
       "coinStart": 29207752.52,
@@ -560,6 +548,18 @@
       "marketCap": null,
       "capTime": null,
       "capId": null,
+      "source": "Binance openInterestHist"
+    },
+    {
+      "growth": 0.4014583462925936,
+      "notional": 59041968.76019816,
+      "coinStart": 289906589.5,
+      "coinEnd": 291070443.7,
+      "sym": "ARBUSDT",
+      "ratio": 4.28728424152347,
+      "marketCap": 1377141459.116735,
+      "capTime": 1791216150000.0,
+      "capId": "arbitrum",
       "source": "Binance openInterestHist"
     },
     {
