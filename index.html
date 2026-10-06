@@ -125,7 +125,7 @@ input[type=number]{text-align:right}
 #toast{position:fixed;left:50%;bottom:calc(78px + var(--safe-b));transform:translateX(-50%) translateY(12px);background:#1e2638;border:1px solid var(--line);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:86vw}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261004-1">
+<link rel="stylesheet" href="layout.css?v=20261006-phase1">
 </head>
 <body>
 <header id="hdr">
@@ -195,6 +195,7 @@ input[type=number]{text-align:right}
       <span class="mut" id="dtCap"></span>
     </div>
     <div class="chips" id="dtChips" style="display:none"></div>
+    <details id="dtEvidence" class="fold" open><summary>单币证据摘要 <span>已有数据 · 不混合时间窗口</span></summary><div id="dtEvidenceBody" class="fold-body"></div></details>
     <div class="banner" id="dtBan"></div>
     <div class="pbar" id="dtBar"><i></i></div>
     <div class="seg" id="dtTab" style="margin:8px 0"><button data-t="day" class="on">日汇总</button><button data-t="min">5分钟明细</button><button data-t="fh">资金费</button></div>
@@ -272,7 +273,7 @@ input[type=number]{text-align:right}
       <button class="btn mini" id="qdStop" disabled>停止</button>
       <span class="mut" id="qdStat"></span>
     </div>
-    <p class="mut" style="margin:4px 0 8px">当前与历史均按所选1/2/3日同端点ΔOI与复合价格收益分四类；次日收益单独统计，仅使用已完成日。n为币×日观测数，小样本不稳定；当前TopN存在幸存者/选择偏差，跨币相关且重叠窗口非独立，未扣手续费、滑点与资金费成本；不构成清算、挤压或交易指令。</p>
+    <p class="mut" style="margin:4px 0 8px">当前与历史均按所选1/2/3日同端点ΔOI与复合价格收益分四类；次日收益单独统计，仅使用已完成日。「次日上涨占比」=次日收益>0的观测数/n，未扣成本，不是方向策略胜率。n为币×日观测数，小样本不稳定；当前TopN存在幸存者/选择偏差，跨币相关且重叠窗口非独立，未扣手续费、滑点与资金费成本；不构成清算、挤压或交易指令。</p>
     <div class="pbar" id="qdBar"><i></i></div>
     <div class="banner" id="qdBan"></div>
     <p class="mut signal-history-note">历史证据是所选日线窗口的条件统计，不是日内 15/30/60 分钟信号的胜率；n 为币×日观测数。TopN 有幸存者/选择偏差，跨币相关且重叠窗口不独立，未扣手续费、滑点与资金费，不能当作概率或交易指令。</p>
@@ -306,7 +307,7 @@ input[type=number]{text-align:right}
       </table></div>
     </div>
     <div class="tblwrap"><table class="tbl" id="qdTbl">
-      <thead><tr><th>币种</th><th>当前象限</th><th>窗口ΔOI</th><th>窗口ΔP</th><th>该象限近30d次数</th><th>该象限次日均</th><th>胜率</th></tr></thead>
+      <thead><tr><th>币种</th><th>当前象限</th><th>窗口ΔOI</th><th>窗口ΔP</th><th>该象限近30d次数</th><th>该象限次日均</th><th>次日上涨占比</th></tr></thead>
       <tbody></tbody></table></div>
   </div>
 </section>
@@ -673,6 +674,7 @@ function dtSetSym(sym){
   const fav=S.fav.has(sym);
   $('#dtStar').textContent=fav?'★':'☆';
   $('#dtStar').classList.toggle('on',fav);
+  if(typeof renderCoinEvidence==='function')renderCoinEvidence(sym);
 }
 function dtQuick(d){
   const end=utcToday0()-DAY,start=end-(d-1)*DAY;
@@ -824,6 +826,7 @@ async function dtLoad(){
 }
 function dtOpen(sym){
   dtSetSym(sym);
+  if(typeof renderCoinEvidence==='function')renderCoinEvidence(sym);
   if(!$('#dtStart').value||!$('#dtEnd').value)dtQuick(30);
   dtLoad();
 }
@@ -1335,7 +1338,7 @@ function fdRender(){
     'oi':(a,b)=>a.oiv==null?(b.oiv==null?0:1):b.oiv==null?-1:b.oiv-a.oiv
   }[k];
   rows=[...rows].sort(cmp);
-  $('#fdTime').textContent=S.fd.time?new Date(S.fd.time).toISOString().slice(11,16)+' UTC':'';
+  $('#fdTime').textContent=S.fd.time?new Date(S.fd.time).toISOString().replace('T',' ').replace('.000Z',' UTC')+(Date.now()-S.fd.time>900000?' · 已过期':' · 15分钟内有效'):'';
   tb.innerHTML=rows.slice(0,150).map(r=>{
     const ann=r.interval>0?r.fr*(24/r.interval)*365*100:null;
     const nxt=r.next?Math.max(0,r.next-Date.now()):null;
@@ -1628,7 +1631,7 @@ function qdCardsRender(){
     const avg=a.sum/a.n,wr=a.win/a.n*100;
     return `<div class="chip" style="display:block">
       <b style="color:var(--${q==='squeeze'||q==='cover'?'up':'down'})">${Q.name}</b> <span class="mut">${Q.desc} · ${Q.thr}</span><br>
-      次日均 <b class="${clsP(avg)}">${(avg>=0?'+':'')+avg.toFixed(2)}%</b> · 胜率 <b>${wr.toFixed(0)}%</b> <span class="mut">(${a.n}次${a.n<20?' · 小样本':''})</span>
+      次日均 <b class="${clsP(avg)}">${(avg>=0?'+':'')+avg.toFixed(2)}%</b> · 次日上涨占比 <b>${wr.toFixed(0)}%</b> <span class="mut">(${a.n}次${a.n<20?' · 小样本':''})</span>
     </div>`;
   }).join('');
 }
@@ -1659,7 +1662,7 @@ function qdCsv(){
   const list=S.qd.rows.filter(r=>r.last.quad===f);
   if(!list.length){toast('无可导出数据');return}
   csvDown(`象限信号_${QUADS[f].name}_${S.qd.W}d.csv`,
-    ['币种','当前象限','所选窗口ΔOI%','所选窗口ΔP%','该象限次数','该象限次日均%','胜率%'],
+    ['币种','当前象限','所选窗口ΔOI%','所选窗口ΔP%','该象限次数','该象限次日均%','次日上涨占比%'],
     list.map(r=>{
       const st=r.stats[f]||{};
       const avg=st.n?st.sum/st.n:null;
@@ -1780,13 +1783,19 @@ function idMarketBias(){
 }
 function idMarketRender(){
   const m=idMarketBias(),el=$('#idMarket');if(!el)return;
-  el.innerHTML=`<span class="chip">市场 <b>${m.state}</b></span><span class="chip">BTC <b class="${clsP(S.tick.BTCUSDT?.chg)}">${S.tick.BTCUSDT?fP(S.tick.BTCUSDT.chg/100):'—'}</b></span><span class="chip">ETH <b class="${clsP(S.tick.ETHUSDT?.chg)}">${S.tick.ETHUSDT?fP(S.tick.ETHUSDT.chg/100):'—'}</b></span><span class="chip">风险 <b>${m.risk}</b></span>`;
+  el.innerHTML=`<span class="chip">24h背景 <b>${m.state}</b></span><span class="chip">BTC <b class="${clsP(S.tick.BTCUSDT?.chg)}">${S.tick.BTCUSDT?fP(S.tick.BTCUSDT.chg/100):'—'}</b></span><span class="chip">ETH <b class="${clsP(S.tick.ETHUSDT?.chg)}">${S.tick.ETHUSDT?fP(S.tick.ETHUSDT.chg/100):'—'}</b></span><span class="chip">风险 <b>${m.risk}</b></span>`;
   $('#idPlan').className='banner on warn';
   $('#idPlan').textContent=`仅描述价格/OI变化，不提供交易指令。${S.id.win}分钟窗口共用已收盘5m边界，OI取边界之前≤65秒的分钟快照；端点缺失、覆盖不足90%或断档不评分；资金费未知计0分。`;
 }
 function idQuad(dOi,dP){
   if(Math.abs(dOi)<1||Math.abs(dP)<.3)return null;
   return dOi>=0?(dP>=0?'trend':'squeeze'):(dP>=0?'cover':'flush');
+}
+function fundingEvidence(sym,now=Date.now()){
+ const r=(S.fd.rows||[]).find(x=>x.sym===sym),asOf=Number(r?.fetchedAt??S.fd.time),intervalHours=Number(r?.interval);
+ const knownTime=Number.isFinite(asOf)&&asOf>0,ageMs=knownTime?now-asOf:null;
+ let status=!r||!Number.isFinite(r.fr)?'missing':!Number.isInteger(intervalHours)||intervalHours<=0||intervalHours>24?'unknown_interval':!knownTime?'unknown_time':ageMs<-60000?'future':ageMs>900000?'stale':'fresh';
+ return {rate:status==='fresh'?r.fr:null,rawRate:Number.isFinite(r?.fr)?r.fr:null,intervalHours:Number.isFinite(intervalHours)&&intervalHours>0?intervalHours:null,asOf:knownTime?asOf:null,ageMs,status,fresh:status==='fresh',usable:status==='fresh',source:'Binance premiumIndex/fundingInfo'};
 }
 function idWindow(samples,end,win){
   const span=win*60000,start=end-span,tol=65000;
@@ -1829,7 +1838,7 @@ async function idPoll(){
       const recent=ks.slice(-20),vv=recent.reduce((a,x)=>a+x.v,0),vwap=vv?recent.reduce((a,x)=>a+(x.h+x.l+x.c)/3*x.v,0)/vv:last.c;
       const trs=ks.slice(-15).map((x,i,a)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),atr=trs.reduce((a,b)=>a+b,0)/trs.length;
       const vols=ks.slice(-21,-1),av=vols.reduce((a,x)=>a+x.v,0)/vols.length,vr=av?last.v/av:0,q=idQuad(dOi,dP);
-      const f=fm.get(r.sym),fr=f&&Number.isFinite(f.fr)?f.fr:null;
+      const funding=fundingEvidence(r.sym,now),fr=funding.rate;
       const mb=S.market.bias||0;
       let score=(dP*mb>0?20:Math.abs(mb)<1?10:5);
       score+=Math.abs(dP)>=1.2?15:Math.abs(dP)>=.8?12:Math.abs(dP)>=.5?8:3;
@@ -1839,7 +1848,7 @@ async function idPoll(){
       const aligned=(q==='trend'&&last.c>=vwap)||(q==='squeeze'&&last.c>=vwap)||(q==='flush'&&last.c<vwap)||(q==='cover'&&last.c>vwap);
       score+=aligned?20:8;
       const script=q?QUADS[q].name:'低于日内象限阈值';
-      rows.push({sym:r.sym,dOi,dP,vr,score:Math.round(Math.min(100,score)),q,state:`${last.c>=vwap?'高于':'低于'}VWAP · 费率${fr==null?'未知(0分)':'已知'}`,script,oi,px:last.c,vwap,atr,fr,t:end,coverage:delta.coverage});
+      rows.push({sym:r.sym,dOi,dP,vr,score:Math.round(Math.min(100,score)),q,state:`${last.c>=vwap?'高于':'低于'}VWAP · 费率${fr==null?'未知/过期(0分)':(fr*100).toFixed(4)+'%/'+funding.intervalHours+'h'} · 更新${funding.asOf?new Date(funding.asOf).toISOString().slice(11,16)+' UTC':'未知'}`,fundingStatus:funding.status,fundingTime:funding.asOf,fundingInterval:funding.intervalHours,script,oi,px:last.c,vwap,atr,fr,t:end,coverage:delta.coverage});
     }catch(e){if(current())coverage.push(`${r.sym}: 数据请求失败`)}
   },()=>!current());
   if(!current())return;
@@ -1899,7 +1908,8 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 </script>
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-5"></script>
-<script src="oi-cap-radar.js?v=20261006-accept1"></script>
+<script src="oi-cap-radar.js?v=20261006-phase1"></script>
+<script src="coin-evidence.js?v=20261006-phase1"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,onSymbol:jumpSym});</script>
 </body>
 </html>

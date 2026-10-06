@@ -41,3 +41,5 @@
 .signal-history-note{padding:8px 10px;border-left:3px solid var(--purple);background:rgba(167,139,250,.06);border-radius:0 8px 8px 0}
 @media(max-width:430px){.signal-explain{font-size:11.5px}.signal-status{font-size:11.5px}.signal-history-note{font-size:11.5px}}
 @media(min-width:900px){#main{width:100%;max-width:1200px;align-self:center;padding:20px 24px}#tabbar{justify-content:center}#tabbar button{flex:0 1 200px}.workspace-heading h2{font-size:27px}.workspace-tabs{max-width:580px;top:-20px}}
+
+.cap-history{margin:12px 0;padding:10px;border:1px solid var(--line);border-radius:9px;font-size:12px;color:var(--sub)}.cap-history summary{cursor:pointer;color:var(--txt)}.cap-history p{overflow-wrap:anywhere;margin:5px 0}.evidence-row{display:grid;gap:4px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:12px}.evidence-row b{color:var(--txt)}.evidence-row small{color:var(--sub);line-height:1.55;overflow-wrap:anywhere}#dtEvidenceBody{padding:0 12px 10px}

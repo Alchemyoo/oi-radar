@@ -1,0 +1,7 @@
+'use strict';
+const test=require('node:test'),a=require('node:assert/strict'),E=require('./coin-evidence');
+test('missing evidence never fabricated as zero or a trade signal',()=>{const d=E.build('BTCUSDT',{id:{rows:[]},sc:{rows:[]} },null,10000);a.equal(d.length,5);a.ok(d.every(x=>x.status==='missing'));a.match(E.html(d),/尚无|未知/)});
+test('expired radar row is explicitly historical never current confluence',()=>{const d=E.build('BTCUSDT',{}, {getEvidence:()=>({row:null,snapshotRow:{growth:3,ratio:12,capTime:1},fresh:false,window:{start:1,end:2},cap:{currentFresh:false}})},10000);a.match(d[0].meta,/历史快照/);a.match(d[1].meta,/非同刻/)});
+test('funding freshness and interval are visible without score or direction inference',()=>{const d=E.build('BTCUSDT',{},null,10000,{rawRate:.0001,intervalHours:4,asOf:1000,status:'stale',usable:false});const f=d.find(x=>x.title==='资金费率');a.match(f.value,/0.0100% \/ 4h/);a.match(f.meta,/过期，评分计0/)});
+test('evidence does not blend unrelated windows and disabled intraday stays historical',()=>{const s={st:{window:3,E:1000,rows:[{sym:'BTCUSDT',ret:{3:.2}}],btc:{ret:{3:.1}}},id:{on:false,win:15,rows:[{sym:'BTCUSDT',dOi:2,dP:1,vr:2,vwap:100,t:9000}]},idTime:9000};const d=E.build('BTCUSDT',s,null,10000);a.match(d.find(x=>x.title==='强势超额').value,/10.00%/);a.match(d.find(x=>x.title==='日内观察').meta,/已暂停/)});
+test('all visible values and symbol-dependent content HTML escaped',()=>{a.doesNotMatch(E.html([{title:'<img src=x>',value:'<script>',meta:'x&y'}]),/<img|<script>/);a.match(E.html([{title:'<img>',value:'',meta:''}]),/&lt;img/)});
