@@ -876,7 +876,7 @@ async function scOne(sym,win,ctx=S.sc){        /* OI 与价格共用 win 的同�
   let hit=null,src='hist';
   const histN=wantZ?Math.min(40,win.W+32):win.W+4;
   if(!ctx.noHist&&!stopped()){              /* 本轮降级状态独立于其他模块 */
-    const cached=ctx.relay&&ctx.relay.map.get(sym);
+    const cached=ctx.relay&&ctx.relay.get?ctx.relay.get(sym):null;
     if(cached){                              /* 即时中继数据：同官方端点，已按精确时间戳校验 */
       hit=R.scOiFromHist(cached,win);
       if(hit)src='relay';
