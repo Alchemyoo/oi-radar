@@ -125,7 +125,7 @@ input[type=number]{text-align:right}
 #toast{position:fixed;left:50%;bottom:calc(78px + var(--safe-b));transform:translateX(-50%) translateY(12px);background:#1e2638;border:1px solid var(--line);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:86vw}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261006-phase1">
+<link rel="stylesheet" href="layout.css?v=20261006-relay1">
 </head>
 <body>
 <header id="hdr">
@@ -572,6 +572,31 @@ function loadOiHist(sym,n){
   return jget(`${API}/futures/data/openInterestHist?symbol=${sym}&period=1d&limit=${n}`)
     .then(d=>d.map(r=>({t:+r.timestamp,oiv:+r.sumOpenInterestValue,oi:+r.sumOpenInterest})));
 }
+/* ================= 即时中继（可选数据源，仅加分不改判定） ================= */
+const RELAY='https://oi-history-relay.shen123lan.workers.dev';
+let relayBusy=false;
+async function relayQuery(symbols,period,limit,timeoutMs=70000){
+  if(relayBusy)throw Error('中继忙碌：上一查询仍在进行');
+  relayBusy=true;const t0=Date.now();
+  try{
+    const q=await fetch(RELAY+'/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbols,period,limit})});
+    if(!q.ok)throw Error('中继入队失败 HTTP '+q.status);
+    const {jobId}=await q.json();
+    while(Date.now()-t0<timeoutMs){
+      const r=await fetch(RELAY+'/result/'+jobId);
+      if(r.status===200)return await r.json();
+      if(r.status===410)throw Error('中继结果过期');
+      if(r.status===502){const e=await r.json();throw Error('中继任务失败：'+(e.error||'未知'))}
+      await new Promise(x=>setTimeout(x,1500));
+    }
+    throw Error('中继等待超时');
+  }finally{relayBusy=false}
+}
+async function relayHistMap(symbols,n){
+  const d=await relayQuery(symbols,'1d',n),out=new Map();
+  for(const item of (d.results||[]))out.set(item.symbol,item.data.map(r=>({t:+r.timestamp,oiv:+r.sumOpenInterestValue,oi:+r.sumOpenInterest})));
+  return {map:out,errors:(d.errors||[]).map(e=>e.symbol+': '+(e.error||'失败'))};
+}
 async function pool(items,n,fn,stopFn){
   let i=0;
   await Promise.all(Array.from({length:Math.max(1,Math.min(n,items.length))},async()=>{
@@ -851,7 +876,12 @@ async function scOne(sym,win,ctx=S.sc){        /* OI 与价格共用 win 的同�
   let hit=null,src='hist';
   const histN=wantZ?Math.min(40,win.W+32):win.W+4;
   if(!ctx.noHist&&!stopped()){              /* 本轮降级状态独立于其他模块 */
-    try{hit=R.scOiFromHist(await loadOiHist(sym,histN),win)}
+    const cached=ctx.relay&&ctx.relay.map.get(sym);
+    if(cached){                              /* 即时中继数据：同官方端点，已按精确时间戳校验 */
+      hit=R.scOiFromHist(cached,win);
+      if(hit)src='relay';
+    }
+    else try{hit=R.scOiFromHist(await loadOiHist(sym,histN),win)}
     catch(e){if(e&&e.name==='TypeError')ctx.noHist=true}
   }
   if(!hit&&!stopped()){                    /* 回退：归档 zip（整段单源，不混合；含 d0 取期初端点） */
@@ -881,9 +911,20 @@ async function scGo(){
   if(S.sc.U>0)list=list.slice(0,S.sc.U);
   const win=OiRadar.scWindow(S.sc.W,Date.now());
   S.sc.run=true;S.sc.stop=false;S.sc.rows=[];S.sc.err=0;S.sc.done=0;S.sc.total=list.length;
-  const ctx={mode:S.sc.mode||'pct',W:win.W,U:S.sc.U,noHist:false,get stop(){return S.sc.stop}};
-  S.sc.config=ctx;S.sc.noHist=false;          /* 降级仅限本轮；不与象限模块共用 */
   S.sc.win=win;S.sc.t0=Date.now();S.sc.scanId=null;S.sc.next=null;S.sc.nextStat=null;
+  /* 即时中继：先批量取 Top 份额的历史，成功则逐币秒回；失败自动回退浏览器直连/归档 */
+  const ctx={mode:S.sc.mode||'pct',W:win.W,U:S.sc.U,noHist:false,relay:null,get stop(){return S.sc.stop}};
+  try{
+    const need=ctx.mode==='z'?Math.min(40,win.W+32):win.W+4;
+    const relayList=list.slice(0,50);        /* 中继单次限 50 币；Top100/全部自动分批走原链路补齐 */
+    if(relayList.length){
+      $('#scStat').innerHTML='<span class="spin"></span> 即时数据中 '+relayList.length+' 币…';
+      const {map,errors}=await relayHistMap(relayList.map(r=>r.sym),need);
+      if(!S.sc.stop&&map.size)ctx.relay=map;
+      if(errors&&errors.length&&!S.sc.stop)S.sc.relayErrors=errors;
+    }
+  }catch(e){/* 中继不可用：静默回退，不改判定 */}
+  S.sc.config=ctx;S.sc.noHist=false;          /* 降级仅限本轮；不与象限模块共用 */
   scRender();
   $('#scGo').disabled=true;$('#scStop').disabled=false;
   $('#scBar').classList.add('on');$('#scBar i').style.width='0%';
@@ -1032,7 +1073,8 @@ function scMeta(){
     `<span class="chip">入选 <b>${S.sc.rows.filter(r=>r.pick).length}</b></span>`+
     (S.sc.err?`<span class="chip">数据不完整 <b>${S.sc.err}</b> · 入选数仅供已知数据参考</span>`:``)+
     (S.sc.stop?`<span class="chip">已停止 · 覆盖 ${S.sc.done}/${S.sc.total}</span>`:``)+
-    `<span class="chip">OI 数据源：${S.sc.rows.length?[...new Set(S.sc.rows.map(r=>r.src==='hist'?'历史接口':r.src==='archive'?'归档 zip':'未知（旧记录）'))].join(' + '):'无有效样本'}</span>`;
+    `<span class="chip">OI 数据源：${S.sc.rows.length?[...new Set(S.sc.rows.map(r=>r.src==='hist'?'历史接口':r.src==='relay'?'即时中继':r.src==='archive'?'归档 zip':'未知（旧记录）'))].join(' + '):'无有效样本'}</span>`+
+    (S.sc.relayErrors&&S.sc.relayErrors.length?`<span class="chip">即时中继未覆盖：${S.sc.relayErrors.length} 币（已回退其他来源）</span>`:``);
 }
 function scCsv(){
   if(!S.sc.rows.length){toast('无可导出数据');return}
@@ -1908,8 +1950,8 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 </script>
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-5"></script>
-<script src="oi-cap-radar.js?v=20261006-phase1"></script>
-<script src="coin-evidence.js?v=20261006-phase1"></script>
-<script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,onSymbol:jumpSym});</script>
+<script src="oi-cap-radar.js?v=20261006-relay1"></script>
+<script src="coin-evidence.js?v=20261006-relay1"></script>
+<script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>
 </body>
 </html>
