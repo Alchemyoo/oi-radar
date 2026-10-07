@@ -74,7 +74,15 @@ function layoutInit(){
   const hint=layoutNode('p','rtHint','只监测自选币种；手动开启，每 60 秒采样，切页后继续，暂停即停止。');hint.className='workspace-help';$('#rtCard').append(hint);
   for(const id of ['strong','scan']){const el=$('#v-'+id);el.className='op-panel';op.append(el)}
   const signal=$('#v-signal');signal.className='view';signal.hidden=false;main.append(signal);
-  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>OI榜单 → 日内观察 → 历史证据</p></div>'),layoutNode('div','oiMarketCapRadar',''));
+  /* 拆分信号页：OI榜单 / 日内执行(5m工作台) / 历史证据(象限统计) 三个子板块 */
+  const card=$('#v-signal .card'),execution=$('#idToggle').parentElement.parentElement;
+  const quadCard=layoutNode('div','signalQuadPanel','');quadCard.className='card';
+  const evidence=layoutNode('details','signalEvidence','<summary>展开扫描、胜率与统计</summary>');evidence.className='fold';
+  [...card.childNodes].forEach(n=>{if(n!==execution)evidence.append(n)});
+  quadCard.innerHTML='<h3>历史象限证据 <span class="r">条件统计，非胜率</span></h3>';
+  quadCard.append(evidence);
+  const execCard=layoutNode('div','signalExecPanel','');execCard.className='card';execCard.append(execution);
+  signal.append(execCard,quadCard);
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);
     $('#'+host).ontoggle=()=>{if($('#'+host).open)loader()};
@@ -82,11 +90,6 @@ function layoutInit(){
   $('#rtTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
   $$('#opTabs button').forEach(b=>b.onclick=()=>{layoutOp(b.dataset.op);$('#main').scrollTop=0});
   const back=layoutNode('button','detailBack','‹ 返回');back.className='btn mini';back.hidden=true;back.onclick=layoutBack;$('#hdr').insertBefore(back,$('#hdr .logo'));
-  // Show execution controls first; put historical quadrant evidence behind a fold.
-  const card=$('#v-signal .card'),execution=$('#idToggle').parentElement.parentElement;
-  const evidence=layoutNode('details','signalEvidence','<summary>历史象限证据 <span>展开扫描、胜率与统计</span></summary>');evidence.className='fold';
-  [...card.childNodes].forEach(n=>{if(n!==execution)evidence.append(n)});
-  card.append(execution,evidence);execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   $('#fdStat').insertAdjacentHTML('afterend','<div class="banner" id="fdBan"></div>');
   layoutOp('strong');layoutFavoritesChanged(false);layoutNavigate('market');
 }
