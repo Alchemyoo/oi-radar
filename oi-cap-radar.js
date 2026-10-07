@@ -19,6 +19,24 @@ function sample(rows,w){
 function ranks(rows){const growth=rows.filter(r=>finite(r.growth)&&r.growth>0).sort((a,b)=>b.growth-a.growth||a.sym.localeCompare(b.sym)).slice(0,5);
  const ratio=rows.filter(r=>finite(r.ratio)&&r.ratio>=0).sort((a,b)=>b.ratio-a.ratio||a.sym.localeCompare(b.sym)).slice(0,5);
  return {growth,ratio};}
+function priceText(x){if(!finite(x))return '—';const a=Math.abs(x);return a>=1000?x.toFixed(1):a>=100?x.toFixed(2):a>=1?x.toFixed(4):a>=.1?x.toFixed(5):x.toFixed(8)}
+function candleStats(raw,now=Date.now()){
+ const c=(Array.isArray(raw)?raw:[]).map(k=>Array.isArray(k)?{t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],close:+k[6]}:k).filter(k=>k&&finite(k.t)&&finite(k.o)&&finite(k.h)&&finite(k.l)&&finite(k.c)&&finite(k.close)&&k.close<now).sort((a,b)=>a.t-b.t);
+ if(c.length<33)return null;const last=c[c.length-1],base8=c[c.length-33],base24=c[Math.max(0,c.length-97)],prior=c.slice(-33,-1);
+ const trs=c.slice(-15).map((x,i)=>{const p=c[c.length-16+i];return Math.max(x.h-x.l,Math.abs(x.h-p.c),Math.abs(x.l-p.c))}).filter(x=>finite(x)&&x>0);
+ const atr=trs.length?trs.reduce((a,b)=>a+b,0)/trs.length:0;if(!(atr>0))return null;
+ return {price:last.c,ret8h:(last.c/base8.c-1)*100,ret24:(last.c/base24.c-1)*100,high8h:Math.max(...prior.map(x=>x.h)),low8h:Math.min(...prior.map(x=>x.l)),atr,lastTime:last.close};
+}
+function buildAdvice(rows,series,now=Date.now()){
+ const growth=(rows||[]).filter(r=>finite(r.growth)&&r.growth>0).sort((a,b)=>b.growth-a.growth||String(a.sym).localeCompare(String(b.sym))).slice(0,5);
+ if(!growth.length)return {status:'no_data',message:'暂无有效OI增长数据'};
+ const btc=series?.BTCUSDT||null,candidate=growth.map(r=>({row:r,stats:series?.[r.sym]})).find(x=>x.stats);
+ if(!candidate||!candidate.stats)return {status:'no_data',message:'候选币缺少足够的15分钟行情数据'};
+ const s=candidate.stats,marketGood=!!btc&&btc.ret8h>=0&&btc.ret24>=0,marketWeak=!!btc&&(btc.ret8h<-1.5||btc.ret24<-3),candidateWeak=s.ret8h<-8;
+ const entryHigh=Math.max(s.price-.25*s.atr,s.price*.01),entryLow=Math.max(s.price-.75*s.atr,s.price*.01),entryMid=(entryLow+entryHigh)/2,stop=Math.max(entryLow-.75*s.atr,entryLow*.5),risk=entryMid-stop;
+ const action=marketGood&&!marketWeak&&!candidateWeak?'回踩做多':'观望';
+ return {status:'ready',generatedAt:now,action,symbol:candidate.row.sym,price:s.price,entryLow,entryHigh,stop,tp1:entryMid+1.5*risk,tp2:entryMid+2.5*risk,hold:'4–12小时，最长24小时',growth:candidate.row.growth,ratio:finite(candidate.row.ratio)?candidate.row.ratio:null,ret8h:s.ret8h,ret24:s.ret24,atr:s.atr,market8h:btc?.ret8h??null,market24:btc?.ret24??null,basis:'OI增长榜独立候选',invalid:marketWeak?'BTC 15分钟趋势转弱':candidateWeak?'候选币8小时价格仍明显走弱':'跌破止损或OI增长转负'};
+}
 function capFresh(r,at){const asset=identity(r.sym);return !!(asset&&asset.id===r.capId&&finite(r.marketCap)&&r.marketCap>0&&finite(r.capTime)&&r.capTime>0&&r.capTime<=at+60000&&at-r.capTime<=FRESH)}
 // History is verified at generation time; expired data never passes validateCache.
 function validateSnapshot(d,now,range){
@@ -47,8 +65,9 @@ async function request(url,signal){const ctl=new AbortController(),abort=()=>ctl
  try{const res=await fetch(url,{signal:ctl.signal});if(!res.ok){const e=Error('HTTP '+res.status);e.status=res.status;e.retryAfter=Number(res.headers.get('Retry-After'))||60;throw e}return await res.json()}
  finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
 }
+function adviceCandidates(rows){return (rows||[]).filter(r=>finite(r.growth)&&r.growth>0&&finite(r.ratio)&&r.ratio>=0).sort((a,b)=>b.ratio-a.ratio||b.growth-a.growth||String(a.sym).localeCompare(String(b.sym))).slice(0,5)}
 function init(host,deps={}){
- if(!host)return null;let generation=0,ctl=null,cooldown=0,expiryTimer=null,pollTimer=null;
+ if(!host)return null;let generation=0,ctl=null,cooldown=0,expiryTimer=null,pollTimer=null,adviceRun=0;
  const sleep=deps.sleep||((ms)=>new Promise(resolve=>setTimeout(resolve,ms)));
  const collectFetch=deps.collectFetch||fetch;
  let checking=false,collectEpoch=0;
@@ -57,6 +76,14 @@ function init(host,deps={}){
   const d=await r.json();if(!r.ok)throw Error(d.error||'采集服务请求失败');return d;
  }
  function finishCollect(message){clearInterval(pollTimer);pollTimer=null;state.collecting=false;state.collectMessage=message;render()}
+ async function updateAdvice(){
+  const id=++adviceRun;state.advice={status:'loading',message:'读取候选币15分钟行情…'};render();
+  try{
+   const candidates=adviceCandidates(state.rows),symbols=[...new Set(['BTCUSDT',...candidates.map(x=>x.sym)])],series={};
+   await Promise.all(symbols.map(async sym=>{const raw=await (deps.fetchCandles?deps.fetchCandles(sym):request(`${'https://www.binance.com'}/fapi/v1/klines?symbol=${encodeURIComponent(sym)}&interval=15m&limit=97`));series[sym]=candleStats(raw,Date.now())}));
+   if(id!==adviceRun)return;state.advice=buildAdvice(candidates,series,Date.now());render();
+  }catch(e){if(id===adviceRun){state.advice={status:'no_data',message:'行情数据不足，暂不提供操作建议'};render()}}
+ }
  async function collect(){
   if(state.collecting||state.running)return;
   const epoch=++collectEpoch;state.collecting=true;state.collectStartedAt=Date.now();state.collectMessage='即时采集：向官方历史 OI 请求…';state.activeRunId=0;state.previousRunId=0;state.beforeCollect=state.updated;render();
@@ -68,7 +95,7 @@ function init(host,deps={}){
    const t0=Date.now();
    while(Date.now()-t0<60000){
     const r=await collectFetch(RELAY+'/result/'+jobId,{signal:AbortSignal.timeout(20000)});if(epoch!==collectEpoch)return;
-    if(r.status===200){const d=await r.json();applyRelaySnapshot(d);finishCollect('即时采集成功 · 榜单已更新');return}
+    if(r.status===200){const d=await r.json();applyRelaySnapshot(d);updateAdvice();finishCollect('即时采集成功 · 榜单已更新');return}
     if(r.status===410)throw Error('即时结果过期');
     if(r.status===502){const e=await r.json();throw Error('即时任务失败：'+(e.error||'未知'))}
     state.collectMessage='即时采集中…';render();await sleep(1500);
@@ -121,7 +148,7 @@ function init(host,deps={}){
    const now=Date.now(),snapshot=validateSnapshot(raw,now,state.range);
    saveSnapshot(snapshot); // Valid history may be shown, but cannot complete a current collection.
    const cache=validateCache(raw,now,state.range);
-   applyFresh(cache);finishCollect('采集成功 · 榜单已更新');
+   applyFresh(cache);updateAdvice();finishCollect('采集成功 · 榜单已更新');
   }catch(e){if(epoch===collectEpoch){state.collectMessage='等待重试 · '+e.message;render()}}
   finally{checking=false}
  }
@@ -159,12 +186,18 @@ function init(host,deps={}){
   return {sym,row:row?{...row}:null,snapshotRow:snapshotRow?{...snapshotRow}:null,snapshot:info,historical:info,fresh:!!row,current:!!row,window:row&&state.w?{...state.w}:info?.window||null,generatedAt:row?state.updated:info?.generatedAt||null,expiresAt:row?state.expiresAt:info?.expiresAt||null,cap:{status:capStatus(row,now),currentFresh:!!row&&capFresh(row,now),snapshotStatus:capStatus(snapshotRow,s?.generatedAt||now),snapshotFreshAtGeneration:!!snapshotRow&&capFresh(snapshotRow,s.generatedAt),snapshotCurrentStatus:capStatus(snapshotRow,now),capTime:(row||snapshotRow)?.capTime||null,ageMs:finite((row||snapshotRow)?.capTime)?now-(row||snapshotRow).capTime:null,asynchronous:true}};
  }
  const symbol=s=>esc(s.replace(/USDT$/,''));
+ function adviceHTML(){
+  const a=state.advice||{status:'idle',message:'点击「刷新缓存」或「立即采集」后生成建议'};
+  if(!state.rows.length&&state.capError)return '<section class="cap-advice"><h3>操作建议</h3><p>数据已过期，请重新刷新；当前不建议操作。</p></section>';
+  if(a.status!=='ready')return '<section class="cap-advice"><h3>操作建议</h3><p>'+esc(a.message||'数据不足，当前不建议操作')+'</p></section>';
+  return '<section class="cap-advice"><h3>操作建议 <span>'+esc(a.action)+'</span></h3><p><b>'+esc(a.symbol.replace(/USDT$/,''))+'</b> · '+esc(a.basis)+'</p><dl><div><dt>回踩入场</dt><dd>'+priceText(a.entryLow)+'–'+priceText(a.entryHigh)+'</dd></div><div><dt>止损</dt><dd>'+priceText(a.stop)+'</dd></div><div><dt>止盈① / ②</dt><dd>'+priceText(a.tp1)+' / '+priceText(a.tp2)+'</dd></div><div><dt>计划持仓</dt><dd>'+esc(a.hold)+'</dd></div></dl><p class="cap-note">1H OI +'+a.growth.toFixed(2)+'%；OI/市值 '+(a.ratio==null?'缺数':a.ratio.toFixed(2)+'%')+'；8H价格 '+a.ret8h.toFixed(2)+'%；24H价格 '+a.ret24.toFixed(2)+'%。</p><p class="cap-note">执行条件：回踩后15分钟重新收回入场区；第一止盈减半，剩余止损上移入场价。失效：'+esc(a.invalid)+'；3小时无延续则退出。单笔账户风险0.5%–1%。</p><p class="cap-note">生成 '+new Date(a.generatedAt).toISOString().slice(0,19).replace('T',' ')+' UTC · 价格按最新已闭合15m；'+(a.action==='观望'?'行情未确认，仅展示候选计划，不建议开仓。':'不追高，只等待条件满足。')+'</p></section>';
+ }
  function render(){
   maintain(Date.now());armExpiry();
   const r=ranks(state.rows);
   const line=(x,kind)=>`<li><button type="button" data-cap-symbol="${esc(x.sym)}">${symbol(x.sym)}</button><b class="${kind}">${kind==='growth'?'+':''}${(kind==='growth'?x.growth:x.ratio).toFixed(1)}%</b></li>`;
   const coverage=state.rows.filter(x=>finite(x.ratio)).length;
-  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值榜单</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两个榜单独立排序，不生成合并信号。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><p class="cap-note">新鲜数据：15分钟内有效；过期后撤下当前榜单，仅保留历史记录。</p><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${state.relayOnly?'<li class="cap-empty">即时快照不含市值；点击「刷新缓存」读取含市值的每小时缓存，或等待下一轮自动采集</li>':r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${esc(state.collecting?state.collectMessage:state.running?'更新中':state.collectMessage||'手动更新')} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}${historyHTML()}<footer><button data-cap-action="refresh" ${state.running||state.collecting?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting||state.running?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running||state.collecting?'':'disabled'}>停止</button></footer></section>`;
+  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值榜单</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两个榜单独立排序，不生成合并信号。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><p class="cap-note">新鲜数据：15分钟内有效；过期后撤下当前榜单，仅保留历史记录。</p><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${state.relayOnly?'<li class="cap-empty">即时快照不含市值；点击「刷新缓存」读取含市值的每小时缓存，或等待下一轮自动采集</li>':r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${esc(state.collecting?state.collectMessage:state.running?'更新中':state.collectMessage||'手动更新')} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}${historyHTML()}${adviceHTML()}<footer><button data-cap-action="refresh" ${state.running||state.collecting?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting||state.running?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running||state.collecting?'':'disabled'}>停止</button></footer></section>`;
  }
  function historyHTML(){
   const snap=state.snapshot;if(!snap)return '<details class="cap-history"><summary>最近小时快照 · 暂无可回看记录</summary><p>仅保存本页读取的、生成时间不超过2小时的官方缓存。</p></details>';
@@ -180,15 +213,15 @@ function init(host,deps={}){
   try{
    const raw=await get(cacheURL(),signal);if(!current())return;
    const now=Date.now(),snap=validateSnapshot(raw,now,state.range);saveSnapshot(snap);
-   try{applyFresh(validateCache(raw,now,state.range));}
+   try{applyFresh(validateCache(raw,now,state.range));updateAdvice();}
    catch{state.rows=[];state.w=null;state.expiresAt=0;state.updated=0;state.total=snap.total;state.done=snap.rows.length+snap.errors.length;state.errors=snap.errors;state.capError='快照已过期：仅供历史回看，请立即采集新数据';}
   }catch(e){if(current()){if(e.status===429||e.status===418){cooldown=Date.now()+60000;state.capError='接口限频冷却中';return}maintain(Date.now());state.capError='缓存读取失败：'+e.message+'；不会用失败数据替代，已验证历史快照可回看';}}
   finally{if(current()){state.running=false;render()}}
  }
- function stop(){if(state.collecting){collectEpoch++;finishCollect('已停止等待；已提交的云端采集未取消')}generation++;ctl?.abort();state.running=false;state.capError='已停止，结果仅覆盖已完成币种';render()}
+ function stop(){adviceRun++;if(state.collecting){collectEpoch++;finishCollect('已停止等待；已提交的云端采集未取消')}generation++;ctl?.abort();state.running=false;state.capError='已停止，结果仅覆盖已完成币种';render()}
  host.addEventListener('click',e=>{const b=e.target.closest('[data-cap-action],[data-cap-symbol]');if(!b)return;if(b.dataset.capSymbol)deps.onSymbol?.(b.dataset.capSymbol);else if(b.dataset.capAction==='refresh')refresh();else if(b.dataset.capAction==='collect')collect();else if(b.dataset.capAction==='stop')stop();else{state.settings=!state.settings;render()}});
  host.addEventListener('change',e=>{if(e.target.matches('[data-cap-range]')){if(state.running||state.collecting)stop();state.snapshot=null;state.snapshotRows=[];state.range=Number(e.target.value)===100?100:50;state.rows=[];state.errors=[];state.done=0;state.total=0;state.w=null;state.updated=0;render()}});
  render();return {refresh,stop,state,expireSnapshot,collect,checkRun,getEvidence};
 }
-const api={identity,windowAt,sample,ranks,validateCache,validateSnapshot,init};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.OiCapRadar=api;
+const api={identity,windowAt,sample,ranks,validateCache,validateSnapshot,adviceCandidates,candleStats,buildAdvice,init};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.OiCapRadar=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
