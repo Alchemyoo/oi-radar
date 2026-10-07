@@ -18,7 +18,7 @@ function sample(rows,w){
 }
 function ranks(rows){const growth=rows.filter(r=>finite(r.growth)&&r.growth>0).sort((a,b)=>b.growth-a.growth||a.sym.localeCompare(b.sym)).slice(0,5);
  const ratio=rows.filter(r=>finite(r.ratio)&&r.ratio>=0).sort((a,b)=>b.ratio-a.ratio||a.sym.localeCompare(b.sym)).slice(0,5);
- const set=new Set(ratio.map(r=>r.sym));return {growth,ratio,resonance:growth.filter(r=>set.has(r.sym)).map(r=>r.sym)};}
+ return {growth,ratio};}
 function capFresh(r,at){const asset=identity(r.sym);return !!(asset&&asset.id===r.capId&&finite(r.marketCap)&&r.marketCap>0&&finite(r.capTime)&&r.capTime>0&&r.capTime<=at+60000&&at-r.capTime<=FRESH)}
 // History is verified at generation time; expired data never passes validateCache.
 function validateSnapshot(d,now,range){
@@ -68,7 +68,7 @@ function init(host,deps={}){
    const t0=Date.now();
    while(Date.now()-t0<60000){
     const r=await collectFetch(RELAY+'/result/'+jobId,{signal:AbortSignal.timeout(20000)});if(epoch!==collectEpoch)return;
-    if(r.status===200){const d=await r.json();applyRelaySnapshot(d);finishCollect('即时采集成功 · 最新双榜已更新');return}
+    if(r.status===200){const d=await r.json();applyRelaySnapshot(d);finishCollect('即时采集成功 · 榜单已更新');return}
     if(r.status===410)throw Error('即时结果过期');
     if(r.status===502){const e=await r.json();throw Error('即时任务失败：'+(e.error||'未知'))}
     state.collectMessage='即时采集中…';render();await sleep(1500);
@@ -85,7 +85,7 @@ function init(host,deps={}){
   }
  }
  function applyRelaySnapshot(d){
-  /* 5m 历史 → 1H 精确端点双榜；与 Actions 缓存同一套严格校验 */
+  /* 5m 历史 → 1H 精确端点榜单；与 Actions 缓存同一套严格校验 */
   const end=Math.max(...d.results.flatMap(x=>x.data.map(r=>r.timestamp)));
   const w={start:end-HOUR,end};
   const rows=d.results.map(item=>{
@@ -121,7 +121,7 @@ function init(host,deps={}){
    const now=Date.now(),snapshot=validateSnapshot(raw,now,state.range);
    saveSnapshot(snapshot); // Valid history may be shown, but cannot complete a current collection.
    const cache=validateCache(raw,now,state.range);
-   applyFresh(cache);finishCollect('采集成功 · 最新双榜已更新');
+   applyFresh(cache);finishCollect('采集成功 · 榜单已更新');
   }catch(e){if(epoch===collectEpoch){state.collectMessage='等待重试 · '+e.message;render()}}
   finally{checking=false}
  }
@@ -139,7 +139,7 @@ function init(host,deps={}){
   if(state.snapshot&&(now>state.snapshot.historyExpiresAt||state.snapshot.scope.limit!==state.range)){state.snapshotRows=[];state.snapshot=null}
   if(state.expiresAt&&now>=state.expiresAt){
    state.rows=[];state.w=null;state.expiresAt=0;
-   state.collectMessage='';state.capError='官方OI快照已过期，已撤下双榜；仅供历史查阅，不代表无异动';
+   state.collectMessage='';state.capError='官方OI快照已过期，已撤下榜单；仅供历史查阅，不代表无异动';
   }
   for(const row of state.rows)if(!capFresh(row,now))row.ratio=null;
  }
@@ -161,16 +161,16 @@ function init(host,deps={}){
  const symbol=s=>esc(s.replace(/USDT$/,''));
  function render(){
   maintain(Date.now());armExpiry();
-  const r=ranks(state.rows),set=new Set(r.resonance);
-  const line=(x,kind)=>`<li><button type="button" data-cap-symbol="${esc(x.sym)}" class="${set.has(x.sym)?'resonant':''}">${symbol(x.sym)} ${set.has(x.sym)?'<small>共振</small>':''}</button><b class="${kind}">${kind==='growth'?'+':''}${(kind==='growth'?x.growth:x.ratio).toFixed(1)}%</b></li>`;
+  const r=ranks(state.rows);
+  const line=(x,kind)=>`<li><button type="button" data-cap-symbol="${esc(x.sym)}">${symbol(x.sym)}</button><b class="${kind}">${kind==='growth'?'+':''}${(kind==='growth'?x.growth:x.ratio).toFixed(1)}%</b></li>`;
   const coverage=state.rows.filter(x=>finite(x.ratio)).length;
-  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值雷达</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><div class="cap-resonance"><strong>${r.resonance.length?r.resonance.map(symbol).join(' · '):'暂无共振'}</strong><span>双榜共振</span></div><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两榜交集只是排名重合。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><p class="cap-note">新鲜榜单：15分钟内的有效数据；过期后不参与当前共振。</p><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${state.relayOnly?'<li class="cap-empty">即时快照不含市值；点击「刷新缓存」读取含市值的每小时缓存，或等待下一轮自动采集</li>':r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${esc(state.collecting?state.collectMessage:state.running?'更新中':state.collectMessage||'手动更新')} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}${historyHTML()}<footer><button data-cap-action="refresh" ${state.running||state.collecting?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting||state.running?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running||state.collecting?'':'disabled'}>停止</button></footer></section>`;
+  host.innerHTML=`<section class="cap-radar"><header><h3>OI / 市值榜单</h3><button data-cap-action="settings" aria-label="榜单设置" title="榜单设置">⚙</button></header><details class="cap-settings" ${state.settings?'open':''}><summary>范围与口径</summary><label>成交额范围 <select data-cap-range><option value="50" ${state.range===50?'selected':''}>Top50</option><option value="100" ${state.range===100?'selected':''}>Top100</option></select></label><p>1H增长按持仓币数；占比=窗口终点OI名义USD / 流通市值USD ×100%，不是资金流或投入比例，可超过100%。两个榜单独立排序，不生成合并信号。</p><p>Binance 5m精确端点；CoinGecko明确ID映射，仅${Object.keys(IDS).length}种已登记资产。倍数合约、未登记资产不猜市值。不是全市场排名。</p></details><p class="cap-note">新鲜数据：15分钟内有效；过期后撤下当前榜单，仅保留历史记录。</p><h4>1H OI 增长 Top 5</h4><ul>${r.growth.map(x=>line(x,'growth')).join('')||'<li class="cap-empty">尚无有效正增长数据</li>'}</ul><h4>OI/市值占比 Top 5</h4><ul>${state.relayOnly?'<li class="cap-empty">即时快照不含市值；点击「刷新缓存」读取含市值的每小时缓存，或等待下一轮自动采集</li>':r.ratio.map(x=>line(x,'ratio')).join('')||'<li class="cap-empty">尚无可靠市值占比数据</li>'}</ul><div class="cap-status" role="status">${esc(state.collecting?state.collectMessage:state.running?'更新中':state.collectMessage||'手动更新')} · ${esc(state.source)} · 已处理 ${state.done}/${state.total} · OI有效 ${state.rows.length} · 市值有效 ${coverage} · 失败 ${state.errors.length}${state.updated?' · '+new Date(state.updated).toISOString().slice(11,19)+' UTC':''}</div>${state.w?'<p class="cap-note">1H窗口 '+new Date(state.w.start).toISOString().slice(11,16)+' → '+new Date(state.w.end).toISOString().slice(11,16)+' UTC；官方发布滞后 '+Math.ceil(state.publicationLagMs/60000)+' 分钟；市值为独立快照（≤15分钟），非同刻历史市值。</p>':''}${state.capError?'<p class="cap-error">'+esc(state.capError)+'</p>':''}${state.errors.length?'<details class="cap-errors"><summary>查看缺数/请求失败</summary>'+state.errors.map(s=>'<p>'+esc(s)+'</p>').join('')+'</details>':''}${historyHTML()}<footer><button data-cap-action="refresh" ${state.running||state.collecting?'disabled':''}>刷新缓存</button><button data-cap-action="collect" ${state.collecting||state.running?'disabled':''}>${state.collecting?'采集任务运行中':'立即采集'}</button><button data-cap-action="stop" ${state.running||state.collecting?'':'disabled'}>停止</button></footer></section>`;
  }
  function historyHTML(){
   const snap=state.snapshot;if(!snap)return '<details class="cap-history"><summary>最近小时快照 · 暂无可回看记录</summary><p>仅保存本页读取的、生成时间不超过2小时的官方缓存。</p></details>';
   const h=ranks(state.snapshotRows),utc=t=>new Date(t).toISOString().slice(0,19).replace('T',' ')+' UTC';
   const rows=(list,key)=>list.map(r=>'<li><button data-cap-symbol="'+esc(r.sym)+'">'+symbol(r.sym)+'</button><b>'+r[key].toFixed(1)+'%</b></li>').join('')||'<li>该次快照无有效记录</li>';
-  return '<details class="cap-history"><summary>最近小时快照 · '+(Date.now()>=snap.expiresAt?'已过期，仅回看':'新鲜快照副本')+'</summary><p>生成 '+utc(snap.generatedAt)+'；窗口 '+utc(snap.w.start)+' → '+utc(snap.w.end)+'</p><p>OI '+state.snapshotRows.length+'/'+snap.total+'；当时市值有效 '+state.snapshotRows.filter(r=>finite(r.ratio)).length+'。历史排行不参与当前共振或评分；市值为生成时的独立快照。</p><h4>该次1H OI增长</h4><ul>'+rows(h.growth,'growth')+'</ul><h4>该次OI/流通市值</h4><ul>'+rows(h.ratio,'ratio')+'</ul><p>自动采集计划每小时17分（可能延迟）；立即采集可请求新快照。</p></details>';
+  return '<details class="cap-history"><summary>最近小时快照 · '+(Date.now()>=snap.expiresAt?'已过期，仅回看':'新鲜快照副本')+'</summary><p>生成 '+utc(snap.generatedAt)+'；窗口 '+utc(snap.w.start)+' → '+utc(snap.w.end)+'</p><p>OI '+state.snapshotRows.length+'/'+snap.total+'；当时市值有效 '+state.snapshotRows.filter(r=>finite(r.ratio)).length+'。历史排行仅供回看，不参与当前榜单；市值为生成时的独立快照。</p><h4>该次1H OI增长</h4><ul>'+rows(h.growth,'growth')+'</ul><h4>该次OI/流通市值</h4><ul>'+rows(h.ratio,'ratio')+'</ul><p>自动采集计划每小时17分（可能延迟）；立即采集可请求新数据。</p></details>';
  }
  async function refresh(){
   if(state.running||state.collecting)return;

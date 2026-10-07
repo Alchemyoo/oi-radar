@@ -6,7 +6,7 @@ const pct=n=>finite(n)?(n>=0?'+':'')+n.toFixed(2)+'%':'缺数';
 function build(sym,state,radar,now=Date.now(),funding){
  const result=[],add=(title,value,meta,status)=>result.push({title,value,meta,status:status||'missing'});
  const cap=radar?.getEvidence?.(sym,now),row=cap?.row||cap?.snapshotRow;
- if(row){const kind=cap.fresh?'新鲜快照':'历史快照（不参与当前共振）';add('1H OI币数变化',pct(row.growth),kind+' · '+utc(cap.window?.start)+' → '+utc(cap.window?.end)+' · Binance官方',cap.fresh?'fresh':'historical');add('OI/流通市值',finite(row.ratio)?row.ratio.toFixed(2)+'%':'未映射或市值缺数',kind+' · OI名义值/流通市值 · 市值 '+utc(row.capTime)+'（独立快照，非同刻）',cap.fresh&&cap.cap?.currentFresh?'fresh':'historical')}
+ if(row){const kind=cap.fresh?'新鲜快照':'历史快照（不参与当前榜单）';add('1H OI币数变化',pct(row.growth),kind+' · '+utc(cap.window?.start)+' → '+utc(cap.window?.end)+' · Binance官方',cap.fresh?'fresh':'historical');add('OI/流通市值',finite(row.ratio)?row.ratio.toFixed(2)+'%':'未映射或市值缺数',kind+' · OI名义值/流通市值 · 市值 '+utc(row.capTime)+'（独立快照，非同刻）',cap.fresh&&cap.cap?.currentFresh?'fresh':'historical')}
  else{add('1H OI与市值','尚无该币有效快照','先读取信号页同源缓存；未知不补零')}
  const st=state.st,price=st?.rows?.find(x=>x.sym===sym),days=st?.window||1,btc=st?.btc?.ret?.[days];
  if(price&&finite(price.ret?.[days]))add('强势超额',finite(btc)?pct((price.ret[days]-btc)*100)+'（百分点）':'BTC基准缺数',days+'日已收盘窗口 · 截止 '+utc(st.E)+' · Binance K线 · 历史比较，不是当前入场', 'historical');

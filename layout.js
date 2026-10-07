@@ -74,7 +74,7 @@ function layoutInit(){
   const hint=layoutNode('p','rtHint','只监测自选币种；手动开启，每 60 秒采样，切页后继续，暂停即停止。');hint.className='workspace-help';$('#rtCard').append(hint);
   for(const id of ['strong','scan']){const el=$('#v-'+id);el.className='op-panel';op.append(el)}
   const signal=$('#v-signal');signal.className='view';signal.hidden=false;main.append(signal);
-  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>双榜共振 → 日内观察 → 历史证据</p></div>'),layoutNode('div','oiMarketCapRadar',''));
+  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>OI榜单 → 日内观察 → 历史证据</p></div>'),layoutNode('div','oiMarketCapRadar',''));
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);
     $('#'+host).ontoggle=()=>{if($('#'+host).open)loader()};
