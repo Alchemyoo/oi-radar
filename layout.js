@@ -74,6 +74,7 @@ function layoutInit(){
   const hint=layoutNode('p','rtHint','只监测自选币种；手动开启，每 60 秒采样，切页后继续，暂停即停止。');hint.className='workspace-help';$('#rtCard').append(hint);
   for(const id of ['strong','scan']){const el=$('#v-'+id);el.className='op-panel';op.append(el)}
   const signal=$('#v-signal');signal.className='view';signal.hidden=false;main.append(signal);
+  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>OI榜单 → 日内观察 → 历史证据</p></div>'),layoutNode('div','oiMarketCapRadar',''));
   /* 拆分信号页：OI榜单 / 日内执行(5m工作台) / 历史证据(象限统计) 三个子板块 */
   const card=$('#v-signal .card'),execution=$('#idToggle').parentElement.parentElement;
   const quadCard=layoutNode('div','signalQuadPanel','');quadCard.className='card';
