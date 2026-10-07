@@ -6,9 +6,6 @@ function create(h){
  const {S,$,store,toast,ban,fetchJSON,R,render,filtered,csvDown,relay}=h;
  let request=null;
  function blocked(message){S.sc.state='unsupported';$('#scStat').textContent=message;ban('#scBan','warn',String(message).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])))}
- async function scOne(sym,win,ctx){
-  const row=ctx?.map?.get(sym);if(!row||row.startMs!==win.startMs||row.endMs!==win.endMs)throw Error('missing_exact_endpoint');return row;
- }
  async function scGo(){
   if(S.sc.run)return;
   if(S.sc.mode==='z'){blocked('σ 不支持：24h 同策略基准未准备；不使用日基准或改阈值');return}
@@ -46,8 +43,8 @@ function create(h){
    rows.forEach(row=>row.pick=R.pick(row,p));
    // Atomic full-universe replacement: failed requests never relabel previous rows.
    S.sc.rows=rows;S.sc.win=result.window;S.sc.result=result;S.sc.params=p;S.sc.mode='pct';
-   S.sc.config=config;S.sc.done=S.sc.total=rows.length;S.sc.err=0;
-   S.sc.next=null;S.sc.nextStat=null;S.sc.t0=result.receivedAt;S.sc.state='ready';S.sc.scanId=null;
+   S.sc.config=config;
+   S.sc.t0=result.receivedAt;S.sc.state='ready';
    scSave();render();scMeta();$('#scStat').textContent=`完成 ${rows.length}/${rows.length} · 24h共同端点`;
   }catch(e){
    if(S.sc.stop){S.sc.state='stopped';$('#scStat').textContent='已停止；没有写入部分结果'}
@@ -66,12 +63,11 @@ function create(h){
    const rows=R.validateResult(last.result,last.result.symbols,last.result.receivedAt);
    rows.forEach(row=>row.pick=R.pick(row,last.params));
    S.sc.rows=rows;S.sc.win=last.result.window;S.sc.result=last.result;S.sc.params=last.params;
-   S.sc.U=last.U??50;S.sc.mode='pct';S.sc.config={U:S.sc.U,mode:'pct'};S.sc.err=0;
-   S.sc.done=S.sc.total=rows.length;S.sc.t0=last.t;S.sc.next=null;S.sc.nextStat=null;S.sc.state='history';
+   S.sc.U=last.U??50;S.sc.mode='pct';S.sc.config={U:S.sc.U,mode:'pct'};
+   S.sc.t0=last.t;S.sc.state='history';
    $('#scStat').textContent='历史滚动24h记录（非当前信号）';scMeta();return true;
   }catch(e){return false}
  }
- function scNextCheck(){S.sc.next=null;S.sc.nextStat=null;for(const r of S.sc.rows)r.next=null}
  function scMeta(){
   const c=$('#scChips');c.style.display='flex';
   const w=S.sc.win;if(!w){c.textContent='尚无滚动24h结果';return}
@@ -84,7 +80,7 @@ function create(h){
   csvDown('OI异动扫描_rolling24.csv',['币种','窗口起始UTC','窗口截止UTC','模式','OI期初USDT','OI期末USDT','OI期初币数','OI期末币数','名义值变化USDT','名义值%','币数%','价格%','入选','OI证据源','价格证据源','后验','采集时间UTC'],filtered().map(r=>[r.sym,new Date(r.startMs).toISOString(),new Date(r.endMs).toISOString(),'rolling24',r.oiS,r.oiE,r.coinS,r.coinE,r.flow,r.net,r.coinNet,r.px,r.pick?'是':'否',r.src,r.priceSource,'未定义(next=null)',new Date(S.sc.result.receivedAt).toISOString()]));
  }
  function stop(){S.sc.stop=true;request?.abort();$('#scStop').disabled=true}
- return {scGo,scOne,scSave,scRestore,scNextCheck,scMeta,scCsv,stop};
+ return {scGo,scSave,scRestore,scMeta,scCsv,stop};
 }
 root.RollingScanDraft={create};
 })(globalThis);

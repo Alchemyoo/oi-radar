@@ -458,7 +458,7 @@ const S={
   fav:new Set(store.get(LSK.fav,[])),
   ov:{page:1,size:store.get('oif_ovsize',20),sort:'vol',dir:-1,q:'',favOnly:false,ready:false,list:[]},
   dt:{sym:store.get(LSK.sym,'BTCUSDT'),rows:null,day:null,miss:[],px:{},tab:'day',mp:1,msize:300,loading:false,src:'archive',fh:null,fhLoading:false},
-  sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,windowMode:'rolling24',mode:'pct',U:50,filter:'all',sort:'net',dir:-1,params:null},
+  sc:{run:false,stop:false,rows:[],mode:'pct',U:50,filter:'all',sort:'net',dir:-1,params:null},
   mg:{rows:null,time:null,tried:false},
   fd:{rows:null,time:0,sort:'fr',onlyTracked:false,loading:false},
   rt:{on:false,timer:null,win:6,thresh:3,int:60,rows:[],last:new Map(),hist:new Map(),lastAlertAt:new Map(),snapT:0},
@@ -867,20 +867,13 @@ function dtStarToggle(){
 function dtMinGo(d){S.dt.mp+=d;dtMinRender()}
 
 /* ================= 异动扫描 ================= */
-function scDays(){return []} /* no day-window semantics for rolling24 */
-const dailyEnd=rows=>{                    /* 5分钟行 → 日末 OI 序列 */
+const dailyEnd=rows=>{
   const m=new Map();
   for(const r of rows)m.set(dstr(r.t),r.oiv);
   return [...m.entries()].map(([d,v])=>({t:Date.parse(d+'T00:00:00Z'),oiv:v}));
 };
-function scOne(sym,win,ctx){return rollingDraft.scOne(sym,win,ctx)}
 function scGo(){return rollingDraft.scGo()}
-function scSave(){return rollingDraft.scSave()}
 function scRestore(last){return rollingDraft.scRestore(last)}
-/* Rolling24 后验待定义：不触发完整UTC日T+1。 */
-function scNextCheck(){return rollingDraft.scNextCheck()}
-function scApplyNext(){return scNextCheck()}
-function scNextChips(){}
 function scFiltered(){
   const f=S.sc.filter;
   S.sc.rows.forEach(r=>{if(r.flow==null)r.flow=r.oiE-r.oiS});
@@ -891,9 +884,7 @@ function scFiltered(){
 }
 function scRender(){
   const tb=$('#scTbl tbody');
-  const nx=v=>v==null?'—':(v>0?'+':'')+v.toFixed(2)+'%';
-  const empty=S.sc.run?'扫描中…':S.sc.err?`数据不完整：${S.sc.err} 个币种失败或缺少判定数据；不能视为零入选`:
-    S.sc.stop?'扫描已停止；结果仅覆盖已完成币种':S.sc.rows.length?'当前筛选无匹配（已有扫描数据）':'尚无扫描数据';
+  const empty=S.sc.run?'扫描中…':S.sc.stop?'扫描已停止；结果仅覆盖已完成币种':S.sc.rows.length?'当前筛选无匹配（已有扫描数据）':'尚无扫描数据';
   tb.innerHTML=scFiltered().map(r=>
     `<tr><td><a data-sym="${r.sym}">${r.sym.replace('USDT','')}</a></td>`+
     `<td>${fC(r.oiS)}</td><td>${fC(r.oiE)}</td>`+
@@ -902,7 +893,7 @@ function scRender(){
     `<td class="${clsP(r.coinNet)}">${r.coinNet==null?'—':fP(r.coinNet/100)}</td>`+
     `<td class="${r.z==null?'':(Math.abs(r.z)>=2?(r.z>0?'up':'down'):'')}">${r.z==null?'—':(r.z>0?'+':'')+r.z.toFixed(2)+'σ'}</td>`+
     `<td class="${clsP(r.px)}">${r.px==null?'—':fP(r.px/100)}</td>`+
-    `<td class="${clsP(r.next)}">${r.next==null?'—':nx(r.next)}</td>`+
+    `<td>—</td>`+
     `<td>${r.pick?'<span class="bdg pick">入选</span>':''}</td></tr>`
   ).join('')||`<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:18px">${empty}</td></tr>`;
 }
@@ -1144,7 +1135,7 @@ function init(){
     if(S.sc.mode==='z'){$('#scOiLbl').textContent='OI净变z≥';$('#scOiUnit').textContent='σ';$('#scOiPct').value=2}
     if(S.sc.params){$('#scOiPct').value=S.sc.params.oiPct;$('#scPxPct').value=S.sc.params.pxPct;$('#scMinOi').value=S.sc.params.minOi}
     scRender();scMeta();
-    scNextCheck(); /* rolling24: next=null, no complete-UTC-day outcome */
+
   }
 }
 const rollingDraft=RollingScanDraft.create({S,$,store,toast,ban,R:RollingOI,relay:RELAY,
