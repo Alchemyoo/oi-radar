@@ -65,7 +65,7 @@ async function request(url,signal){const ctl=new AbortController(),abort=()=>ctl
  try{const res=await fetch(url,{signal:ctl.signal});if(!res.ok){const e=Error('HTTP '+res.status);e.status=res.status;e.retryAfter=Number(res.headers.get('Retry-After'))||60;throw e}return await res.json()}
  finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
 }
-function adviceCandidates(rows){return (rows||[]).filter(r=>finite(r.growth)&&r.growth>0&&finite(r.ratio)&&r.ratio>=0).sort((a,b)=>b.ratio-a.ratio||b.growth-a.growth||String(a.sym).localeCompare(String(b.sym))).slice(0,5)}
+function adviceCandidates(rows){return (rows||[]).filter(r=>finite(r.growth)&&r.growth>0&&r.ratio===null||finite(r.growth)&&r.growth>0&&finite(r.ratio)&&r.ratio>=0).sort((a,b)=>(b.ratio??-1)-(a.ratio??-1)||b.growth-a.growth||String(a.sym).localeCompare(String(b.sym))).slice(0,5)}
 function init(host,deps={}){
  if(!host)return null;let generation=0,ctl=null,cooldown=0,expiryTimer=null,pollTimer=null,adviceRun=0;
  const sleep=deps.sleep||((ms)=>new Promise(resolve=>setTimeout(resolve,ms)));
