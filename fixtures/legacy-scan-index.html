@@ -230,13 +230,13 @@ input[type=number]{text-align:right}
 <!-- ========== 异动扫描 ========== -->
 <section class="view" id="v-scan">
   <div class="card">
-    <h3>持仓异动扫描 <span class="r" id="scSrc">openInterestHist 5m精确首末 · 滚动24h</span></h3>
+    <h3>持仓异动扫描 <span class="r" id="scSrc">openInterestHist 1d 快照</span></h3>
     <div class="row" style="margin-bottom:8px">
-      <span id="scWin">固定滚动24h · 截止最新共同已发布5m</span>
-      <div class="seg" id="scUni"><button data-u="50" class="on">Top50</button><button data-u="100" disabled title="共同窗口最多50币，不能独立分批">Top100（未支持）</button><button data-u="0" disabled>全部（未支持）</button></div>
+      <div class="seg" id="scWin"><button data-w="1">1天</button><button data-w="2">2天</button><button data-w="3" class="on">3天</button></div>
+      <div class="seg" id="scUni"><button data-u="50">Top50</button><button data-u="100" class="on">Top100</button><button data-u="0">全部</button></div>
     </div>
     <div class="row" style="margin-bottom:8px">
-      <div class="seg" id="scMode"><button data-m="pct" class="on">%</button><button data-m="z" disabled title="24h同策略基准未准备，不支持σ">σ（未支持）</button></div>
+      <div class="seg" id="scMode"><button data-m="pct" class="on">%</button><button data-m="z">σ</button></div>
       <span class="mut" id="scOiLbl">OI净增≥</span><input id="scOiPct" type="number" value="30" style="width:56px"><span class="mut" id="scOiUnit">%</span>
       <span class="mut">名义值变化：期末OI值−期初OI值，不代表实际资金流</span>
       <span class="mut">|价格|≤</span><input id="scPxPct" type="number" value="10" style="width:56px"><span class="mut">%</span>
@@ -255,7 +255,7 @@ input[type=number]{text-align:right}
       <button class="btn mini" id="scCsv">导出CSV</button>
     </div>
     <div class="tblwrap"><table class="tbl" id="scTbl">
-      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="flow">OI名义值变化</th><th data-k="net">名义值%</th><th data-k="coinNet">币数%</th><th data-k="z">z值</th><th data-k="px">价格%</th><th data-k="next" title="滚动24h后验口径未定义">后验未定义</th><th>标记</th></tr></thead>
+      <thead><tr><th data-k="sym">币种</th><th data-k="oiS">OI期初</th><th data-k="oiE">OI期末</th><th data-k="flow">OI名义值变化</th><th data-k="net">名义值%</th><th data-k="coinNet">币数%</th><th data-k="z">z值</th><th data-k="px">价格%</th><th data-k="next">T+1%</th><th>标记</th></tr></thead>
       <tbody></tbody></table></div>
   </div>
 </section>
@@ -394,8 +394,6 @@ input[type=number]{text-align:right}
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
-<script src="rolling-oi.js?v=20261007-rolling1"></script>
-<script src="rolling-scan.js?v=20261007-rolling1"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -458,7 +456,7 @@ const S={
   fav:new Set(store.get(LSK.fav,[])),
   ov:{page:1,size:store.get('oif_ovsize',20),sort:'vol',dir:-1,q:'',favOnly:false,ready:false,list:[]},
   dt:{sym:store.get(LSK.sym,'BTCUSDT'),rows:null,day:null,miss:[],px:{},tab:'day',mp:1,msize:300,loading:false,src:'archive',fh:null,fhLoading:false},
-  sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,windowMode:'rolling24',mode:'pct',U:50,filter:'all',sort:'net',dir:-1,params:null},
+  sc:{run:false,stop:false,rows:[],err:0,done:0,total:0,W:3,U:100,filter:'all',sort:'net',dir:-1,params:null},
   mg:{rows:null,time:null,tried:false},
   fd:{rows:null,time:0,sort:'fr',onlyTracked:false,loading:false},
   rt:{on:false,timer:null,win:6,thresh:3,int:60,rows:[],last:new Map(),hist:new Map(),lastAlertAt:new Map(),snapT:0},
@@ -867,20 +865,175 @@ function dtStarToggle(){
 function dtMinGo(d){S.dt.mp+=d;dtMinRender()}
 
 /* ================= 异动扫描 ================= */
-function scDays(){return []} /* no day-window semantics for rolling24 */
+function scDays(){return OiRadar.scWindow(S.sc.W,Date.now()).days}
 const dailyEnd=rows=>{                    /* 5分钟行 → 日末 OI 序列 */
   const m=new Map();
   for(const r of rows)m.set(dstr(r.t),r.oiv);
   return [...m.entries()].map(([d,v])=>({t:Date.parse(d+'T00:00:00Z'),oiv:v}));
 };
-function scOne(sym,win,ctx){return rollingDraft.scOne(sym,win,ctx)}
-function scGo(){return rollingDraft.scGo()}
-function scSave(){return rollingDraft.scSave()}
-function scRestore(last){return rollingDraft.scRestore(last)}
-/* Rolling24 后验待定义：不触发完整UTC日T+1。 */
-function scNextCheck(){return rollingDraft.scNextCheck()}
-function scApplyNext(){return scNextCheck()}
-function scNextChips(){}
+async function scOne(sym,win,ctx=S.sc){        /* OI 与价格共用 win 的同一对端点 */
+  const R=OiRadar,wantZ=ctx.mode==='z',stopped=()=>ctx.stop===true;
+  let hit=null,src='hist';
+  const histN=wantZ?Math.min(40,win.W+32):win.W+4;
+  if(!ctx.noHist&&!stopped()){              /* 本轮降级状态独立于其他模块 */
+    const cached=ctx.relay&&ctx.relay.get?ctx.relay.get(sym):null;
+    if(cached){                              /* 即时中继数据：同官方端点，已按精确时间戳校验 */
+      hit=R.scOiFromHist(cached,win);
+      if(hit)src='relay';
+    }
+    else try{hit=R.scOiFromHist(await loadOiHist(sym,histN),win)}
+    catch(e){if(e&&e.name==='TypeError')ctx.noHist=true}
+  }
+  if(!hit&&!stopped()){                    /* 回退：归档 zip（整段单源，不混合；含 d0 取期初端点） */
+    src='archive';
+    let adays=[win.d0,...win.days];
+    if(wantZ){                            /* z 模式：向前扩 30 天做基准分布 */
+      const first=Date.parse(win.d0+'T00:00:00Z'),base=[];
+      for(let t=first-DAY;t>=first-30*DAY;t-=DAY)base.push(dstr(t));
+      adays=[...base.reverse(),...adays];
+    }
+    const rs=[];
+    await pool(adays,3,async d=>{if(stopped())return;try{const dd=await fetchDay(sym,d);rs.push(...dd)}catch(e){}},stopped);
+    rs.sort((a,b)=>a.t-b.t);
+    hit=R.scOiFromArchive(rs,win);
+  }
+  let px=null;                            /* 价格取同窗口端点收盘价，不用当日未完成 K 线 */
+  if(!stopped())try{px=R.scPriceChange(await loadKlines(sym,win.W+3),win,Date.now())}catch(e){}
+  if(!hit)return {oiS:null,oiE:null,px,src,z:null};
+  const z=wantZ?R.scZ(hit.seq,hit.oiS,hit.oiE,win.W):null;
+  return {oiS:hit.oiS,oiE:hit.oiE,coinS:hit.coinS,coinE:hit.coinE,px,src,z};
+}
+async function scGo(){
+  if(S.sc.run)return;
+  if(!S.ov.ready||!S.ov.list.length){toast('合约列表未就绪，请稍候再扫');return}
+  const p=S.sc.params={oiPct:+$('#scOiPct').value||0,pxPct:+$('#scPxPct').value||30,minOi:+$('#scMinOi').value||0};
+  let list=[...S.ov.list].sort((a,b)=>b.vol-a.vol);
+  if(S.sc.U>0)list=list.slice(0,S.sc.U);
+  const win=OiRadar.scWindow(S.sc.W,Date.now());
+  S.sc.run=true;S.sc.stop=false;S.sc.rows=[];S.sc.err=0;S.sc.done=0;S.sc.total=list.length;
+  S.sc.win=win;S.sc.t0=Date.now();S.sc.scanId=null;S.sc.next=null;S.sc.nextStat=null;
+  /* 即时中继：先批量取 Top 份额的历史，成功则逐币秒回；失败自动回退浏览器直连/归档 */
+  const ctx={mode:S.sc.mode||'pct',W:win.W,U:S.sc.U,noHist:false,relay:null,get stop(){return S.sc.stop}};
+  try{
+    const need=ctx.mode==='z'?Math.min(40,win.W+32):win.W+4;
+    const relayList=list.slice(0,50);        /* 中继单次限 50 币；Top100/全部自动分批走原链路补齐 */
+    if(relayList.length){
+      $('#scStat').innerHTML='<span class="spin"></span> 即时数据中 '+relayList.length+' 币…';
+      const {map,errors}=await relayHistMap(relayList.map(r=>r.sym),need);
+      if(!S.sc.stop&&map.size)ctx.relay=map;
+      if(errors&&errors.length&&!S.sc.stop)S.sc.relayErrors=errors;
+    }
+  }catch(e){/* 中继不可用：静默回退，不改判定 */}
+  S.sc.config=ctx;S.sc.noHist=false;          /* 降级仅限本轮；不与象限模块共用 */
+  scRender();
+  $('#scGo').disabled=true;$('#scStop').disabled=false;
+  $('#scBar').classList.add('on');$('#scBar i').style.width='0%';
+  $('#scChips').style.display='none';
+  ban('#scBan','',null);
+  $('#scStat').innerHTML='<span class="spin"></span> 0/'+S.sc.total;
+  await pool(list,5,async r=>{
+    if(S.sc.stop)return;
+    try{
+      const data=await scOne(r.sym,win,ctx);
+      if(S.sc.stop)return;                /* 停止时丢弃未完成结果 */
+      const {oiS,oiE,coinS,coinE,src}=data,fin=Number.isFinite;
+      const px=fin(data.px)?data.px:null,z=fin(data.z)?data.z:null;
+      const net=(oiE/oiS-1)*100,flow=oiE-oiS;
+      if(!fin(oiS)||!fin(oiE)||oiS<=0||oiE<=0||!fin(net)||!fin(flow)){S.sc.err++}
+      else{
+        const rawCoin=fin(coinS)&&coinS>0&&fin(coinE)&&coinE>0?(coinE/coinS-1)*100:null;
+        const coinNet=fin(rawCoin)?rawCoin:null;
+        const complete=px!=null&&(ctx.mode==='z'?z!=null:coinNet!=null);
+        if(!complete)S.sc.err++;           /* 价格/币数/基准缺失不冒充成功零入选 */
+        const netOk=ctx.mode==='z'?(z!=null&&z>=p.oiPct):(coinNet!=null&&coinNet>=p.oiPct);
+        S.sc.rows.push({sym:r.sym,oiS,oiE,coinS,coinE,coinNet,flow,net,px,z,src,
+          pick:complete&&netOk&&Math.abs(px)<=p.pxPct&&oiS>=p.minOi});
+      }
+    }catch(e){S.sc.err++}
+    S.sc.done++;
+    $('#scBar i').style.width=(S.sc.done/S.sc.total*100).toFixed(1)+'%';
+    $('#scStat').textContent=`${S.sc.done}/${S.sc.total}`+(S.sc.err?` · 失败${S.sc.err}`:'');
+    if(S.sc.done%20===0)scRender();
+  });
+  S.sc.run=false;S.sc.noHist=ctx.noHist;
+  $('#scGo').disabled=false;$('#scStop').disabled=true;
+  $('#scBar').classList.remove('on');
+  scRender();scMeta();
+  $('#scStat').textContent=`${S.sc.stop?'已停止':'完成'} ${S.sc.done}/${S.sc.total} · 失败 ${S.sc.err}`;
+  if(S.sc.stop)toast('扫描已停止');
+  scSave();scNextCheck();
+}
+function scSave(){
+  const win=S.sc.win||OiRadar.scWindow(S.sc.W,Date.now());
+  const config=S.sc.config||S.sc;
+  const rec={
+    t:S.sc.t0||Date.now(),W:win.W,U:config.U,mode:config.mode||'pct',params:S.sc.params,
+    days:win.days,d0:win.d0,signalDay:win.signalDay,
+    rows:S.sc.rows.map(({next,nextSt,...r})=>r),noHist:S.sc.noHist,
+    err:S.sc.err,stop:S.sc.stop,done:S.sc.done,total:S.sc.total
+  };
+  store.set('oif_lastscan',rec);
+  S.sc.scanId=OiRadar.scScanId(rec);
+}
+function scRestore(last){
+  if(!last||!Array.isArray(last.rows))return false;
+  S.sc.rows=last.rows.map(({next,nextSt,...r})=>r);
+  S.sc.W=Math.min(3,Math.max(1,last.W||3));S.sc.U=last.U??100;
+  S.sc.mode=last.mode||'pct';S.sc.params=last.params||null;
+  const count=(v,fallback)=>Number.isInteger(v)&&v>=0?v:fallback;
+  S.sc.err=count(last.err,0);S.sc.stop=last.stop===true;
+  S.sc.done=count(last.done,S.sc.rows.length);S.sc.total=count(last.total,S.sc.done);
+  S.sc.noHist=last.noHist===true;S.sc.run=false;S.sc.t0=last.t;
+  S.sc.win=OiRadar.scWindow(S.sc.W,last.t||Date.now());
+  S.sc.config={W:S.sc.W,U:S.sc.U,mode:S.sc.mode};
+  S.sc.scanId=OiRadar.scScanId(last);
+  $('#scStat').textContent=`${S.sc.stop?'已停止':'上次扫描'} ${S.sc.done}/${S.sc.total} · 失败 ${S.sc.err}`;
+  return true;
+}
+/* T+1：信号日收盘 → 下一完整 UTC 日收盘；未完成为 null；缓存按扫描 id 隔离 */
+async function scNextCheck(){
+  if(S.sc.run)return;
+  const last=store.get('oif_lastscan',null);
+  const id=OiRadar.scScanId(last);
+  if(!id||!last.rows||!last.rows.length)return;
+  if(S.sc.scanId!==id)return;                /* 界面上的结果不是这次保存的扫描 */
+  const sd=OiRadar.scSignalDay(last);
+  const due=Date.now()>=Date.parse(sd+'T00:00:00Z')+2*DAY;
+  if(due)ban('#scBan','ok',`<span class="spin"></span> 验证上次扫描(信号日 ${sd}) T+1 表现…`);
+  const res=await OiRadar.scNextCheckRun({last,cache:store.get('oif_scancheck2',null),now:Date.now(),
+    pool,loadKlines,isCurrent:i=>!S.sc.run&&S.sc.scanId===i});
+  if(due)ban('#scBan','',null);
+  if(!res)return;
+  store.set('oif_scancheck2',res.cache);
+  scApplyNext(res.done);
+}
+function scApplyNext(done){
+  S.sc.next=done;
+  let n=0,win=0,pending=0;
+  for(const r of S.sc.rows){
+    const o=done[r.sym];
+    r.nextSt=o?o.status:'pending';
+    r.next=o&&o.status==='ok'?o.value:null;
+    if(r.nextSt==='pending')pending++;
+    if(r.next!=null){n++;if(r.next>0)win++}
+  }
+  const pk=S.sc.rows.filter(r=>r.pick);
+  const pn=pk.filter(r=>r.next!=null).length;
+  const pw=pk.filter(r=>r.next>0).length;
+  S.sc.nextStat={n,win,pn,pw,pending};
+  scRender();scNextChips();
+}
+function scNextChips(){
+  const c=$('#scChips');
+  const st=S.sc.nextStat;
+  c.querySelectorAll('.nx').forEach(x=>x.remove());
+  if(!st)return;
+  let html='';
+  if(st.n)html+=`<span class="chip nx">T+1 已验 <b>${st.n}</b> · 胜 <b>${st.win}</b> (${Math.round(st.win/st.n*100)}%)</span>`;
+  if(st.pn)html+=`<span class="chip nx">入选 T+1 <b>${st.pw}/${st.pn}</b> (${Math.round(st.pw/st.pn*100)}%)</span>`;
+  if(st.pending)html+=`<span class="chip nx">T+1 待收盘 <b>${st.pending}</b></span>`;
+  if(html)c.insertAdjacentHTML('beforeend',html);
+}
 function scFiltered(){
   const f=S.sc.filter;
   S.sc.rows.forEach(r=>{if(r.flow==null)r.flow=r.oiE-r.oiS});
@@ -906,8 +1059,29 @@ function scRender(){
     `<td>${r.pick?'<span class="bdg pick">入选</span>':''}</td></tr>`
   ).join('')||`<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:18px">${empty}</td></tr>`;
 }
-function scMeta(){return rollingDraft.scMeta()}
-function scCsv(){return rollingDraft.scCsv()}
+function scMeta(){
+  const c=$('#scChips');
+  c.style.display='flex';
+  S.sc.rows.forEach(r=>{if(r.flow==null)r.flow=r.oiE-r.oiS});
+  const inflow=S.sc.rows.filter(r=>r.flow>0),outflow=S.sc.rows.filter(r=>r.flow<0);
+  const inSum=inflow.reduce((a,r)=>a+r.flow,0),outSum=outflow.reduce((a,r)=>a+r.flow,0);
+  c.innerHTML=`<span class="chip">样本 <b>${S.sc.rows.length}</b></span>`+
+    `<span class="chip">净增 <b>${S.sc.rows.filter(r=>r.coinNet!=null&&r.coinNet>=0).length}</b></span>`+
+    `<span class="chip">净减 <b>${S.sc.rows.filter(r=>r.coinNet!=null&&r.coinNet<0).length}</b></span>`+
+    `<span class="chip up">名义值增 <b>${fC(inSum)}</b> (${inflow.length})</span>`+
+    `<span class="chip down">名义值减 <b>${fC(Math.abs(outSum))}</b> (${outflow.length})</span>`+
+    `<span class="chip">入选 <b>${S.sc.rows.filter(r=>r.pick).length}</b></span>`+
+    (S.sc.err?`<span class="chip">数据不完整 <b>${S.sc.err}</b> · 入选数仅供已知数据参考</span>`:``)+
+    (S.sc.stop?`<span class="chip">已停止 · 覆盖 ${S.sc.done}/${S.sc.total}</span>`:``)+
+    `<span class="chip">OI 数据源：${S.sc.rows.length?[...new Set(S.sc.rows.map(r=>r.src==='hist'?'历史接口':r.src==='relay'?'即时中继':r.src==='archive'?'归档 zip':'未知（旧记录）'))].join(' + '):'无有效样本'}</span>`+
+    (S.sc.relayErrors&&S.sc.relayErrors.length?`<span class="chip">即时中继未覆盖：${S.sc.relayErrors.length} 币（已回退其他来源）</span>`:``);
+}
+function scCsv(){
+  if(!S.sc.rows.length){toast('无可导出数据');return}
+  csvDown(`OI异动扫描_${S.sc.win?.W||S.sc.W}d.csv`,
+    ['币种','OI期初USDT','OI期末USDT','OI名义值变化USDT','名义值%','OI币数变化%','z值','价格%','入选'],
+    scFiltered().map(r=>[r.sym,r.oiS,r.oiE,r.flow,+r.net.toFixed(2),r.coinNet==null?'':+r.coinNet.toFixed(2),r.z!=null?+r.z.toFixed(2):'',r.px!=null?+r.px.toFixed(2):'',r.pick?'是':'']));
+}
 
 /* ================= 热度 ================= */
 const MG='https://apimegaglass.codtech.uk';
@@ -1019,13 +1193,25 @@ function bind(){
   $('#dtMinNext').onclick=()=>dtMinGo(1);
   $('#dtCsv').onclick=dtCsv;
   /* 扫描 */
+  $$('#scWin button').forEach(b=>b.onclick=()=>{
+    S.sc.W=+b.dataset.w;
+    $$('#scWin button').forEach(x=>x.classList.toggle('on',x===b));
+  });
   $$('#scUni button').forEach(b=>b.onclick=()=>{
     S.sc.U=+b.dataset.u;
     $$('#scUni button').forEach(x=>x.classList.toggle('on',x===b));
   });
-  $$('#scMode button').forEach(b=>b.onclick=()=>{if(b.dataset.m==='z'){ban('#scBan','warn','σ未支持：不能把日基准当24h同策略');return}S.sc.mode='pct'});
+  $$('#scMode button').forEach(b=>b.onclick=()=>{
+    S.sc.mode=b.dataset.m;
+    $$('#scMode button').forEach(x=>x.classList.toggle('on',x===b));
+    $('#scOiLbl').textContent=S.sc.mode==='z'?'OI净变z≥':'OI净增≥';
+    $('#scOiUnit').textContent=S.sc.mode==='z'?'σ':'%';
+    $('#scOiPct').value=S.sc.mode==='z'?2:30;
+    ban('#scBan','warn',S.sc.mode==='z'?'σ 模式：以该币近 30 天日环比分布为基准，净变 ≥ N 个标准差才算异动（比固定 % 更公平地对待 BTC 与 meme）':'');
+    setTimeout(()=>{if(S.sc.mode!=='z')ban('#scBan','',null)},3000);
+  });
   $('#scGo').onclick=scGo;
-  $('#scStop').onclick=()=>rollingDraft.stop();
+  $('#scStop').onclick=()=>{S.sc.stop=true;abortActiveRequests();$('#scStop').disabled=true};
   $$('#scFilter button').forEach(b=>b.onclick=()=>{
     S.sc.filter=b.dataset.f;
     $$('#scFilter button').forEach(x=>x.classList.toggle('on',x===b));
@@ -1137,20 +1323,17 @@ function init(){
   stamp();setInterval(stamp,30000);
   bootOverview();
   /* 恢复上次扫描 + T+1 验证 */
-  const last=store.get('oif_lastscan_rolling24_v2',null);
+  const last=store.get('oif_lastscan',null);
   if(scRestore(last)){
+    $$('#scWin button').forEach(b=>b.classList.toggle('on',+b.dataset.w===S.sc.W));
     $$('#scUni button').forEach(b=>b.classList.toggle('on',+b.dataset.u===S.sc.U));
     $$('#scMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===(S.sc.mode||'pct')));
     if(S.sc.mode==='z'){$('#scOiLbl').textContent='OI净变z≥';$('#scOiUnit').textContent='σ';$('#scOiPct').value=2}
     if(S.sc.params){$('#scOiPct').value=S.sc.params.oiPct;$('#scPxPct').value=S.sc.params.pxPct;$('#scMinOi').value=S.sc.params.minOi}
     scRender();scMeta();
-    scNextCheck(); /* rolling24: next=null, no complete-UTC-day outcome */
+    setTimeout(scNextCheck,2500);
   }
 }
-const rollingDraft=RollingScanDraft.create({S,$,store,toast,ban,R:RollingOI,relay:RELAY,
-  render:()=>scRender(),filtered:()=>scFiltered(),csvDown,
-  fetchJSON:async(url,opts)=>{const r=await fetch(url,opts);const body=await r.json();if(!r.ok)throw Error(body.error||('HTTP '+r.status));return body}
-});
 init();
 
 /* ================= 费率 ================= */
@@ -1768,7 +1951,7 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-5"></script>
 <script src="oi-cap-radar.js?v=20261006-relay1"></script>
-<script src="coin-evidence.js?v=20261007-rolling1"></script>
+<script src="coin-evidence.js?v=20261006-relay1"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>
 </body>
 </html>

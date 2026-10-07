@@ -1,3 +1,4 @@
+// Historical full-day scanner regression fixture. Rolling24 is tested in rolling-scan.test.js.
 'use strict';
 // Run: node --test radar.test.js (Node 18+; no packages, no network, no real clock).
 const test = require('node:test');
@@ -7,7 +8,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const radarSrc = fs.readFileSync(path.join(__dirname, 'radar.js'), 'utf8');
-const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'fixtures/legacy-scan-index.html'), 'utf8');
 const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)][0][1];
 
 const MIN = 60000, HOUR = 3600000, DAY = 86400000;

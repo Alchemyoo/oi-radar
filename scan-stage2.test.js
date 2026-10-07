@@ -1,6 +1,7 @@
+// Historical full-day scanner regression fixture. Rolling24 is tested in rolling-scan.test.js.
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const html=fs.readFileSync(__dirname+'/fixtures/legacy-scan-index.html','utf8');
 const script=html.match(/<script>\s*'use strict';([\s\S]*?)<\/script>/)[1];
 function fn(name){const m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(script);assert.ok(m);return script.slice(m.index,script.indexOf('\n}',m.index)+2)}
 function harness(){
