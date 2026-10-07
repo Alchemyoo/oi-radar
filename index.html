@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="oi-cap-radar.css?v=20261005-1">
+<link rel="stylesheet" href="oi-cap-radar.css?v=20261007-adv1">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#0a0d13">
 <title>OI 雷达 · Binance 持仓</title>
@@ -1758,7 +1758,7 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 </script>
 <script src="strong.js?v=20261003-1"></script>
 <script src="layout.js?v=20261005-5"></script>
-<script src="oi-cap-radar.js?v=20261006-relay1"></script>
+<script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>
 </body>
