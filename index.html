@@ -391,6 +391,7 @@ input[type=number]{text-align:right}
   <button data-v="market" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 19V5m0 14h18M6 14l4-5 4 3 6-8"/></svg>市场</button>
   <button data-v="opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg>机会</button>
   <button data-v="signal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>信号</button>
+  <button data-v="evidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg>历史</button>
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
@@ -1757,7 +1758,7 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261003-1"></script>
-<script src="layout.js?v=20261005-5"></script>
+<script src="layout.js?v=20261008-evidence1"></script>
 <script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>

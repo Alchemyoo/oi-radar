@@ -3,7 +3,7 @@
  const out=[],check=(name,ok)=>{out.push({name,ok:!!ok});if(!ok)throw Error(name)};
  const saved={fav:[...S.fav],list:{q:S.ov.q,page:S.ov.page,sort:S.ov.sort,dir:S.ov.dir},view:Layout.current,op:Layout.op};
  try{
-  check('3 primary entries',$$('#tabbar button').length===3);
+  check('4 primary entries',$$('#tabbar button').length===4);
   check('market loaded',S.ov.list.length>0);
   check('unique IDs',$$('[id]').every((e,i,a)=>a.findIndex(x=>x.id===e.id)===i));
   check('correct market header',$('#ovTitle').contains($('#ovCount')));
@@ -23,8 +23,11 @@
   for(const k of ['strong','scan']){layoutOp(k);check(k+' exclusive visibility',['strong','scan'].every(x=>$('#v-'+x).hidden===(x!==k)))}
   layoutNavigate('signal');check('signal is primary',Layout.current==='signal'&&$('#v-signal').classList.contains('on'));check('radar host exists',!!$('#oiMarketCapRadar'));
   layoutNavigate('detail');layoutBack();check('detail returns to signal',Layout.current==='signal');
-  check('evidence folded',!$('#signalEvidence').open&&$('#signalEvidence').contains($('#qdTbl')));
-  check('execution first',$('#v-signal .card').firstElementChild.contains($('#idToggle')));
+  check('signal has no historical controls',!$('#v-signal').contains($('#qdGo'))&&!$('#v-signal').contains($('#qdTbl')));
+  check('execution remains in signal',$('#signalExecPanel').contains($('#idToggle')));
+  layoutNavigate('evidence');check('history page is primary',Layout.current==='evidence'&&$('#v-evidence').classList.contains('on'));
+  check('history has controls and wrapped table',$('#v-evidence').contains($('#qdGo'))&&$('#qdTbl').parentElement.classList.contains('tblwrap'));
+  layoutNavigate('detail');layoutBack();check('detail returns to history',Layout.current==='evidence');
   layoutNavigate('opportunity');layoutOp('scan');$('#main').scrollTop=120;const y=$('#main').scrollTop;
   layoutNavigate('detail');check('detail source',Layout.returnTo.view==='opportunity'&&Layout.returnTo.op==='scan');
   layoutBack();check('source and scroll restored',Layout.current==='opportunity'&&Layout.op==='scan'&&$('#main').scrollTop===y);

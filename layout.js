@@ -1,4 +1,4 @@
-/* Three workspaces; move existing nodes so IDs, data and bound events survive. */
+/* Four workspaces; move existing nodes so IDs, data and bound events survive. */
 'use strict';
 const Layout={current:'market',op:'strong',returnTo:null,scroll:{},lists:{market:{q:'',page:1,sort:'vol',dir:-1}}};
 function layoutNode(tag,id,html){const e=document.createElement(tag);e.id=id;if(html)e.innerHTML=html;return e}
@@ -33,13 +33,13 @@ function layoutNavigate(v,restore=false){
     $('#marketTools').open=true;
     const box=$(v==='fund'?'#toolFund':'#toolHeat');box.open=true;return;
   }
-  if(!['market','opportunity','signal','detail'].includes(v))return;
+  if(!['market','opportunity','signal','evidence','detail'].includes(v))return;
   layoutSaveList();Layout.scroll[Layout.current]=$('#main').scrollTop;
   if(v==='detail'&&Layout.current!=='detail')Layout.returnTo={view:Layout.current,op:Layout.op,scroll:$('#main').scrollTop};
   Layout.current=v;
   if(v==='market')layoutList(v);
   if(v==='opportunity')layoutOp(Layout.op);
-  for(const id of ['market','opportunity','signal','detail'])$('#v-'+id).classList.toggle('on',id===v);
+  for(const id of ['market','opportunity','signal','evidence','detail'])$('#v-'+id).classList.toggle('on',id===v);
   const active=v==='detail'?(Layout.returnTo?.view||'market'):v;
   $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active;b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
   $('#hdr h1').textContent=v==='detail'?'单币详情':'OI 雷达';
@@ -74,16 +74,18 @@ function layoutInit(){
   const hint=layoutNode('p','rtHint','只监测自选币种；手动开启，每 60 秒采样，切页后继续，暂停即停止。');hint.className='workspace-help';$('#rtCard').append(hint);
   for(const id of ['strong','scan']){const el=$('#v-'+id);el.className='op-panel';op.append(el)}
   const signal=$('#v-signal');signal.className='view';signal.hidden=false;main.append(signal);
-  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>OI榜单 → 日内观察 → 历史证据</p></div>'),layoutNode('div','oiMarketCapRadar',''));
-  /* 拆分信号页：OI榜单 / 日内执行(5m工作台) / 历史证据(象限统计) 三个子板块 */
+  signal.prepend(layoutNode('div','signalHeading','<div class="workspace-heading"><h2>信号</h2><p>OI榜单与操作建议 · 日内观察</p></div>'),layoutNode('div','oiMarketCapRadar',''));
+  /* 拆分：信号页保留OI榜单+日内执行；历史象限证据整体迁出为独立页面 */
   const card=$('#v-signal .card'),execution=$('#idToggle').parentElement.parentElement;
-  const quadCard=layoutNode('div','signalQuadPanel','');quadCard.className='card';
-  const evidence=layoutNode('details','signalEvidence','<summary>展开扫描、胜率与统计</summary>');evidence.className='fold';
-  [...card.childNodes].forEach(n=>{if(n!==execution)evidence.append(n)});
-  quadCard.innerHTML='<h3>历史象限证据 <span class="r">条件统计，非胜率</span></h3>';
-  quadCard.append(evidence);
   const execCard=layoutNode('div','signalExecPanel','');execCard.className='card';execCard.append(execution);
-  signal.append(execCard,quadCard);
+  signal.append(execCard);
+  /* 历史象限证据独立页面：迁出全部象限内容与统计表 */
+  const evidenceView=layoutNode('section','v-evidence','');evidenceView.className='view';
+  evidenceView.innerHTML='<div class="workspace-heading"><h2>历史象限证据</h2><p>条件统计，非胜率</p></div>';
+  // Move the original card, including the table wrapper and bound controls.
+  // Do not clone IDs or detach qdTbl from its horizontally scrollable wrapper.
+  card.id='signalQuadPanel';evidenceView.append(card);main.append(evidenceView);
+  execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);
     $('#'+host).ontoggle=()=>{if($('#'+host).open)loader()};
