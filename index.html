@@ -112,6 +112,14 @@ input[type=number]{text-align:right}
 @keyframes sp{to{transform:rotate(360deg)}}
 .bdg{display:inline-block;padding:1px 7px;border-radius:6px;font-size:11px;font-weight:700}
 .bdg.pick{background:rgba(240,185,11,.15);color:var(--acc)}
+/* ---------- detail long/short ratio card ---------- */
+.lsMain{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.lsBig{font-size:26px;letter-spacing:.3px}
+.lsBar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--down)}
+.lsBar i{display:block;height:100%;background:var(--up)}
+.lsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.lsCell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:2px}
+.lsCell b{font-size:17px}
 /* ---------- tabbar / toast ---------- */
 #tabbar{flex:0 0 auto;display:flex;background:rgba(10,13,19,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:var(--safe-b);z-index:20}
 #tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;color:var(--dim);font-size:9.8px;font-weight:600}
@@ -195,6 +203,7 @@ input[type=number]{text-align:right}
       <span class="mut" id="dtCap"></span>
     </div>
     <div class="chips" id="dtChips" style="display:none"></div>
+    <details id="lsFold" class="fold" open><summary>多空比 <span id="lsStamp">Binance 归档 · 待加载</span></summary><div id="lsBody" class="fold-body"></div></details>
     <details id="dtEvidence" class="fold" open><summary>单币证据摘要 <span>已有数据 · 不混合时间窗口</span></summary><div id="dtEvidenceBody" class="fold-body"></div></details>
     <div class="banner" id="dtBan"></div>
     <div class="pbar" id="dtBar"><i></i></div>
@@ -516,14 +525,15 @@ function parseMetricsCsv(text){
   const head=lines[0].split(',');
   const ix=k=>head.indexOf(k);
   const ic=ix('create_time'),i1=ix('sum_open_interest'),i2=ix('sum_open_interest_value'),
-        i3=ix('count_toptrader_long_short_ratio'),i4=ix('count_long_short_ratio'),i5=ix('sum_taker_long_short_vol_ratio');
+        i3=ix('count_toptrader_long_short_ratio'),i4=ix('count_long_short_ratio'),i5=ix('sum_taker_long_short_vol_ratio'),
+        i6=ix('sum_toptrader_long_short_ratio');
   const rows=[];
   for(let i=1;i<lines.length;i++){
     const ln=lines[i].trim();if(!ln)continue;
     const c=ln.split(',');
     const t=Date.parse(c[ic].replace(' ','T')+'Z');
     if(!isFinite(t)||c.length<=i5)continue;
-    rows.push({t,oi:+c[i1],oiv:+c[i2],top:+c[i3],ret:+c[i4],taker:+c[i5]});
+    rows.push({t,oi:+c[i1],oiv:+c[i2],top:+c[i3],ret:+c[i4],taker:+c[i5],pos:(i6>=0&&c.length>i6)?+c[i6]:null});
   }
   rows.sort((a,b)=>a.t-b.t);
   return rows;
@@ -801,6 +811,7 @@ async function dtLoad(){
   const current=()=>request===S.dt.request&&sym===S.dt.sym;
   S.dt.rows=[];S.dt.days=[];S.dt.px={};
   dtDayRender();dtMinRender();
+  if(typeof lsRender==='function')lsRender();
   dtChips(null);
   S.dt.loading=true;S.dt.mp=1;
   $('#dtLoad').disabled=true;
@@ -833,6 +844,7 @@ async function dtLoad(){
     dtChips(S.dt.miss);
     dtDayBuild();
     dtDayRender();dtMinRender();dtTab(S.dt.tab);
+    if(typeof lsRender==='function')lsRender();
     setTimeout(dtChartRender,50);
     if(!S.dt.rows.length){
       ban('#dtBan','warn','该范围无归档数据（新上市或未收录）');
@@ -1758,6 +1770,7 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 <script src="layout.js?v=20261019-opp1"></script>
 <script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
+<script src="ls-ratio.js?v=20261019-ls3"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>
 </body>
 </html>
