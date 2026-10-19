@@ -9,24 +9,43 @@
   const pct1 = v => (v == null || !isFinite(v)) ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 
   const RELAYS = ['https://ls-relay.shen123lan.workers.dev/ls'];
-  const RT = { inFlight: null, cache: new Map() };   /* sym → {j, at} */
+  const RT = { inFlight: null, cache: new Map(), timer: null, retry: 0 };   /* sym → {j, at} */
+
+  /* keep the live snapshot fresh: re-render after the 45s cache expires */
+  function scheduleRefresh(sym) {
+    clearTimeout(RT.timer);
+    RT.timer = setTimeout(() => {
+      if (document.querySelector('#lsBody') && typeof S !== 'undefined' && S.dt && S.dt.sym === sym) lsRender();
+    }, 50000);
+  }
+
+  /* one delayed self-heal attempt when every relay attempt failed */
+  function scheduleRetry(sym) {
+    if (RT.retry) return;
+    RT.retry = 1;
+    setTimeout(() => { RT.retry = 0; if (document.querySelector('#lsBody')) lsRender(); }, 12000);
+  }
 
   async function fetchLive(sym) {
     const hit = RT.cache.get(sym);
     if (hit && Date.now() - hit.at < 45000) return { j: hit.j, at: hit.at };
     if (RT.inFlight) return RT.inFlight;
     RT.inFlight = (async () => {
+      /* first connection to workers.dev often fails in WKWebView; retry once per relay */
       for (const base of RELAYS) {
-        try {
-          const r = await fetch(base + '?symbol=' + encodeURIComponent(sym), { signal: AbortSignal.timeout(7000) });
-          if (!r.ok) continue;
-          const j = await r.json();
-          if (j && (j.global || j.topAccount || j.topPosition)) {
-            const d = { j, at: Date.now() };
-            RT.cache.set(sym, d);
-            return d;
-          }
-        } catch (e) { /* try next relay */ }
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            if (attempt) await new Promise(r => setTimeout(r, 1500));
+            const r = await fetch(base + '?symbol=' + encodeURIComponent(sym), { signal: AbortSignal.timeout(7000) });
+            if (!r.ok) continue;
+            const j = await r.json();
+            if (j && (j.global || j.topAccount || j.topPosition)) {
+              const d = { j, at: Date.now() };
+              RT.cache.set(sym, d);
+              return d;
+            }
+          } catch (e) { /* retry / next relay */ }
+        }
       }
       return null;
     })().finally(() => { RT.inFlight = null; });
@@ -97,8 +116,12 @@
       return;
     }
     const sym = dt.sym || '';
-    const live = (RT.cache.get(sym) || {}).j || null;
-    if (!live) fetchLive(sym).then(d => { if (d) lsRender(); }).catch(() => {});
+    const hit = RT.cache.get(sym);
+    const live = hit ? hit.j : null;
+    const stale = !hit || (Date.now() - hit.at >= 45000);
+    if (stale) {
+      fetchLive(sym).then(d => { if (d) lsRender(); else scheduleRetry(sym); }).catch(() => scheduleRetry(sym));
+    }
     const last = rows[rows.length - 1];
     const d = new Date(last.t);
     const g = pickVal(live, 'global', last, 'ret');
@@ -135,7 +158,8 @@
         ${cell('大户持仓多空比', tp.v, cg(tp, 'pos'))}
         ${cell('Taker 主动买卖比', last.taker, chgMix(rows, 'taker', last.t, last.taker))}
       </div>
-      <p class="mut" style="margin-top:8px">口径：Binance 单所。全网/大户账户比为账户数比，大户持仓比为持仓量比，Taker 为主动买卖量比；&gt;1 表示做多侧占优。实时值经 vps-01 中继直读 Binance fapi（5 分钟粒度，40s 缓存）；走势与 24h 变化基于 daily 归档。CoinGlass 的「全网多空比」为跨交易所聚合，此处为 Binance 单所口径，不可直接对齐。</p>`;
+      <p class="mut" style="margin-top:8px">口径：Binance 单所；实时值经 vps-01 中继（5m 粒度、40s 缓存），走势与 24h 变化基于 daily 归档。</p>`;
     el.innerHTML = html;
+    if (g.live) scheduleRefresh(sym);
   };
 })();

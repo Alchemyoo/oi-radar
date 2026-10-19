@@ -120,7 +120,7 @@
       label = `${stop}：已完成 ${j.done}/${j.total}；成功 ${j.ok}；失败 ${j.failed}；缺少当前收盘K线 ${j.missing}；历史不完整 ${j.short}；未扫描 ${j.total - j.done}。`;
       if (!st.run && j.total > 0 && j.ok === 0) label += ' 无有效币种数据。';
       if (!st.run && j.total === 0) label += ' 当前没有符合条件的非BTC USDT永续。';
-    } else label = '点击「扫描全市场」，扫描全部交易中 USDT 永续（不含BTC），不使用短名单。';
+    } else label = '点击「扫描全市场」开始统计（USDT 永续，不含BTC）。';
     if (st.setupError) label = '本次准备失败：' + st.setupError + '。此前成功快照未更改。 ' + label;
     if (st.notice) label = st.notice + ' ' + label;
     return label;
@@ -149,7 +149,7 @@
     text('#stEnv', `BTC环境（${d}天，阈值 ±${st.threshold}%）：` +
       ({unknown: '数据不足', down: '下跌', flat: '震荡', up: '上涨'}[regime]));
     const sample = DAYS.map(w => `<span class="chip">${w}天样本 <b>${st.rows.filter(r => finite(r.ret[w])).length}</b></span>`).join('');
-    html('#stMeta', sample + `<span class="chip">符合筛选 <b>${eligible.length}</b></span><span class="chip">展示 <b>${st.displayed.length}</b></span>`);
+    html('#stMeta', st.rows.length ? sample + `<span class="chip">符合筛选 <b>${eligible.length}</b></span><span class="chip">展示 <b>${st.displayed.length}</b></span>` : '');
     const messages = [];
     if (st.run && st.job && !st.job.committed && st.E !== null) messages.push('正在准备新扫描，表格仍为此前快照。');
     if (regime === 'up') messages.push('当前不是BTC弱势周期：BTC所选周期上涨，排名仍可查看，不代表历史弱势条件筛选或逐日回测。');
@@ -165,7 +165,7 @@
     if (bar) bar.classList.toggle('on', st.run);
     const fill = $('#stBar i');
     if (fill) fill.style.width = ((j && j.total > 0) ? Math.min(100, j.done / j.total * 100) : 0) + '%';
-    const reason = st.E === null ? '点击「扫描全市场」后显示排名；加载标签不会自动扫描。' :
+    const reason = st.E === null ? '点击「扫描全市场」后显示排名。' :
       br === null && st.mode !== 'all' ? 'BTC所选周期缺少历史，无法比较。' :
       st.run && !st.rows.length ? '扫描中，等待有效币种K线…' :
       !st.rows.length ? '无有效币种数据；查看扫描失败/缺失统计。' : '所选周期或筛选条件下无符合币种（缺失数据不以0补齐）。';
