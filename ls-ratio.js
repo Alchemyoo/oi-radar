@@ -8,8 +8,7 @@
   const f4 = v => (v == null || !isFinite(v)) ? '—' : (Math.abs(v) >= 100 ? v.toFixed(1) : v.toFixed(4));
   const pct1 = v => (v == null || !isFinite(v)) ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 
-  const RELAYS = ['https://ls-relay.shen123lan.workers.dev/ls',
-                  'http://3.107.187.97:3435/ls'];
+  const RELAYS = ['https://ls-relay.shen123lan.workers.dev/ls'];
   const RT = { inFlight: null, cache: new Map() };   /* sym → {j, at} */
 
   async function fetchLive(sym) {
