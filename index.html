@@ -120,6 +120,9 @@ input[type=number]{text-align:right}
 .lsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
 .lsCell{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:2px}
 .lsCell b{font-size:17px}
+.lsLive{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--up);font-weight:600;white-space:nowrap}
+.lsLive i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:lsPulse 1.6s ease-in-out infinite}
+@keyframes lsPulse{50%{opacity:.3}}
 /* ---------- tabbar / toast ---------- */
 #tabbar{flex:0 0 auto;display:flex;background:rgba(10,13,19,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:var(--safe-b);z-index:20}
 #tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;color:var(--dim);font-size:9.8px;font-weight:600}
@@ -1770,7 +1773,7 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 <script src="layout.js?v=20261019-opp1"></script>
 <script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
-<script src="ls-ratio.js?v=20261019-ls3"></script>
+<script src="ls-ratio.js?v=20261019-ls4"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>
 </body>
 </html>
