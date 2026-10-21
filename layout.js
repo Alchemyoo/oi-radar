@@ -33,16 +33,17 @@ function layoutNavigate(v,restore=false){
     $('#marketTools').open=true;
     const box=$(v==='fund'?'#toolFund':'#toolHeat');box.open=true;return;
   }
-  if(!['market','opportunity','signal','evidence','detail'].includes(v))return;
+  if(!['market','opportunity','signal','evidence','whale','detail'].includes(v))return;
   layoutSaveList();Layout.scroll[Layout.current]=$('#main').scrollTop;
   if(v==='detail'&&Layout.current!=='detail')Layout.returnTo={view:Layout.current,op:Layout.op,scroll:$('#main').scrollTop};
   Layout.current=v;
   if(v==='market')layoutList(v);
   if(v==='opportunity')layoutOp(Layout.op);
-  for(const id of ['market','opportunity','signal','evidence','detail'])$('#v-'+id).classList.toggle('on',id===v);
+  if(v==='whale'&&typeof whaleInit==='function')whaleInit();
+  for(const id of ['market','opportunity','signal','evidence','whale','detail'])$('#v-'+id).classList.toggle('on',id===v);
   const active=v==='detail'?(Layout.returnTo?.view||'market'):v;
   $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active;b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
-  $('#hdr h1').textContent=v==='detail'?'单币详情':'OI 雷达';
+  $('#hdr h1').textContent=v==='detail'?'单币详情':(v==='whale'?'巨鲸持仓':'OI 雷达');
   $('#detailBack').hidden=v!=='detail';
   $('#main').scrollTop=restore?(Layout.scroll[v]||0):0;
   if(v==='detail')setTimeout(dtChartRender,60);
@@ -85,6 +86,10 @@ function layoutInit(){
   // Move the original card, including the table wrapper and bound controls.
   // Do not clone IDs or detach qdTbl from its horizontally scrollable wrapper.
   card.id='signalQuadPanel';evidenceView.append(card);main.append(evidenceView);
+  /* 巨鲸持仓独立页面：Hyperliquid 大户快照（hl-whale-collector.py 每小时产出） */
+  const whale=layoutNode('section','v-whale','<div class="workspace-heading"><h2>巨鲸持仓</h2><p>Hyperliquid 大户 · 每小时快照</p></div>');
+  whale.className='view';main.append(whale);
+  whale.append(layoutNode('div','whaleHost',''));
   execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);

@@ -125,7 +125,6 @@ input[type=number]{text-align:right}
 @keyframes lsPulse{50%{opacity:.3}}
 /* ---------- tabbar / toast ---------- */
 #tabbar{flex:0 0 auto;display:flex;background:rgba(10,13,19,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:var(--safe-b);z-index:20}
-#tabbar{display:none}
 #tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 5px;color:var(--dim);font-size:9.8px;font-weight:600}
 #tabbar button.on{color:var(--acc)}
 #tabbar svg{width:20px;height:20px}
@@ -140,7 +139,7 @@ input[type=number]{text-align:right}
 #stTime{overflow-wrap:anywhere;max-width:100%}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261006-relay1">
+<link rel="stylesheet" href="layout.css?v=20261021-whale1">
 </head>
 <body>
 <header id="hdr">
@@ -407,11 +406,13 @@ input[type=number]{text-align:right}
 </main>
 <nav id="tabbar" aria-label="主导航">
   <button data-v="opportunity" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg>机会</button>
+  <button data-v="whale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c3 0 4-2 5-4 1 2 2 3 4 3s3-1 4-3c1 2 2 4 5 4"/><circle cx="17" cy="6" r="2"/></svg>巨鲸</button>
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
 <script src="rolling-oi.js?v=20261007-rolling1"></script>
 <script src="rolling-scan.js?v=20261007-rolling1"></script>
+<script src="whale.js?v=20261021-whale1"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1776,7 +1777,7 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261019-slim1"></script>
-<script src="layout.js?v=20261019-opp1"></script>
+<script src="layout.js?v=20261021-whale1"></script>
 <script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
 <script src="ls-ratio.js?v=20261019-ls8"></script>

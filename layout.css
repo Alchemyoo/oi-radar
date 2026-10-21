@@ -1,7 +1,7 @@
 /* Compact mobile-first information hierarchy. */
 [hidden]{display:none!important}
 .view.on{animation:none;opacity:1;transform:none}
-#main{padding-bottom:18px}
+#main{padding-bottom:calc(72px + var(--safe-b,0px))}
 #tabbar button{position:relative;min-height:60px;padding:9px 0 7px;gap:4px;font-size:12px;color:var(--sub)}
 #tabbar button.on{background:linear-gradient(180deg,rgba(240,185,11,.07),transparent)}
 #tabbar svg{width:22px;height:22px}
@@ -41,5 +41,23 @@
 .signal-history-note{padding:8px 10px;border-left:3px solid var(--purple);background:rgba(167,139,250,.06);border-radius:0 8px 8px 0}
 @media(max-width:430px){.signal-explain{font-size:11.5px}.signal-status{font-size:11.5px}.signal-history-note{font-size:11.5px}}
 @media(min-width:900px){#main{width:100%;max-width:1200px;align-self:center;padding:20px 24px}#tabbar{justify-content:center}#tabbar button{flex:0 1 200px}.workspace-heading h2{font-size:27px}.workspace-tabs{max-width:580px;top:-20px}}
+/* ---------- 巨鲸持仓 (whale.js) ---------- */
+.whale-sel{background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:7px 10px;font-size:15px;font-weight:700;outline:none}
+.whale-bar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--card2)}
+.whale-bar .wb-l{background:var(--up);opacity:.85}
+.whale-bar .wb-s{background:var(--down);opacity:.85;flex:1}
+.whale-tbl td:nth-child(2),.whale-tbl th:nth-child(2){text-align:left}
+.whale-tbl a{color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--line)}
+.whale-ladder{margin-top:4px}
+.wl-head{display:flex;justify-content:space-between;font-size:11px;font-weight:600;padding:2px 2px 6px}
+.wl-row{display:flex;align-items:center;gap:6px;padding:2.5px 0;font-size:10.5px}
+.wl-l,.wl-s{flex:1;display:flex;align-items:center;gap:4px;min-width:0}
+.wl-s{justify-content:flex-end}
+.wl-l em,.wl-s em{font-style:normal;color:var(--sub);font-size:9.5px;white-space:nowrap}
+.wl-l i,.wl-s i{display:block;height:9px;border-radius:3px;flex:none}
+.wl-l i{background:var(--up);opacity:.75}
+.wl-s i{background:var(--down);opacity:.75}
+.wl-px{flex:0 0 64px;text-align:center;color:var(--dim);font-variant-numeric:tabular-nums}
+.wl-px.cur{color:var(--acc);font-weight:700}
 
 .cap-history{margin:12px 0;padding:10px;border:1px solid var(--line);border-radius:9px;font-size:12px;color:var(--sub)}.cap-history summary{cursor:pointer;color:var(--txt)}.cap-history p{overflow-wrap:anywhere;margin:5px 0}.evidence-row{display:grid;gap:4px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:12px}.evidence-row b{color:var(--txt)}.evidence-row small{color:var(--sub);line-height:1.55;overflow-wrap:anywhere}#dtEvidenceBody{padding:0 12px 10px}
