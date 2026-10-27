@@ -1,0 +1,9 @@
+[Unit]
+Description=Hourly Alpha card snapshot (on the 11th minute)
+
+[Timer]
+OnCalendar=*-*-* *:11:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

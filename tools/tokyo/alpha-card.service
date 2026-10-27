@@ -1,0 +1,8 @@
+[Unit]
+Description=Alpha card snapshot collector (tokyo, hourly)
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/alpha-card/oi-radar/tools/tokyo/alpha-card.sh
+TimeoutStartSec=600
