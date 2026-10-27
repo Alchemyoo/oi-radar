@@ -5,7 +5,7 @@ Universe: Binance Alpha tokens whose cexCoinName trades as a Binance USDT perpet
 Per coin: Alpha list stats + bapi hourly OI trend + fapi 15m klines (+ Gate borrow book).
 Verdict score is our own transparent formula (NOT the source bot's algorithm).
 """
-import argparse, concurrent.futures, http.client, json, math, time, urllib.request, urllib.error
+import argparse, concurrent.futures, http.client, json, math, threading, time, urllib.request, urllib.error
 from pathlib import Path
 
 ALPHA_LIST='https://www.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/cex/alpha/all/token/list'
@@ -13,6 +13,18 @@ ALPHA_OI='https://www.binance.com/bapi/apex/v1/public/apex/marketing/web/alpha/o
 FAPI='https://fapi.binance.com'
 GATE='https://api.gateio.ws/api/v4/margin/funding_book'
 UA={'User-Agent':'oi-radar-cache/1.0','Accept':'application/json'}
+
+# Global pacing: bursts of parallel new connections trip Binance WAF (mass 400s).
+_PACE_LOCK=threading.Lock()
+_NEXT_AT=[0.0]
+MIN_INTERVAL=0.45
+
+def _pace():
+    with _PACE_LOCK:
+        now=time.time()
+        wait=_NEXT_AT[0]-now
+        if wait>0: time.sleep(wait)
+        _NEXT_AT[0]=max(now, _NEXT_AT[0] if _NEXT_AT[0]>now else now)+MIN_INTERVAL
 
 def _repair(b):
     # Truncated JSON: drop the last incomplete element, close open brackets.
@@ -32,9 +44,10 @@ def _repair(b):
         elif ch in '}]' and stack: stack.pop()
     return (s+''.join('}' if c=='{' else ']' for c in reversed(stack))).encode()
 
-def get(url, retries=4, timeout=20):
+def get(url, retries=5, timeout=20):
     last=None
     for i in range(retries):
+        _pace()
         try:
             req=urllib.request.Request(url, headers=UA)
             with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -45,9 +58,9 @@ def get(url, retries=4, timeout=20):
                     return json.loads(cand)
                 except Exception:
                     pass
-            last=e; time.sleep(1.5*(i+1))
+            last=e; time.sleep(2*(i+1))
         except urllib.error.HTTPError as e:
-            if e.code in (429,418,400): time.sleep(2*(i+1)); last=e; continue
+            if e.code in (429,418,400): time.sleep(min(20,8*(i+1))); last=e; continue
             raise
         except Exception as e:
             last=e; time.sleep(1.5*(i+1))
@@ -177,7 +190,7 @@ def collect(limit=80, max_age_ms=None):
         pass
     gate_cache={}
     out=[]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
         futs=[(r,pool.submit(build_coin,r,{},{},gate_cache)) for r in rows]
         for r,f in futs:
             try:
