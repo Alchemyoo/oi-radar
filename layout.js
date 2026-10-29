@@ -33,7 +33,7 @@ function layoutNavigate(v,restore=false){
     $('#marketTools').open=true;
     const box=$(v==='fund'?'#toolFund':'#toolHeat');box.open=true;return;
   }
-  if(!['market','opportunity','signal','evidence','whale','alpha','detail'].includes(v))return;
+  if(!['market','opportunity','signal','evidence','whale','alpha','cap','detail'].includes(v))return;
   layoutSaveList();Layout.scroll[Layout.current]=$('#main').scrollTop;
   if(v==='detail'&&Layout.current!=='detail')Layout.returnTo={view:Layout.current,op:Layout.op,scroll:$('#main').scrollTop};
   Layout.current=v;
@@ -41,10 +41,11 @@ function layoutNavigate(v,restore=false){
   if(v==='opportunity')layoutOp(Layout.op);
   if(v==='whale'&&typeof whaleInit==='function')whaleInit();
   if(v==='alpha'&&typeof alphaInit==='function')alphaInit();
-  for(const id of ['market','opportunity','signal','evidence','whale','alpha','detail'])$('#v-'+id).classList.toggle('on',id===v);
+  if(v==='cap'&&typeof capInit==='function')capInit();
+  for(const id of ['market','opportunity','signal','evidence','whale','alpha','cap','detail'])$('#v-'+id).classList.toggle('on',id===v);
   const active=v==='detail'?(Layout.returnTo?.view||'market'):v;
   $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active;b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
-  $('#hdr h1').textContent=v==='detail'?'单币详情':(v==='whale'?'巨鲸持仓':(v==='alpha'?'Alpha 判断':'OI 雷达'));
+  $('#hdr h1').textContent=v==='detail'?'单币详情':(v==='whale'?'巨鲸持仓':(v==='alpha'?'Alpha 判断':(v==='cap'?'持仓市值':'OI 雷达')));
   $('#detailBack').hidden=v!=='detail';
   $('#main').scrollTop=restore?(Layout.scroll[v]||0):0;
   if(v==='detail')setTimeout(dtChartRender,60);
@@ -95,6 +96,10 @@ function layoutInit(){
   const alpha=layoutNode('section','v-alpha','<div class="workspace-heading"><h2>Alpha 判断</h2><p>Alpha 币种 · 每小时快照与判断</p></div>');
   alpha.className='view';main.append(alpha);
   alpha.append(layoutNode('div','alphaHost',''));
+  /* 持仓市值：全永续 OI × CoinGecko 市值 */
+  const cap=layoutNode('section','v-cap','<div class="workspace-heading"><h2>持仓市值</h2><p>全永续 OI × 市值 · 杠杆集中度</p></div>');
+  cap.className='view';main.append(cap);
+  cap.append(layoutNode('div','capHost',''));
   execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);

@@ -64,5 +64,8 @@
 .alpha-tbl td,.alpha-tbl th{padding:6px 8px}
 .alpha-row{cursor:pointer}
 .alpha-tbl .ta-l b{font-size:12.5px}
+/* ---------- 持仓市值 (capview.js) ---------- */
+.cap-tbl td:nth-child(2),.cap-tbl th:nth-child(2){text-align:left}
+.cap-tbl .muted{display:block;line-height:1.1;overflow:hidden;text-overflow:ellipsis;max-width:110px}
 
 .cap-history{margin:12px 0;padding:10px;border:1px solid var(--line);border-radius:9px;font-size:12px;color:var(--sub)}.cap-history summary{cursor:pointer;color:var(--txt)}.cap-history p{overflow-wrap:anywhere;margin:5px 0}.evidence-row{display:grid;gap:4px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:12px}.evidence-row b{color:var(--txt)}.evidence-row small{color:var(--sub);line-height:1.55;overflow-wrap:anywhere}#dtEvidenceBody{padding:0 12px 10px}

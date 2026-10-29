@@ -139,7 +139,7 @@ input[type=number]{text-align:right}
 #stTime{overflow-wrap:anywhere;max-width:100%}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261027-alpha1">
+<link rel="stylesheet" href="layout.css?v=20261027-cap1">
 </head>
 <body>
 <header id="hdr">
@@ -408,6 +408,7 @@ input[type=number]{text-align:right}
   <button data-v="opportunity" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg>机会</button>
   <button data-v="whale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c3 0 4-2 5-4 1 2 2 3 4 3s3-1 4-3c1 2 2 4 5 4"/><circle cx="17" cy="6" r="2"/></svg>巨鲸</button>
   <button data-v="alpha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>Alpha</button>
+  <button data-v="cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>市值</button>
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
@@ -415,6 +416,7 @@ input[type=number]{text-align:right}
 <script src="rolling-scan.js?v=20261007-rolling1"></script>
 <script src="whale.js?v=20261021-whale1"></script>
 <script src="alpha.js?v=20261027-alpha1"></script>
+<script src="capview.js?v=20261027-cap1"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1779,7 +1781,7 @@ function idToggle(on){
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
 <script src="strong.js?v=20261019-slim1"></script>
-<script src="layout.js?v=20261027-alpha1"></script>
+<script src="layout.js?v=20261027-cap1"></script>
 <script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
 <script src="ls-ratio.js?v=20261019-ls8"></script>
