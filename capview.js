@@ -34,6 +34,8 @@ async function capFetchCG(){
 
 async function capLoad(){
   if(CAP.loading)return;
+  const cached=capRowsCache();
+  if(cached&&cached.length){CAP.rows=cached;CAP.err=null;capRender();return}
   CAP.loading=true;capRenderLoading('加载市值与全量 OI…');
   try{
     const [tk,cg]=await Promise.all([
@@ -63,9 +65,16 @@ async function capLoad(){
     }
     if(!rows.length)throw new Error('无有效数据');
     CAP.rows=rows;CAP.err=null;
+    try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:rows.map(r=>[r.sym,r.px,r.chg,r.vol,r.oi,r.mcap,r.cgname])}))}catch(e){}
   }catch(e){CAP.err='加载失败：'+e.message}
   CAP.loading=false;capRender();
 }
+
+function capRowsCache(){
+  try{const v=JSON.parse(localStorage.getItem('oif_cap_rows')||'null');
+    if(v&&Date.now()-v.t<10*60*1000)return v.rows.map(a=>({sym:a[0],base:a[0].slice(0,-4),px:a[1],chg:a[2],vol:a[3],oi:a[4],oiv:a[4]*a[1],mcap:a[5],cgname:a[6],ratio:a[5]?a[4]*a[1]/a[5]:null}));
+  }catch(e){}
+  return null}
 
 function capInit(){
   const host=$('#capHost');if(!host)return;
@@ -96,7 +105,7 @@ function capRender(){
     return 0};
   const q=CAP.q.trim().toUpperCase();
   let list=rows.filter(r=>!q||r.sym.includes(q)||(r.cgname||'').toUpperCase().includes(q));
-  list=list.slice().sort((a,b)=>(key(b)-key(a))*CAP.dir);
+  list=list.slice().sort((a,b)=>((key(a)-key(b))||a.sym.localeCompare(b.sym))*CAP.dir);
   list=list.slice(0,150);
   const sorts=[['mcap','市值'],['oiv','OI'],['ratio','OI/市值'],['vol','成交额']];
   let html='<p class="muted hint" style="margin-bottom:6px">口径：Binance USDT 永续实时 OI（名义值）× CoinGecko 流通市值（15 分钟缓存）。比值=OI名义/市值，越大说明杠杆持仓相对体量越重。覆盖市值数据 '+withMcap.length+'/'+rows.length+' 币。</p>';
