@@ -54,8 +54,9 @@ async function capLoad(){
     };
     const note=()=>{const h=$('#capHost');if(h&&CAP.loading)h.innerHTML='<p class="muted hint">加载市值与全量 OI… '+done+'/'+syms.length+(rendered?'（表格已先行渲染，后台继续补全）':'')+'</p>'};
     note();
-    await cgP;  // CG 一般先于 OI 完成；若 CG 挂了继续用 OI 渲染
+    cgP.then(()=>{if(CAP.rows&&!CAP.loading)capRender()}).catch(()=>{});
     await pool(syms,16,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}done++;if(done%40===0){note();partialRender()}});
+    await cgP;  // 确保最终构建带上市值
     CAP.rows=capBuildRows(syms,oi,capTick);CAP.err=null;
     if(!CAP.rows.length)throw new Error('无有效数据');
     try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:CAP.rows.map(r=>[r.sym,r.px,r.chg,r.vol,r.oi,r.mcap,r.cgname])}))}catch(e){}
