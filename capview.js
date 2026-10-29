@@ -38,8 +38,10 @@ async function capLoad(){
     const vol={};for(const x of tk)vol[x.symbol]=+x.quoteVolume;
     const chg={};for(const x of tk)chg[x.symbol]=+x.priceChangePercent;
     const oi=new Map();
-    let failed=0;
-    await pool(syms,6,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}});
+    let failed=0,done=0;
+    const note=()=>{const h=$('#capHost');if(h&&CAP.loading)h.innerHTML='<p class="muted hint">加载市值与全量 OI… '+done+'/'+syms.length+'</p>'};
+    note();
+    await pool(syms,16,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}done++;if(done%40===0)note()});
     const rows=[];
     for(const s of syms){
       const base=s.slice(0,-4);
