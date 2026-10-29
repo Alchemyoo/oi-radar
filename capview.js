@@ -48,31 +48,42 @@ async function capLoad(){
     const vol={};for(const x of tk)vol[x.symbol]=+x.quoteVolume;
     const chg={};for(const x of tk)chg[x.symbol]=+x.priceChangePercent;
     const oi=new Map();
-    let failed=0,done=0;
-    const note=()=>{const h=$('#capHost');if(h&&CAP.loading)h.innerHTML='<p class="muted hint">加载市值与全量 OI… '+done+'/'+syms.length+'</p>'};
+    let failed=0,done=0,rendered=false;
+    const capTick={px:px,vol:vol,chg:chg,cg:cg};
+    const partialRender=()=>{
+      if(rendered||oi.size<60)return;
+      rendered=true;
+      CAP.rows=capBuildRows(syms,oi,capTick);
+      CAP.err=null;CAP.loading=false;capRender();
+    };
+    const note=()=>{const h=$('#capHost');if(h&&CAP.loading)h.innerHTML='<p class="muted hint">加载市值与全量 OI… '+done+'/'+syms.length+(rendered?'（表格已先行渲染，后台继续补全）':'')+'</p>'};
     note();
-    await pool(syms,16,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}done++;if(done%40===0)note()});
-    const rows=[];
-    for(const s of syms){
-      const base=s.slice(0,-4);
-      const oic=oi.get(s),p=px[s];
-      if(!(oic>0)||!(p>0))continue;
-      const oiv=oic*p;
-      const c=cg?cg[base]:null;
-      rows.push({sym:s,base,px:p,chg:chg[s],vol:vol[s],oi:oic,oiv,
-        mcap:c&&c.mc>0?c.mc:null,cgname:c?c.nm:null,
-        ratio:(c&&c.mc>0)?oiv/c.mc:null});
-    }
-    if(!rows.length)throw new Error('无有效数据');
-    CAP.rows=rows;CAP.err=null;
-    try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:rows.map(r=>[r.sym,r.px,r.chg,r.vol,r.oi,r.mcap,r.cgname])}))}catch(e){}
+    await pool(syms,16,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}done++;if(done%40===0){note();partialRender()}});
+    CAP.rows=capBuildRows(syms,oi,capTick);CAP.err=null;
+    try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:CAP.rows.map(r=>[r.sym,r.px,r.chg,r.vol,r.oi,r.mcap,r.cgname])}))}catch(e){}
   }catch(e){CAP.err='加载失败：'+e.message}
   CAP.loading=false;capRender();
 }
 
+function capBuildRows(syms,oi,capTick){
+  const px=capTick.px,vol=capTick.vol,chg=capTick.chg,cg=capTick.cg;
+  const rows=[];
+  for(const s of syms){
+    const base=s.slice(0,-4);
+    const oic=oi.get(s),p=px[s];
+    if(!(oic>0)||!(p>0))continue;
+    const oiv=oic*p;
+    const c=cg?cg[base]:null;
+    rows.push({sym:s,base,px:p,chg:chg[s],vol:vol[s],oi:oic,oiv,
+      mcap:c&&c.mc>0?c.mc:null,cgname:c?c.nm:null,
+      ratio:(c&&c.mc>0)?oiv/c.mc:null});
+  }
+  return rows;
+}
+
 function capRowsCache(){
   try{const v=JSON.parse(localStorage.getItem('oif_cap_rows')||'null');
-    if(v&&Date.now()-v.t<10*60*1000)return v.rows.map(a=>({sym:a[0],base:a[0].slice(0,-4),px:a[1],chg:a[2],vol:a[3],oi:a[4],oiv:a[4]*a[1],mcap:a[5],cgname:a[6],ratio:a[5]?a[4]*a[1]/a[5]:null}));
+    if(v&&Date.now()-v.t<30*60*1000)return v.rows.map(a=>({sym:a[0],base:a[0].slice(0,-4),px:a[1],chg:a[2],vol:a[3],oi:a[4],oiv:a[4]*a[1],mcap:a[5],cgname:a[6],ratio:a[5]?a[4]*a[1]/a[5]:null}));
   }catch(e){}
   return null}
 
