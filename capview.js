@@ -8,13 +8,21 @@ function capCacheGet(){
   return null}
 function capCacheSet(cg){try{localStorage.setItem('oif_cap',JSON.stringify({t:Date.now(),cg}))}catch(e){}}
 
+async function capJget(u,to,tries=2){
+  let last;
+  for(let i=0;i<tries;i++){
+    try{return await jget(u,to)}catch(e){last=e;if(i<tries-1)await new Promise(r=>setTimeout(r,1500*(i+1)))}
+  }
+  throw last;
+}
+
 async function capFetchCG(){
   const cached=capCacheGet();
   if(cached)return cached.cg;
   const out={};
   for(let p=1;p<=4;p++){
     const u='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page='+p+'&price_change_percentage=24h';
-    const r=await jget(u,15000);
+    const r=await capJget(u,20000,2);
     if(!Array.isArray(r)||!r.length)break;
     for(const c of r)if(c.symbol)out[String(c.symbol).toUpperCase()]={mc:c.market_cap,px:c.current_price,nm:c.name||''};
     if(r.length<250)break;
@@ -29,7 +37,7 @@ async function capLoad(){
   CAP.loading=true;capRenderLoading('加载市值与全量 OI…');
   try{
     const [tk,cg]=await Promise.all([
-      jget(API+'/fapi/v1/ticker/24hr',30000),
+      capJget(API+'/fapi/v1/ticker/24hr',45000,3),
       capFetchCG().catch(()=>null)
     ]);
     if(!Array.isArray(tk))throw new Error('行情响应异常');
