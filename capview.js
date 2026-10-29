@@ -38,18 +38,14 @@ async function capLoad(){
   if(cached&&cached.length){CAP.rows=cached;CAP.err=null;capRender();return}
   CAP.loading=true;capRenderLoading('加载市值与全量 OI…');
   try{
-    const [tk,cg]=await Promise.all([
-      capJget(API+'/fapi/v1/ticker/24hr',45000,3),
-      capFetchCG().catch(()=>null)
-    ]);
+    const capTick={px:{},vol:{},chg:{},cg:null};
+    const cgP=capFetchCG().then(c=>{capTick.cg=c;return c}).catch(()=>null);
+    const tk=await capJget(API+'/fapi/v1/ticker/24hr',45000,3);
     if(!Array.isArray(tk))throw new Error('行情响应异常');
     const syms=tk.filter(x=>x.symbol.endsWith('USDT')).map(x=>x.symbol);
-    const px={};for(const x of tk)px[x.symbol]=+x.lastPrice;
-    const vol={};for(const x of tk)vol[x.symbol]=+x.quoteVolume;
-    const chg={};for(const x of tk)chg[x.symbol]=+x.priceChangePercent;
+    for(const x of tk){capTick.px[x.symbol]=+x.lastPrice;capTick.vol[x.symbol]=+x.quoteVolume;capTick.chg[x.symbol]=+x.priceChangePercent}
     const oi=new Map();
     let failed=0,done=0,rendered=false;
-    const capTick={px:px,vol:vol,chg:chg,cg:cg};
     const partialRender=()=>{
       if(rendered||oi.size<60)return;
       rendered=true;
@@ -58,8 +54,10 @@ async function capLoad(){
     };
     const note=()=>{const h=$('#capHost');if(h&&CAP.loading)h.innerHTML='<p class="muted hint">加载市值与全量 OI… '+done+'/'+syms.length+(rendered?'（表格已先行渲染，后台继续补全）':'')+'</p>'};
     note();
+    await cgP;  // CG 一般先于 OI 完成；若 CG 挂了继续用 OI 渲染
     await pool(syms,16,async s=>{try{oi.set(s,await loadOiOne(s))}catch(e){failed++}done++;if(done%40===0){note();partialRender()}});
     CAP.rows=capBuildRows(syms,oi,capTick);CAP.err=null;
+    if(!CAP.rows.length)throw new Error('无有效数据');
     try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:CAP.rows.map(r=>[r.sym,r.px,r.chg,r.vol,r.oi,r.mcap,r.cgname])}))}catch(e){}
   }catch(e){CAP.err='加载失败：'+e.message}
   CAP.loading=false;capRender();
