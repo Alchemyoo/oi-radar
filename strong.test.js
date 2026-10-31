@@ -82,7 +82,7 @@ function api(c, symbolFn = () => candles(), clock = E + 123456) {
   assert.equal(h.nodes.get('#stGo').onclick, undefined);
   h.c.stBind(); h.c.stBind(); h.c.stRender();
   assert.equal(requests, 0);
-  assert.match(h.nodes.get('#stTbl tbody').innerHTML, /不会自动扫描/);
+  assert.match(h.nodes.get('#stTbl tbody').innerHTML, /点击「扫描全市场」后显示排名/);
   assert.equal(h.nodes.get('#stCsv').disabled, true);
 });
 

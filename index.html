@@ -139,7 +139,7 @@ input[type=number]{text-align:right}
 #stTime{overflow-wrap:anywhere;max-width:100%}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261027-whale5">
+<link rel="stylesheet" href="layout.css?v=20261027-whale6">
 </head>
 <body>
 <header id="hdr">
@@ -615,11 +615,6 @@ async function relayQuery(symbols,period,limit,timeoutMs=70000){
     }
     throw Error('中继等待超时');
   }finally{relayBusy=false}
-}
-async function relayHistMap(symbols,n){
-  const d=await relayQuery(symbols,'1d',n),out=new Map();
-  for(const item of (d.results||[]))out.set(item.symbol,item.data.map(r=>({t:+r.timestamp,oiv:+r.sumOpenInterestValue,oi:+r.sumOpenInterest})));
-  return {map:out,errors:(d.errors||[]).map(e=>e.symbol+': '+(e.error||'失败'))};
 }
 async function pool(items,n,fn,stopFn){
   let i=0;
@@ -1238,7 +1233,6 @@ function fdMeta(){
 }
 
 /* ================= 实时 OI 雷达 ================= */
-function rtView(){return S.rt.on}
 async function rtPoll(){
   if(!S.rt.on||S.rt.loading)return;
   const job={};S.rt.job=job;S.rt.loading=true;
