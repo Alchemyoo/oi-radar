@@ -110,7 +110,7 @@ function whaleLadder(c){
   return '<div class="whale-ladder"><div class="wl-head"><span class="up">多 · 开仓价筹码</span>'+
     '<span class="muted">分位分箱 · 每箱地址数相近</span>'+
     '<span class="down">空 · 开仓价筹码</span></div>'+rows.join('')+
-    '<div class="wl-note">箱内地址多 '+hs.length+' 大户（快照口径）· ★=现价所在箱</div>'+pnlNote+'</div>';
+    '<div class="wl-note">'+hs.length+' 大户开仓价 · 分位分箱每箱地址相近 · ★=现价所在箱</div>'+pnlNote+'</div>';
 }
 
 function whaleInit(){
