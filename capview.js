@@ -36,7 +36,23 @@ async function capLoad(){
   if(CAP.loading)return;
   const cached=capRowsCache();
   if(cached&&cached.length){CAP.rows=cached;CAP.err=null;capRender();return}
-  CAP.loading=true;capRenderLoading('加载市值与全量 OI…');
+  CAP.loading=true;capRenderLoading('加载快照…');
+  try{
+    const r=await capJget('cap-snapshot.json',15000,2);
+    if(!r||!Array.isArray(r.coins)||!r.coins.length)throw new Error('快照为空');
+    CAP.rows=r.coins.map(c=>({sym:c.s,base:c.s.slice(0,-4),px:c.p,chg:c.c,vol:c.v,oi:c.oi,oiv:c.oi*c.p,mcap:c.mc,cgname:c.nm,ratio:c.mc?c.oi*c.p/c.mc:null}));
+    CAP.err=null;CAP.snapT=r.generatedAt;
+    try{localStorage.setItem('oif_cap_rows',JSON.stringify({t:Date.now(),rows:CAP.rows.map(x=>[x.sym,x.px,x.chg,x.vol,x.oi,x.mcap,x.cgname])}))}catch(e){}
+  }catch(e){
+    CAP.snapT=null;
+    CAP.err=null;
+    CAP.loading=false;
+    return capLoadBrowser();
+  }
+  CAP.loading=false;capRender();
+}
+
+async function capLoadBrowser(){
   try{
     const capTick={px:{},vol:{},chg:{},cg:null};
     const cgP=capFetchCG().then(c=>{capTick.cg=c;return c}).catch(()=>null);
@@ -118,7 +134,9 @@ function capRender(){
   list=list.slice().sort((a,b)=>((key(a)-key(b))||a.sym.localeCompare(b.sym))*CAP.dir);
   list=list.slice(0,150);
   const sorts=[['mcap','市值'],['oiv','OI'],['ratio','OI/市值'],['vol','成交额']];
-  let html='<p class="muted hint" style="margin-bottom:6px">口径：Binance USDT 永续实时 OI（名义值）× CoinGecko 流通市值（15 分钟缓存）。比值=OI名义/市值，越大说明杠杆持仓相对体量越重。覆盖市值数据 '+withMcap.length+'/'+rows.length+' 币。</p>';
+  const stamp=CAP.snapT?new Date(CAP.snapT):null;
+  const hh=stamp?String(stamp.getHours()).padStart(2,'0')+':'+String(stamp.getMinutes()).padStart(2,'0'):null;
+  let html='<p class="muted hint" style="margin-bottom:6px">口径：Binance USDT 永续 OI（名义值）× CoinGecko 流通市值'+(hh?' · 服务端快照 '+hh:'（浏览器实时）')+'。比值=OI名义/市值，越大说明杠杆持仓相对体量越重。覆盖市值数据 '+withMcap.length+'/'+rows.length+' 币。</p>';
   html+='<div class="row" style="margin-bottom:6px">'+
     '<input id="capQ" placeholder="搜索币种" value="'+CAP.q+'" style="flex:1;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--txt);outline:none">'+
     '<span class="muted" style="font-size:11px">全市场 OI $'+fC(totalOiv)+'</span></div>';

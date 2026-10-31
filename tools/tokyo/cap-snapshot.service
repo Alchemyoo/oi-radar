@@ -1,0 +1,8 @@
+[Unit]
+Description=Perp OI x market-cap snapshot (tokyo, hourly)
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/alpha-card/oi-radar/tools/tokyo/cap-snapshot.sh
+TimeoutStartSec=900
