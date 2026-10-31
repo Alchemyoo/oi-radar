@@ -95,9 +95,10 @@ function whaleLadder(c){
   }
   const mx=Math.max(...bins.map(b=>Math.max(b.vL,b.vS)),1);
   const cur=c.mark;
+  const ps=v=>v>=1e6?(v/1e6).toFixed(2)+'M':(v>=1e3?(v/1e3).toFixed(1)+'K':(v>=100?v.toFixed(1):v.toPrecision(3)));
   const rows=bins.map((b,i)=>{
     const inCur=cur!=null&&cur>=b.lo&&cur<=b.hi;
-    const rng=(b.lo>=100?b.lo.toFixed(1):b.lo.toPrecision(3))+'–'+(b.hi>=100?b.hi.toFixed(1):b.hi.toPrecision(3));
+    const rng=ps(b.lo)+'–'+ps(b.hi);
     return '<div class="wl-row'+(inCur?' curRow':'')+'">'+
       '<span class="wl-l"><i class="wl-lbar" style="width:'+(b.vL/mx*100)+'%"></i>'+
       (b.vL?'<em>'+fC(b.vL)+'</em>':'')+'</span>'+

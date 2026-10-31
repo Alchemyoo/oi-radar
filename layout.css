@@ -57,7 +57,7 @@
 .wl-l i,.wl-s i{display:block;height:9px;border-radius:3px;flex:none}
 .wl-l i{background:var(--up);opacity:.75}
 .wl-s i{background:var(--down);opacity:.75}
-.wl-px{flex:0 0 84px;text-align:center;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9.5px}
+.wl-px{flex:0 0 92px;text-align:center;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9.5px}
 .wl-px.cur{color:var(--acc);font-weight:700}
 .wl-row.curRow{background:rgba(240,185,11,.07);border-radius:6px;margin:0 -4px;padding:3.5px 4px}
 .wl-note{font-size:10px;color:var(--dim);margin-top:6px;text-align:center}
