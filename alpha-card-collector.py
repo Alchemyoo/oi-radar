@@ -112,24 +112,23 @@ def build_coin(row, okx, oi_hist_cache, gate_cache):
     d={'sym':sym,'coin':row.get('symbol'),'ca':ca.lower(),'chain':chain,
        'price':num(row.get('price'),8),'pct24h':num(row.get('percentChange24h'),2),
        'vol24h':num(row.get('volume24h')),'mcap':num(row.get('marketCap')),'holders':row.get('holders')}
-    # OI trend (hourly USD points)
+    # OI: fapi openInterestHist (USD+coin) — bapi OI trend endpoint tarpits under concurrency
     oi=None
     try:
-        d_oi=get(ALPHA_OI+'?chainId='+chain+'&contractAddress='+ca).get('data') or {}
-        pts=[(p.get('timestamp'),num(p.get('totalOi'))) for p in (d_oi.get('points') or []) if p.get('totalOi') is not None]
+        hist=get('https://fapi.binance.com/futures/data/openInterestHist?symbol='+sym+'&period=1h&limit=8', retries=4, timeout=15)
+        pts=[(int(p['timestamp']), float(p['sumOpenInterestValue'])) for p in (hist or []) if p.get('sumOpenInterestValue')]
         pts.sort()
         if pts:
-            oi=pts[-1][1]
             def chg(back):
                 if len(pts)<back+1: return None,None
-                prev=pts[-1-back][1]
+                prev=pts[-1-back][1];cur=pts[-1][1]
                 if not prev: return None,None
-                cur=pts[-1][1]
                 return round((cur/prev-1)*100,2), round(cur-prev)
             d['dOi1hPct'],d['dOi1hUsd']=chg(1)
             d['dOi4hPct'],d['dOi4hUsd']=chg(4)
+            oi=pts[-1][1]
     except Exception:
-        d['dOi1hPct']=d['dOi1hUsd']=d['dOi4hPct']=d['dOi4hUsd']=None
+        pass
     d['oi']=oi
     # fapi 15m klines
     dP1h=dP15m=dP4h=volX=None
