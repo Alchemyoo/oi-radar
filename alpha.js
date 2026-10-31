@@ -67,7 +67,9 @@ function alphaDetail(d,c,hh,mm){
   html+='<p class="muted hint" style="font-size:11px">1h 价 '+(c.dP1h!=null?(c.dP1h>=0?'+':'')+c.dP1h+'%':'—')+' · 4h 价 '+(c.dP4h!=null?(c.dP4h>=0?'+':'')+c.dP4h+'%':'—')+
     ' · 1h OI '+(c.dOi1hPct!=null?(c.dOi1hPct>=0?'+':'')+c.dOi1hPct+'%':'—')+(c.dOi1hUsd!=null?' ($'+fC(c.dOi1hUsd)+')':'')+
     ' · 4h OI '+(c.dOi4hPct!=null?(c.dOi4hPct>=0?'+':'')+c.dOi4hPct+'%':'—')+
-    ' · 4h 量比 '+(c.volX!=null?c.volX+'x':'—')+' · Gate 借币 '+(c.gateRate!=null?fN(c.gateRate,4):(c.gateBook?'有盘':'—'))+'</p>';
+    ' · 4h 量比 '+(c.volX!=null?c.volX+'x':'—')+
+    ' · OKX 借币 '+(c.okxRate!=null?(c.okxRate>=0?'+':'')+c.okxRate+'%/h':'—')+
+    (c.gateRate!=null?' · Gate '+fN(c.gateRate,4):'')+'</p>';
   const hist=(c.hist||[]).slice().reverse();
   html+='<h3 class="card-title" style="margin:10px 0 4px">判断历史 <span class="muted">近 '+hist.length+' 次变化</span></h3>';
   if(hist.length){
@@ -79,7 +81,7 @@ function alphaDetail(d,c,hh,mm){
     }
     html+='</tbody></table></div>';
   }else html+='<p class="muted hint">暂无历史（每小时快照累加，最多保留 48 条）</p>';
-  html+='<p class="muted hint" style="margin-top:6px">合约 <a href="'+alphaExplorer(c)+'" target="_blank" rel="noopener">'+alphaShort(c)+'</a> · 链 '+c.chain+' · 原口径卡片中的聪明钱持仓与借币利率无公开接口，恒显示「—」</p>';
+  html+='<p class="muted hint" style="margin-top:6px">合约 <a href="'+alphaExplorer(c)+'" target="_blank" rel="noopener">'+alphaShort(c)+'</a> · 链 '+c.chain+' · 每小时快照含 OKX 全币种借币利率（estRate，小时%）；聪明钱持仓与 Gate 借币利率无公开接口，恒为「—」。</p>';
   const host=$('#alphaHost');host.innerHTML=html;
   $('#alphaBack').onclick=()=>{ALPHA.sym=null;alphaRender()};
 }

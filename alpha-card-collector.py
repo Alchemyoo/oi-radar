@@ -96,7 +96,17 @@ def verdict(dP1h, dP15m, dOi1hPct, dOi1hUsd, volX, gateRate):
     label='偏多' if score>=60 else ('偏空' if score<45 else '中性')
     return {'score':int(round(score)),'label':label,'quad':quad}
 
-def build_coin(row, fapi_meta, oi_hist_cache, gate_cache):
+OKX_RATE='https://www.okx.com/api/v5/finance/savings/lending-rate-summary'
+
+def fetch_okx_rates():
+    # one call returns all currencies; rate is hourly percent (e.g. 0.005 = 0.005%/h)
+    try:
+        d=get(OKX_RATE, retries=3, timeout=20)
+        return {x['ccy']: num(x.get('estRate'),6) for x in (d.get('data') or []) if x.get('ccy')}
+    except Exception:
+        return {}
+
+def build_coin(row, okx, oi_hist_cache, gate_cache):
     ca=row.get('contractAddress'); chain=row.get('chainId'); sym=row.get('cexCoinName')
     if not ca or not sym: return None
     d={'sym':sym,'coin':row.get('symbol'),'ca':ca.lower(),'chain':chain,
@@ -147,6 +157,7 @@ def build_coin(row, fapi_meta, oi_hist_cache, gate_cache):
         pass
     d['gateRate']=num(gr,6) if gr is not None else None
     d['gateBook']=gn
+    d['okxRate']=(okx or {}).get(row.get('symbol') or '')
     v=verdict(dP1h,dP15m,d.get('dOi1hPct'),d.get('dOi1hUsd'),volX,d['gateRate'])
     d['score']=v['score'] if v else None
     d['label']=v['label'] if v else None
@@ -189,9 +200,10 @@ def collect(limit=80, max_age_ms=None):
     except Exception:
         pass
     gate_cache={}
+    okx=fetch_okx_rates()
     out=[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
-        futs=[(r,pool.submit(build_coin,r,{},{},gate_cache)) for r in rows]
+        futs=[(r,pool.submit(build_coin,r,okx,{},gate_cache)) for r in rows]
         for r,f in futs:
             try:
                 d=f.result()
@@ -211,7 +223,7 @@ def collect(limit=80, max_age_ms=None):
             r=rowmap.get(c['sym'])
             if not r: continue
             try:
-                d2=build_coin(r,{},{},gate_cache)
+                d2=build_coin(r,okx,{},gate_cache)
                 for k in ('dP15m','dP1h','dP4h','volX','dOi1hPct','dOi1hUsd','dOi4hPct','dOi4hUsd','score','label','quad','tags','oi'):
                     if d2 and d2.get(k) is not None and c.get(k) is None: c[k]=d2[k]
             except Exception:
