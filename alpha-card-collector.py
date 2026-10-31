@@ -137,7 +137,7 @@ def build_coin(row, okx, oi_hist_cache, gate_cache):
     # fapi 15m klines
     dP1h=dP15m=dP4h=volX=None
     try:
-        kl=get(FAPI+'/fapi/v1/klines?symbol='+sym+'&interval=15m&limit=40')
+        kl=get(FAPI+'/fapi/v1/klines?symbol='+sym+'USDT&interval=15m&limit=40')
         cl=[float(k[4]) for k in kl]
         vols=[float(k[5]) for k in kl]
         if len(cl)>=17:
