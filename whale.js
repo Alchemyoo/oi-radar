@@ -81,25 +81,36 @@ function whaleRender(){
 function whaleLadder(c){
   const hs=c.holders.filter(h=>h.e!=null&&h.e>0);
   if(!hs.length)return '<p class="muted hint">无有效开仓价数据</p>';
-  const lo=Math.min(...hs.map(h=>h.e)),hi=Math.max(...hs.map(h=>h.e));
-  const N=12,w=(hi-lo)/N||1;
-  const bins=Array.from({length:N},(_,i)=>({lo:lo+i*w,hi:lo+(i+1)*w,L:0,S:0}));
-  for(const h of hs){
-    let i=Math.min(N-1,Math.max(0,Math.floor((h.e-lo)/w)));
-    if(h.s==='L')bins[i].L+=h.v;else bins[i].S+=h.v;
+  // 按地址分位分箱：每箱地址数相近，避免线性分箱的空箱问题
+  const N=Math.min(14,Math.max(6,Math.round(hs.length/6)));
+  const sorted=hs.slice().sort((a,b)=>a.e-b.e);
+  const bins=[];
+  for(let i=0;i<N;i++){
+    const lo=Math.floor(i*sorted.length/N),hi=Math.floor((i+1)*sorted.length/N);
+    const seg=sorted.slice(lo,hi);
+    if(!seg.length)continue;
+    let L=0,S=0,nL=0,nS=0;
+    for(const h of seg){if(h.s==='L'){L+=h.v;nL++}else{S+=h.v;nS++}}
+    bins.push({lo:seg[0].e,hi:seg[seg.length-1].e,nL,nS,vL:L,vS:S});
   }
-  const mx=Math.max(...bins.map(b=>Math.max(b.L,b.S)),1);
+  const mx=Math.max(...bins.map(b=>Math.max(b.vL,b.vS)),1);
   const cur=c.mark;
-  let rows=bins.map((b,i)=>{
-    const mid=(b.lo+b.hi)/2;
-    return '<div class="wl-row"><span class="wl-l"><i class="wl-lbar" style="width:'+(b.L/mx*100)+'%"></i>'+
-      (b.L?'<em>'+fC(b.L)+'</em>':'')+'</span>'+
-      '<span class="wl-px'+(cur>=b.lo&&cur<b.hi?' cur':'')+'">'+(mid>=100?mid.toFixed(1):mid.toPrecision(3))+'</span>'+
-      '<span class="wl-s">'+(b.S?'<em>'+fC(b.S)+'</em>':'')+'<i class="wl-sbar" style="width:'+(b.S/mx*100)+'%"></i></span></div>';
+  const rows=bins.map((b,i)=>{
+    const inCur=cur!=null&&cur>=b.lo&&cur<=b.hi;
+    const rng=(b.lo>=100?b.lo.toFixed(1):b.lo.toPrecision(3))+'–'+(b.hi>=100?b.hi.toFixed(1):b.hi.toPrecision(3));
+    return '<div class="wl-row'+(inCur?' curRow':'')+'">'+
+      '<span class="wl-l"><i class="wl-lbar" style="width:'+(b.vL/mx*100)+'%"></i>'+
+      (b.vL?'<em>'+fC(b.vL)+'</em>':'')+'</span>'+
+      '<span class="wl-px'+(inCur?' cur':'')+'" title="地址 '+b.nL+'多/'+b.nS+'空">'+rng+(inCur?' ★':'')+'</span>'+
+      '<span class="wl-s">'+(b.vS?'<em>'+fC(b.vS)+'</em>':'')+'<i class="wl-sbar" style="width:'+(b.vS/mx*100)+'%"></i></span></div>';
   }).reverse();
+  const above=hs.filter(h=>cur!=null&&h.e>cur&&h.s==='L').reduce((a,h)=>a+h.v,0);
+  const below=hs.filter(h=>cur!=null&&h.e<=cur&&h.s==='L').reduce((a,h)=>a+h.v,0);
+  const pnlNote=cur!=null?'<div class="wl-note">多单浮盈 $'+fC(below)+' · 浮亏 $'+fC(above)+'（以现价 '+fN(cur,cur>=100?1:4)+' 计）</div>':'';
   return '<div class="whale-ladder"><div class="wl-head"><span class="up">多 · 开仓价筹码</span>'+
-    '<span class="muted">现价 '+(cur!=null?fN(cur,cur>=100?1:4):'—')+'</span>'+
-    '<span class="down">空 · 开仓价筹码</span></div>'+rows.join('')+'</div>';
+    '<span class="muted">分位分箱 · 每箱地址数相近</span>'+
+    '<span class="down">空 · 开仓价筹码</span></div>'+rows.join('')+
+    '<div class="wl-note">箱内地址多 '+hs.length+' 大户（快照口径）· ★=现价所在箱</div>'+pnlNote+'</div>';
 }
 
 function whaleInit(){
