@@ -1,8 +1,6 @@
 name: HL whale cache
 
 on:
-  schedule:
-    - cron: '37 * * * *'
   workflow_dispatch:
     inputs:
       users:

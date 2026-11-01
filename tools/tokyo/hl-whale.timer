@@ -1,0 +1,9 @@
+[Unit]
+Description=Hourly HL whale snapshot (on the 45th minute)
+
+[Timer]
+OnCalendar=*-*-* *:45:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

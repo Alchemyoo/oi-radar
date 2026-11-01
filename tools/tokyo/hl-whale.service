@@ -1,0 +1,8 @@
+[Unit]
+Description=Hyperliquid whale snapshot (tokyo, hourly)
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/alpha-card/oi-radar/tools/tokyo/hl-whale.sh
+TimeoutStartSec=900

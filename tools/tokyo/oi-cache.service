@@ -1,0 +1,8 @@
+[Unit]
+Description=Binance OI cache (tokyo, hourly)
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/alpha-card/oi-radar/tools/tokyo/oi-cache.sh
+TimeoutStartSec=900

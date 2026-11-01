@@ -72,7 +72,7 @@ function whaleRender(){
     });
     html+='</tbody></table></div>';
   }
-  html+='<p class="muted hint" style="margin-top:6px">每小时 ：37 由 GitHub Actions 抓取 Hyperliquid 公开 API（leaderboard + clearinghouseState）生成快照；'+d.lagNote+'。地址尾部可点开 Hyperliquid 资产页。</p>';
+  html+='<p class="muted hint" style="margin-top:6px">每小时 ：45 由服务端定时抓取 Hyperliquid 公开 API（leaderboard + clearinghouseState）生成快照；'+d.lagNote+'。地址尾部可点开 Hyperliquid 资产页。</p>';
   host.innerHTML=html;
   const sel=$('#whaleSel');if(sel)sel.onchange=()=>{WHALE.coin=sel.value;whaleRender()};
   $$('#whaleTabs button').forEach(b=>b.onclick=()=>{WHALE.tab=b.dataset.t;whaleRender()});
