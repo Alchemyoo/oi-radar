@@ -108,10 +108,20 @@ function whaleLadder(c){
     const d=cur<b.lo?b.lo-cur:(cur>b.hi?cur-b.hi:0);
     if(d<curDist){curDist=d;curIdx=i}
   });
+  const ps4=(v)=>{
+    if(v>=1e6)return (v/1e6).toPrecision(4).replace(/\.?0+$/,'')+'M';
+    if(v>=1e3)return (v/1e3).toPrecision(4).replace(/\.?0+$/,'')+'K';
+    return v>=1?v.toPrecision(4).replace(/\.?0+$/,''):v.toPrecision(3);
+  };
+  const psPair=(lo,hi)=>{
+    const a=ps(lo),b=ps(hi);
+    if(a===b)return ps4(lo)+'–'+ps4(hi);  // 3 位撞车时升到 4 位
+    return a+'–'+b;
+  };
   const curLine='<div class="wl-curline"><span>现价 '+(cur!=null?fN(cur,cur>=100?1:4):'—')+'</span></div>';
   const rows=bins.map((b,i)=>{
     const inCur=i===curIdx;
-    const rng=ps(b.lo)+'–'+ps(b.hi);
+    const rng=psPair(b.lo,b.hi);
     const row='<div class="wl-row'+(inCur?' curRow':'')+'">'+
       '<span class="wl-px'+(inCur?' cur':'')+'" title="地址 '+b.nL+'多/'+b.nS+'空">'+rng+(inCur?' ★':'')+'</span>'+
       '<span class="wl-l"><i class="wl-lbar" style="width:'+(b.vL/mx*100)+'%"></i>'+
