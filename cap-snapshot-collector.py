@@ -71,6 +71,22 @@ def num(x, nd=None):
     if not math.isfinite(v): return None
     return round(v, nd) if nd is not None else v
 
+PAPRIKA='https://api.coinpaprika.com/v1/tickers'
+
+def fetch_paprika():
+    # free, no key, one bulk call — fills the long tail CoinGecko's rate limit can't reach
+    try:
+        rows=get(PAPRIKA, retries=2, timeout=40)
+    except Exception:
+        return {}
+    out={}
+    for c in (rows or []):
+        sym=str(c.get('symbol') or '').upper()
+        mc=((c.get('quotes') or {}).get('USD') or {}).get('market_cap') or 0
+        if sym and mc>(out.get(sym,{}).get('mc') or 0):
+            out[sym]={'mc':mc,'nm':c.get('name') or ''}
+    return out
+
 def fetch_cg(pages=10):
     out={}
     got=0
@@ -112,6 +128,12 @@ def collect():
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         list(pool.map(lambda s: _safe(one,s), [x['symbol'] for x in tk]))
     cg=fetch_cg()
+    pap=fetch_paprika()
+    if pap:
+        for sym,v in pap.items():
+            if not (cg.get(sym) or {}).get('mc'):
+                cg[sym]=v
+        print(f"paprika merged, cg symbols now={len(cg)}")
     rows=[]
     for x in tk:
         s=x['symbol']; base=s[:-4]; p=px[s]; o=oi.get(s)
