@@ -107,7 +107,7 @@ function whaleLadder(c){
     const inCur=i===curIdx;
     const rng=ps(b.lo)+'–'+ps(b.hi);
     const row='<div class="wl-row'+(inCur?' curRow':'')+'">'+
-      '<span class="wl-px'+(inCur?' cur':'')+'" title="地址 '+b.nL+'多/'+b.nS+'空">'+rng+'</span>'+
+      '<span class="wl-px'+(inCur?' cur':'')+'" title="地址 '+b.nL+'多/'+b.nS+'空">'+rng+(inCur?' ★':'')+'</span>'+
       '<span class="wl-l"><i class="wl-lbar" style="width:'+(b.vL/mx*100)+'%"></i>'+
       (b.vL?'<em>'+fC(b.vL)+'</em>':'')+'</span>'+
       '<span class="wl-s">'+(b.vS?'<em>'+fC(b.vS)+'</em>':'')+'<i class="wl-sbar" style="width:'+(b.vS/mx*100)+'%"></i></span></div>';
