@@ -95,10 +95,16 @@ function whaleLadder(c){
   }
   const mx=Math.max(...bins.map(b=>Math.max(b.vL,b.vS)),1);
   const cur=c.mark;
+  // 现价可能落在两箱之间的空隙（分箱只覆盖真实开仓价），取最近箱标注
+  let curIdx=-1,curDist=Infinity;
+  if(cur!=null)bins.forEach((b,i)=>{
+    const d=cur<b.lo?b.lo-cur:(cur>b.hi?cur-b.hi:0);
+    if(d<curDist){curDist=d;curIdx=i}
+  });
   const ps=v=>v>=1e6?(v/1e6).toFixed(2)+'M':(v>=1e3?(v/1e3).toFixed(1)+'K':(v>=100?v.toFixed(1):v.toPrecision(3)));
   const curLine='<div class="wl-curline"><span>现价 '+(cur!=null?fN(cur,cur>=100?1:4):'—')+'</span></div>';
   const rows=bins.map((b,i)=>{
-    const inCur=cur!=null&&cur>=b.lo&&cur<=b.hi;
+    const inCur=i===curIdx;
     const rng=ps(b.lo)+'–'+ps(b.hi);
     const row='<div class="wl-row'+(inCur?' curRow':'')+'">'+
       '<span class="wl-px'+(inCur?' cur':'')+'" title="地址 '+b.nL+'多/'+b.nS+'空">'+rng+'</span>'+
