@@ -54,6 +54,8 @@
 .wl-px.cur{color:var(--acc);font-weight:700}
 .wl-row.curRow{background:rgba(240,185,11,.07);border-radius:6px;margin:0 -4px;padding:3.5px 4px}
 .wl-note{font-size:10px;color:var(--dim);margin-top:6px;text-align:center}
+.wl-axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);padding:2px 4px 6px;border-bottom:1px dashed var(--line);margin-bottom:4px}
+.wl-axis .cur{color:var(--acc);font-weight:700}
 .whale-ladder .wl-row .wl-px{font-size:10.5px}
 /* ---------- Alpha 判断 (alpha.js) ---------- */
 .alpha-tag{display:inline-block;background:rgba(240,185,11,.12);color:var(--acc);border-radius:6px;padding:2px 6px;margin-right:3px;font-size:10px;white-space:nowrap}

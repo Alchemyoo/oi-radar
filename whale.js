@@ -107,8 +107,10 @@ function whaleLadder(c){
   }).reverse();
   const above=hs.filter(h=>cur!=null&&h.e>cur&&h.s==='L').reduce((a,h)=>a+h.v,0);
   const below=hs.filter(h=>cur!=null&&h.e<=cur&&h.s==='L').reduce((a,h)=>a+h.v,0);
+  const hiP=ps(Math.max(...hs.map(h=>h.e))),loP=ps(Math.min(...hs.map(h=>h.e)));
+  const axis='<div class="wl-axis"><span>最高 '+hiP+'</span><span class="cur">现价 '+(cur!=null?fN(cur,cur>=100?1:4):'—')+'</span><span>最低 '+loP+'</span></div>';
   const pnlNote=cur!=null?'<div class="wl-note">多单浮盈 $'+fC(below)+' · 浮亏 $'+fC(above)+'（以现价 '+fN(cur,cur>=100?1:4)+' 计）</div>':'';
-  return '<div class="whale-ladder"><div class="wl-head"><span class="up">多 · 开仓价筹码</span>'+
+  return '<div class="whale-ladder">'+axis+'<div class="wl-head"><span class="up">多 · 开仓价筹码</span>'+
     '<span class="muted">分位分箱 · 每箱地址数相近</span>'+
     '<span class="down">空 · 开仓价筹码</span></div>'+rows.join('')+
     '<div class="wl-note">'+hs.length+' 大户开仓价 · 分位分箱每箱地址相近 · ★=现价所在箱</div>'+pnlNote+'</div>';
