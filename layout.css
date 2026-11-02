@@ -44,19 +44,21 @@
 .whale-ladder{margin-top:4px}
 .wl-head{display:flex;justify-content:space-between;font-size:11px;font-weight:600;padding:2px 2px 6px}
 .wl-row{display:flex;align-items:center;gap:6px;padding:2.5px 0;font-size:10.5px}
+.wl-px{flex:0 0 78px;text-align:right;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9.5px;padding-right:2px}
 .wl-l,.wl-s{flex:1;display:flex;align-items:center;gap:4px;min-width:0}
 .wl-s{justify-content:flex-end}
 .wl-l em,.wl-s em{font-style:normal;color:var(--sub);font-size:9.5px;white-space:nowrap;flex:none;max-width:48px;overflow:hidden;text-overflow:ellipsis}
 .wl-l i,.wl-s i{display:block;height:9px;border-radius:3px;flex:none;max-width:calc(100% - 52px)}
 .wl-l i{background:var(--up);opacity:.75}
 .wl-s i{background:var(--down);opacity:.75}
-.wl-px{flex:0 0 92px;text-align:center;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9.5px}
 .wl-px.cur{color:var(--acc);font-weight:700}
 .wl-row.curRow{background:rgba(240,185,11,.07);border-radius:6px;margin:0 -4px;padding:3.5px 4px}
+.wl-curline{position:relative;display:flex;justify-content:flex-end;align-items:center;height:16px;margin:2px 0}
+.wl-curline::before{content:'';position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed rgba(240,185,11,.75)}
+.wl-curline span{position:relative;background:var(--bg,#0a0d13);color:var(--acc);font-size:9.5px;font-weight:700;padding:0 4px}
 .wl-note{font-size:10px;color:var(--dim);margin-top:6px;text-align:center}
 .wl-axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim);padding:2px 4px 6px;border-bottom:1px dashed var(--line);margin-bottom:4px}
 .wl-axis .cur{color:var(--acc);font-weight:700}
-.whale-ladder .wl-row .wl-px{font-size:10.5px}
 /* ---------- Alpha 判断 (alpha.js) ---------- */
 .alpha-tag{display:inline-block;background:rgba(240,185,11,.12);color:var(--acc);border-radius:6px;padding:2px 6px;margin-right:3px;font-size:10px;white-space:nowrap}
 .alpha-tbl td,.alpha-tbl th{padding:6px 8px}
