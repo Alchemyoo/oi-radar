@@ -154,7 +154,7 @@ function capRender(){
       '<td class="'+(r.ratio!=null&&r.ratio>=0.15?'up':(r.ratio!=null?'':'muted'))+'">'+(r.ratio!=null?(r.ratio*100).toFixed(1)+'%':'—')+'</td></tr>';
   });
   html+='</tbody></table></div>';
-  html+='<p class="muted hint" style="margin-top:6px">OI 名义 = 合约持仓量 × 标记价；市值未匹配多为 CoinGecko 前 2500 之外或刚上线的新币。比值≥15% 高亮（资金杠杆度高，波动可能被放大）。</p>';
+  html+='<p class="muted hint" style="margin-top:6px">OI 名义 = 合约持仓量 × 标记价；市值来源 CoinGecko→CoinPaprika→Binance Alpha 三级兜底，仍未匹配的多为代币化股票或极新币。比值≥15% 高亮（资金杠杆度高，波动可能被放大）。</p>';
   host.innerHTML=html;
   capBind();
 }

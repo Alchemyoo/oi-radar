@@ -72,6 +72,21 @@ def num(x, nd=None):
     return round(v, nd) if nd is not None else v
 
 PAPRIKA='https://api.coinpaprika.com/v1/tickers'
+ALPHA_LIST='https://www.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/cex/alpha/all/token/list'
+
+def fetch_alpha_mcap():
+    # Binance Alpha carries its own mcap for newly listed tokens
+    try:
+        d=get(ALPHA_LIST, retries=2, timeout=30)
+    except Exception:
+        return {}
+    out={}
+    for t in (d.get('data') or []):
+        sym=str(t.get('cexCoinName') or '').upper()
+        mc=num(t.get('marketCap')) or 0
+        if sym and mc>0:
+            out[sym]={'mc':mc,'nm':t.get('name') or ''}
+    return out
 
 def fetch_paprika():
     # free, no key, one bulk call — fills the long tail CoinGecko's rate limit can't reach
@@ -134,6 +149,12 @@ def collect():
             if not (cg.get(sym) or {}).get('mc'):
                 cg[sym]=v
         print(f"paprika merged, cg symbols now={len(cg)}")
+    alp=fetch_alpha_mcap()
+    filled=0
+    for sym,v in alp.items():
+        if not (cg.get(sym) or {}).get('mc'):
+            cg[sym]=v; filled+=1
+    print(f"alpha mcap merged, +{filled}, symbols now={len(cg)}")
     rows=[]
     for x in tk:
         s=x['symbol']; base=s[:-4]; p=px[s]; o=oi.get(s)
