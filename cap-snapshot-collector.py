@@ -2,7 +2,7 @@
 """Perp OI x market-cap snapshot -> cap-snapshot.json (for oi-radar 市值 page).
 
 Public endpoints only: fapi ticker/24hr + fapi openInterest (per symbol, paced)
-+ CoinGecko coins/markets (top 2000). Output rows are ready-to-render.
++ CoinGecko coins/markets (top 2500). Output rows are ready-to-render.
 """
 import argparse, concurrent.futures, http.client, json, math, threading, time, urllib.request, urllib.error
 from pathlib import Path
@@ -71,12 +71,21 @@ def num(x, nd=None):
     if not math.isfinite(v): return None
     return round(v, nd) if nd is not None else v
 
-def fetch_cg(pages=8):
+def fetch_cg(pages=10):
     out={}
+    got=0
     for p in range(1,pages+1):
-        try: rows=get(CG+str(p), retries=3, timeout=25)
-        except Exception: break
-        if not isinstance(rows,list) or not rows: break
+        rows=None
+        for attempt in range(2):
+            try:
+                rows=get(CG+str(p), retries=2, timeout=25)
+                break
+            except Exception:
+                rows=None
+                time.sleep(12)  # 429 cooldown, keep going with the next pages
+        if not isinstance(rows,list) or not rows:
+            continue
+        got+=1
         for c in rows:
             sym=str(c.get('symbol') or '').upper()
             mc=c.get('market_cap') or 0
@@ -84,7 +93,8 @@ def fetch_cg(pages=8):
             if sym and (sym not in out or mc>(out[sym].get('mc') or 0)):
                 out[sym]={'mc':mc,'nm':c.get('name') or ''}
         if len(rows)<250: break
-        time.sleep(5)  # CoinGecko free tier rate limit: keep pages spaced out
+        time.sleep(6)  # CoinGecko free tier rate limit: keep pages spaced out
+    print(f"cg pages fetched={got} symbols={len(out)}")
     return out
 
 def collect():
