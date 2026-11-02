@@ -2,7 +2,7 @@
 """Perp OI x market-cap snapshot -> cap-snapshot.json (for oi-radar 市值 page).
 
 Public endpoints only: fapi ticker/24hr + fapi openInterest (per symbol, paced)
-+ CoinGecko coins/markets (top 1000). Output rows are ready-to-render.
++ CoinGecko coins/markets (top 2500). Output rows are ready-to-render.
 """
 import argparse, concurrent.futures, http.client, json, math, threading, time, urllib.request, urllib.error
 from pathlib import Path
@@ -71,15 +71,18 @@ def num(x, nd=None):
     if not math.isfinite(v): return None
     return round(v, nd) if nd is not None else v
 
-def fetch_cg():
+def fetch_cg(pages=10):
     out={}
-    for p in range(1,5):
+    for p in range(1,pages+1):
         try: rows=get(CG+str(p), retries=3, timeout=25)
         except Exception: break
         if not isinstance(rows,list) or not rows: break
         for c in rows:
-            if c.get('symbol'):
-                out[str(c['symbol']).upper()]={'mc':c.get('market_cap') or 0,'nm':c.get('name') or ''}
+            sym=str(c.get('symbol') or '').upper()
+            mc=c.get('market_cap') or 0
+            # keep the highest-mcap entry per symbol (CG lists duplicates/similar tickers)
+            if sym and (sym not in out or mc>(out[sym].get('mc') or 0)):
+                out[sym]={'mc':mc,'nm':c.get('name') or ''}
         if len(rows)<250: break
     return out
 
