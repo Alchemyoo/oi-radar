@@ -174,8 +174,63 @@
       const pp = excess === null ? '—' : (excess >= 0 ? '+' : '') + excess.toFixed(2);
       return `<tr><td>${i + 1}</td><td><a data-st-sym="${esc(r.sym)}">${esc(r.sym)}</a></td><td>${fPrice(r.px)}</td>` +
         DAYS.map(w => `<td class="${clsP(r.ret[w])}">${fP(r.ret[w])}</td>`).join('') +
-        `<td class="${clsP(excess)}">${pp}</td><td>${finite(r.vol) ? fC(r.vol) : '—'}</td></tr>`;
-    }).join('') || `<tr><td colspan="9" style="text-align:center;color:var(--dim);padding:22px">${esc(reason)}</td></tr>`);
+        `<td class="${clsP(excess)}">${pp}</td><td>${finite(r.vol) ? fC(r.vol) : '—'}</td>`+
+        `<td data-smc="${esc(r.sym)}" class="muted">—</td></tr>`;
+    }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--dim);padding:22px">${esc(reason)}</td></tr>`);
+    smcEnsure(st.displayed);
+  }
+
+  /* ---------- SMC 评分列（按需计算，限并发 + 10 分钟缓存） ---------- */
+  const SMC_CACHE = new Map();
+  let smcQueue = [], smcRunning = 0;
+  const SMC_TTL = 10 * 60 * 1000, SMC_CONC = 3;
+
+  function smcEnsure(list) {
+    if (typeof SmcCore === 'undefined') return;
+    for (const r of list) {
+      const sym = r.sym, hit = SMC_CACHE.get(sym);
+      if (hit && Date.now() - hit.t < SMC_TTL) { smcPaint(sym, hit); continue; }
+      if (hit && hit.loading) continue;
+      if (smcQueue.includes(sym)) continue;
+      smcQueue.push(sym);
+      SMC_CACHE.set(sym, {loading: true, t: 0});
+    }
+    smcPump();
+  }
+  function smcPump() {
+    while (smcRunning < SMC_CONC && smcQueue.length) {
+      const sym = smcQueue.shift();
+      smcRunning++;
+      smcFetch(sym).finally(() => { smcRunning--; smcPump(); });
+    }
+  }
+  async function smcFetch(sym) {
+    try {
+      const ks = await jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(sym)}&interval=1h&limit=200`, 20000);
+      if (!Array.isArray(ks)) throw new Error('K线响应异常');
+      const bars = ks.map(k => ({t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5]}));
+      const res = SmcCore.analyze(bars, {sLen: 10});
+      if (!res) throw new Error('K线不足');
+      const rec = {t: Date.now(), score: res.score, dir: res.dir, quad: res.lastEvent ? res.lastEvent.type : '', pd: res.pdPos};
+      SMC_CACHE.set(sym, rec);
+      smcPaint(sym, rec);
+    } catch (e) {
+      SMC_CACHE.set(sym, {t: Date.now(), err: true});
+      smcPaint(sym, {err: true});
+    }
+  }
+  function smcPaint(sym, rec) {
+    const cells = document.querySelectorAll('#stTbl tbody td[data-smc]');
+    for (const td of cells) {
+      if (td.dataset.smc !== sym) continue;
+      if (rec.loading) { td.textContent = '…'; td.className = 'muted'; continue; }
+      if (rec.err) { td.textContent = '—'; td.className = 'muted'; td.title = 'K线不足或请求失败'; continue; }
+      const arrow = rec.dir === 1 ? '↑' : rec.dir === -1 ? '↓' : '';
+      td.textContent = rec.score + arrow;
+      td.className = rec.score >= 70 ? 'up' : rec.score < 45 ? 'down' : '';
+      td.title = 'SMC ' + rec.score + ' · ' + (rec.dir === 1 ? '上升结构' : rec.dir === -1 ? '下降结构' : '结构未定') +
+        (rec.quad ? ' · 最近 ' + rec.quad : '') + (rec.pd != null ? ' · 位置 ' + Math.round(rec.pd * 100) + '%' : '') + ' · 1h×200';
+    }
   }
 
   function apiError(data) {

@@ -395,7 +395,7 @@ input[type=number]{text-align:right}
   <div class="card">
     <h3>涨跌幅排名 <span class="r">点周期列切换</span></h3>
     <div class="tblwrap"><table class="tbl" id="stTbl">
-      <thead><tr><th>#</th><th>币种</th><th>快照价</th><th data-d="1" class="sd">1天%</th><th data-d="3">3天%</th><th data-d="5">5天%</th><th data-d="7">7天%</th><th>超额</th><th>24h成交</th></tr></thead>
+      <thead><tr><th>#</th><th>币种</th><th>快照价</th><th data-d="1" class="sd">1天%</th><th data-d="3">3天%</th><th data-d="5">5天%</th><th data-d="7">7天%</th><th>超额</th><th>24h成交</th><th title="SMC 结构评分（1h×200，按需计算）">SMC</th></tr></thead>
       <tbody><tr><td colspan="10" style="text-align:center;color:var(--dim);padding:22px">扫描后显示前30名。</td></tr></tbody>
     </table></div>
     <div class="row" style="margin-top:10px"><button class="btn mini" id="stCsv" disabled>导出前30 CSV</button></div>
@@ -1775,7 +1775,7 @@ function idToggle(on){
 }
 $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
 </script>
-<script src="strong.js?v=20261019-slim1"></script>
+<script src="strong.js?v=20261104-smc1"></script>
 <script src="layout.js?v=20261027-cap1"></script><script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261007-rolling1"></script>
 <script src="ls-ratio.js?v=20261019-ls8"></script>

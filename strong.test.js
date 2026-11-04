@@ -356,13 +356,13 @@ test('BTC up is warning only; missing BTC window removes comparable rankings but
   assert.match(h.nodes.get('#stTbl tbody').innerHTML, /<td class="">—<\/td>/);
 });
 
-test('symbols are HTML escaped, clicks dispatch original symbol, table has exactly nine cells', () => {
+test('symbols are HTML escaped, clicks dispatch original symbol, table has exactly ten cells', () => {
   const h = harness(), c = h.c, sym = '中文<"&\'USDT';
   c.stBind(); Object.assign(c.S.st, {E, btc: {1: -0.02}, rows: [row(sym, 0.03)]});
   c.stRender();
   const markup = h.nodes.get('#stTbl tbody').innerHTML;
   assert.equal(markup.includes(sym), false); assert.match(markup, /&lt;&quot;&amp;&#39;/);
-  assert.equal((markup.match(/<td(?:\s|>)/g) || []).length, 9);
+  assert.equal((markup.match(/<td(?:\s|>)/g) || []).length, 10);
   h.nodes.get('#stTbl tbody').onclick({target: {closest: () => ({dataset: {stSym: sym}})}});
   assert.deepEqual(h.jumps, [sym]);
   assert.match(markup, /\+5\.00/); // +3% minus -2% = +5 percentage points, not ratio
