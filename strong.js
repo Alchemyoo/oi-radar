@@ -227,7 +227,7 @@
       if (rec.err) { td.textContent = '—'; td.className = 'muted'; td.title = 'K线不足或请求失败'; continue; }
       const arrow = rec.dir === 1 ? '↑' : rec.dir === -1 ? '↓' : '';
       td.textContent = rec.score + arrow;
-      td.className = rec.score >= 70 ? 'up' : rec.score < 45 ? 'down' : '';
+      td.className = rec.dir === 1 ? 'up' : rec.dir === -1 ? 'down' : '';  // 颜色=结构方向，数字=该方向信号强度
       td.title = 'SMC ' + rec.score + ' · ' + (rec.dir === 1 ? '上升结构' : rec.dir === -1 ? '下降结构' : '结构未定') +
         (rec.quad ? ' · 最近 ' + rec.quad : '') + (rec.pd != null ? ' · 位置 ' + Math.round(rec.pd * 100) + '%' : '') + ' · 1h×200';
     }
