@@ -139,7 +139,7 @@ input[type=number]{text-align:right}
 #stTime{overflow-wrap:anywhere;max-width:100%}
 #toast.on{opacity:1;transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="layout.css?v=20261102-whale12">
+<link rel="stylesheet" href="layout.css?v=20261104-smc1">
 </head>
 <body>
 <header id="hdr">
@@ -417,6 +417,7 @@ input[type=number]{text-align:right}
 <script src="whale.js?v=20261102-whale14"></script>
 <script src="alpha.js?v=20261027-alpha2"></script>
 <script src="capview.js?v=20261102-cap10"></script>
+<script src="smc.js?v=20261104-smc1"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -820,7 +821,7 @@ async function dtLoad(){
   const current=()=>request===S.dt.request&&sym===S.dt.sym;
   S.dt.rows=[];S.dt.days=[];S.dt.px={};
   dtDayRender();dtMinRender();
-  if(typeof lsRender==='function')lsRender();
+  if(typeof lsRender==='function')lsRender();if(typeof smcRefresh==='function')smcRefresh();
   dtChips(null);
   S.dt.loading=true;S.dt.mp=1;
   $('#dtLoad').disabled=true;
@@ -853,7 +854,7 @@ async function dtLoad(){
     dtChips(S.dt.miss);
     dtDayBuild();
     dtDayRender();dtMinRender();dtTab(S.dt.tab);
-    if(typeof lsRender==='function')lsRender();
+    if(typeof lsRender==='function')lsRender();if(typeof smcRefresh==='function')smcRefresh();
     setTimeout(dtChartRender,50);
     if(!S.dt.rows.length){
       ban('#dtBan','warn','该范围无归档数据（新上市或未收录）');

@@ -109,5 +109,6 @@ function layoutInit(){
   $$('#opTabs button').forEach(b=>b.onclick=()=>{layoutOp(b.dataset.op);$('#main').scrollTop=0});
   const back=layoutNode('button','detailBack','‹ 返回');back.className='btn mini';back.hidden=true;back.onclick=layoutBack;$('#hdr').insertBefore(back,$('#hdr .logo'));
   $('#fdStat').insertAdjacentHTML('afterend','<div class="banner" id="fdBan"></div>');
+  if(typeof smcMount==='function')smcMount();
   layoutOp('strong');layoutFavoritesChanged(false);layoutList('market');layoutNavigate('opportunity');
 }
