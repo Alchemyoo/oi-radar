@@ -75,7 +75,7 @@ def collect(users_n=1500, holders_n=80, min_coin_usd=1_500_000):
             val=abs(num(p.get('positionValue')) or 0)
             if val<=0: continue
             lev=p.get('leverage') or {}
-            rec={'a':a[-6:].lower(),'s':side,'sz':num(p.get('szi'),6),'v':int(val),
+            rec={'a':a.lower(),'s':side,'sz':num(p.get('szi'),6),'v':int(val),
                  'e':num(p.get('entryPx'),8),'lv':num(lev.get('value')),'lt':lev.get('type') or 'c',
                  'up':num(p.get('unrealizedPnl')),'roe':num(p.get('returnOnEquity'),4),
                  'lq':num(p.get('liquidationPx'),8)}

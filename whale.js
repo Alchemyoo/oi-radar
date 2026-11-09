@@ -3,6 +3,7 @@
 const WHALE={data:null,loading:false,err:null,coin:null,tab:'list',loadTs:0};
 
 function whaleAddr(a){return a&&a.length>=6?('0x…'+String(a).slice(-6)):'—'}
+function whaleFull(a){return /^0x/i.test(String(a))?String(a):'0x'+String(a)}
 function whaleSym(coin){return coin.endsWith('-USD')?coin.slice(0,-4):coin}
 function whalePct(x){return x==null||!isFinite(x)?'—':(x>=0?'+':'')+ (x*100).toFixed(1)+'%'}
 function whaleUp(v,pos,neg){return v>0?'up':(v<0?'down':(pos||''))}
@@ -54,7 +55,7 @@ function whaleRender(){
     '<button data-t="ladder"'+(WHALE.tab==='ladder'?' class="on"':'')+'>价位分布</button>'+
     '<button data-t="liq"'+(WHALE.tab==='liq'?' class="on"':'')+'>爆仓分布</button></div>';
   if(WHALE.tab==='ladder')html+=whaleLadder(c);
-  else if(WHALE.tab==='liq')html+=whaleLiq(c);
+  else if(WHALE.tab==='liq')html+=whaleLiq(c)+(WHALE.live&&WHALE.live.coin===c.coin?whaleLiveBlock(WHALE.live):'<p class="muted hint" id="liqLiveNote">正在连接 Hyperliquid 实时数据…</p>');
   else{
     html+='<div class="tblwrap"><table class="tbl whale-tbl"><thead><tr>'+
       ['#','地址','向','持仓','价值','开仓价','未实现','杠杆','强平价'].map(h=>'<th>'+h+'</th>').join('')+
@@ -62,7 +63,7 @@ function whaleRender(){
     c.holders.forEach((h,i)=>{
       const dir=h.s==='L'?'<span class="up">多</span>':'<span class="down">空</span>';
       html+='<tr><td>'+(i+1)+'</td>'+
-        '<td class="ta-l"><a href="https://app.hyperliquid.xyz/explorer/address/0x'+h.a+'" target="_blank" rel="noopener">'+whaleAddr(h.a)+'</a></td>'+
+        '<td class="ta-l"><a href="https://app.hyperliquid.xyz/explorer/address/'+whaleFull(h.a)+'" target="_blank" rel="noopener">'+whaleAddr(h.a)+'</a></td>'+
         '<td>'+dir+'</td>'+
         '<td>'+(h.sz!=null?fN(Math.abs(h.sz),Math.abs(h.sz)>=100?0:2):'—')+'</td>'+
         '<td>$'+fC(h.v)+'</td>'+
@@ -77,7 +78,8 @@ function whaleRender(){
   html+='<p class="muted hint" style="margin-top:6px">每小时 ：45 由服务端定时抓取 Hyperliquid 公开 API（leaderboard + clearinghouseState）生成快照；'+d.lagNote+'。地址尾部可点开 Hyperliquid 资产页。</p>';
   host.innerHTML=html;
   const sel=$('#whaleSel');if(sel)sel.onchange=()=>{WHALE.coin=sel.value;whaleRender()};
-  $$('#whaleTabs button').forEach(b=>b.onclick=()=>{WHALE.tab=b.dataset.t;whaleRender()});
+  $$('#whaleTabs button').forEach(b=>b.onclick=()=>{WHALE.tab=b.dataset.t;whaleRender();if(WHALE.tab==='liq')whaleLiveStart(c.coin);else whaleLiveStop()});
+  if(WHALE.tab==='liq')whaleLiveStart(c.coin);else whaleLiveStop();
 }
 
 function whaleLadder(c){
@@ -190,4 +192,95 @@ function whaleLiq(c){
 function whaleInit(){
   const host=$('#whaleHost');if(!host)return;
   whaleOpen();
+}
+
+/* ---------- 实时爆仓：前端直连 Hyperliquid（30s 刷新，仅爆仓 tab） ---------- */
+const HLI='https://api.hyperliquid.xyz/info';
+async function hlPost(body){
+  const r=await fetch(HLI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('HL HTTP '+r.status);
+  return r.json();
+}
+function whaleLiveStop(){
+  if(WHALE.liveTimer){clearInterval(WHALE.liveTimer);WHALE.liveTimer=null}
+}
+function whaleLiveStart(coin){
+  whaleLiveStop();
+  if(!coin)return;
+  const run=()=>whaleLiveFetch(coin).catch(e=>{
+    WHALE.live={coin,err:e.message,ts:Date.now()};
+    const box=$('#liqLiveBox');if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
+  });
+  run();
+  WHALE.liveTimer=setInterval(()=>{if(WHALE.tab!=='liq'||!document.querySelector('#whaleHost'))return;run()},30000);
+}
+async function whaleLiveFetch(coin){
+  const snap=WHALE.data&&WHALE.data.coins.find(x=>x.coin===coin);
+  if(!snap)return;
+  const addrs=[...new Set((snap.holders||[]).map(h=>whaleFull(h.a)))];
+  if(!addrs.length)return;
+  const [meta,states]=await Promise.all([
+    hlPost({type:'metaAndAssetCtxs'}),
+    (async()=>{
+      const out=[];
+      const q=addrs.slice(0,90);
+      for(let i=0;i<q.length;i+=8){
+        const batch=q.slice(i,i+8);
+        const rs=await Promise.all(batch.map(a=>hlPost({type:'clearinghouseState',user:a}).catch(()=>null)));
+        rs.forEach((d,idx)=>{if(d&&d.assetPositions)out.push({a:batch[idx],d})});
+      }
+      return out;
+    })()
+  ]);
+  let mark=null;
+  try{
+    const i=meta[0].universe.findIndex(u=>u.name===coin);
+    if(i>=0)mark=+meta[1][i].markPx;
+  }catch(e){}
+  const rows=[];
+  for(const {a,d} of states){
+    for(const ap of d.assetPositions||[]){
+      const p=ap.position||{};
+      if(p.coin!==coin)continue;
+      const szi=+p.szi||0;if(!szi)continue;
+      const lq=+p.liquidationPx||0;
+      if(!(lq>0))continue;
+      rows.push({a,s:szi>0?'L':'S',lq,v:Math.abs(+(p.positionValue||0)),e:+p.entryPx||0});
+    }
+  }
+  WHALE.live={coin,ts:Date.now(),mark:mark!=null?mark:(snap.mark||null),rows,addrs:addrs.length};
+  const box=$('#liqLiveBox');
+  if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
+}
+function whaleLiveBlock(L){
+  if(!L)return '';
+  if(L.err)return '<div id="liqLiveBox"><p class="muted hint">实时数据获取失败：'+L.err+'（下方为每小时快照）</p></div>';
+  const cur=L.mark,rows=L.rows||[];
+  if(!rows.length)return '<div id="liqLiveBox"><p class="muted hint">实时：这些地址当前没有 '+L.coin+' 持仓</p></div>';
+  const ps=v=>v>=1e6?(v/1e6).toPrecision(3).replace(/\.?0+$/,'')+'M':(v>=1e3?(v/1e3).toPrecision(3).replace(/\.?0+$/,'')+'K':v.toPrecision(4));
+  const bin=(list)=>{
+    if(!list.length)return [];
+    list=list.slice().sort((a,b)=>a.lq-b.lq);
+    const N=Math.min(12,Math.max(3,Math.round(list.length/3))),out=[];
+    for(let i=0;i<N;i++){
+      const seg=list.slice(Math.floor(i*list.length/N),Math.floor((i+1)*list.length/N));
+      if(!seg.length)continue;
+      out.push({lo:seg[0].lq,hi:seg[seg.length-1].lq,v:seg.reduce((a,h)=>a+h.v,0),n:seg.length});
+    }
+    return out;
+  };
+  const longs=bin(rows.filter(r=>r.s==='L')),shorts=bin(rows.filter(r=>r.s==='S'));
+  const sumL=longs.reduce((a,b)=>a+b.v,0),sumS=shorts.reduce((a,b)=>a+b.v,0);
+  const near=(list)=>{let best=null,bd=Infinity;for(const b of list){const d=cur?Math.abs((b.lo+b.hi)/2-cur)/cur:Infinity;if(d<bd){bd=d;best=b}}return best?{...best,dist:bd}:null};
+  const nl=near(longs),ns=near(shorts);
+  const t=new Date(L.ts);
+  const hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
+  let h='<div id="liqLiveBox" class="smc-pd" style="display:block;padding:8px 10px;margin:6px 0;line-height:1.7">';
+  h+='<div style="font-size:10.5px;color:var(--sub)">实时 · '+hh+':'+mm+':'+ss+' · 直连 Hyperliquid · '+L.addrs+' 个地址 · 30 秒自动刷新</div>';
+  h+='<div style="font-size:11.5px">现价 <b>'+fN(cur,cur>=100?1:4)+'</b>';
+  if(nl)h+=' · <span class="up">最近多爆仓 $'+fC(nl.v)+' @ '+ps(nl.lo)+'–'+ps(nl.hi)+'（'+(nl.dist*100).toFixed(1)+'%）</span>';
+  if(ns)h+=' · <span class="down">最近空爆仓 $'+fC(ns.v)+' @ '+ps(ns.lo)+'–'+ps(ns.hi)+'（'+(ns.dist*100).toFixed(1)+'%）</span>';
+  h+='</div>';
+  h+='<div style="font-size:10.5px;color:var(--dim)">实时多单爆仓 $'+fC(sumL)+' · 空单 $'+fC(sumS)+' · 覆盖 '+rows.length+' 笔持仓（快照地址列表）</div></div>';
+  return h;
 }
