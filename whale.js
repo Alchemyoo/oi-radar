@@ -194,101 +194,107 @@ function whaleInit(){
   whaleOpen();
 }
 
-/* ---------- 实时爆仓：前端直连 Hyperliquid（30s 刷新，仅爆仓 tab） ---------- */
+/* ---------- 实时爆仓：价格实时（1 请求/15s），持仓簇用每小时快照 ---------- */
 const HLI='https://api.hyperliquid.xyz/info';
 async function hlPost(body,timeout){
-  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),timeout||12000);
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),timeout||10000);
   try{
     const r=await fetch(HLI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctl.signal});
     if(!r.ok)throw new Error('HL HTTP '+r.status);
     return await r.json();
   }finally{clearTimeout(t)}
 }
-async function hlPostRetry(body){
-  try{return await hlPost(body,12000)}
-  catch(e){await new Promise(r=>setTimeout(r,800));return hlPost(body,12000)}
-}
 function whaleLiveStop(){
   if(WHALE.liveTimer){clearInterval(WHALE.liveTimer);WHALE.liveTimer=null}
 }
 function whaleLiveStart(coin){
-  if(!coin)return;
-  if(WHALE.liveBusy===coin)return;      // 同一币正在抓取，不重复启动
   whaleLiveStop();
-  const run=()=>{WHALE.liveBusy=coin;return whaleLiveFetch(coin).catch(e=>{
-    WHALE.live={coin,err:e.message,ts:Date.now()};
-    const box=$('#liqLiveBox');if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
-  }).finally(()=>{WHALE.liveBusy=null})};
+  if(!coin)return;
+  const run=()=>{
+    const box=$('#liqLiveBox');
+    if(box&&!WHALE.live)box.innerHTML='<p class="muted hint">连接 Hyperliquid 实时价格…</p>';
+    return whaleLiveTick(coin).catch(e=>{
+      WHALE.live={coin,err:e.message,ts:Date.now()};
+      const b2=$('#liqLiveBox');if(b2)b2.innerHTML=whaleLiveBlock(WHALE.live);
+    });
+  };
   run();
-  WHALE.liveTimer=setInterval(()=>{if(WHALE.tab!=='liq'||!document.querySelector('#whaleHost'))return;run()},30000);
+  WHALE.liveTimer=setInterval(()=>{
+    if(WHALE.tab!=='liq'||!document.querySelector('#whaleHost'))return;
+    run();
+  },15000);
 }
-async function whaleLiveFetch(coin){
+async function whaleLiveTick(coin){
   const snap=WHALE.data&&WHALE.data.coins.find(x=>x.coin===coin);
   if(!snap)return;
-  const addrs=[...new Set((snap.holders||[]).map(h=>whaleFull(h.a)))];
-  if(!addrs.length)return;
-  const [meta,states]=await Promise.all([
-    hlPostRetry({type:'metaAndAssetCtxs'}),
-    (async()=>{
-      const out=[];
-      const q=addrs.slice(0,90);
-      for(let i=0;i<q.length;i+=8){
-        const batch=q.slice(i,i+8);
-        const rs=await Promise.all(batch.map(a=>hlPostRetry({type:'clearinghouseState',user:a}).catch(()=>null)));
-        rs.forEach((d,idx)=>{if(d&&d.assetPositions)out.push({a:batch[idx],d})});
-      }
-      return out;
-    })()
-  ]);
+  const meta=await hlPost({type:'metaAndAssetCtxs'},10000);
   let mark=null;
   try{
     const i=meta[0].universe.findIndex(u=>u.name===coin);
     if(i>=0)mark=+meta[1][i].markPx;
   }catch(e){}
+  WHALE.live={coin,ts:Date.now(),mark:mark!=null?mark:(snap.mark||null),deep:WHALE.live&&WHALE.live.deep||null,err:null};
+  const box=$('#liqLiveBox');
+  if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
+}
+/* 手动重抓持仓（较慢：只抓持仓价值最大的 40 个地址，约 5 批） */
+async function whaleLiveDeep(coin){
+  const snap=WHALE.data&&WHALE.data.coins.find(x=>x.coin===coin);
+  if(!snap)return;
+  const box=$('#liqLiveBox');
+  if(box)box.innerHTML='<p class="muted hint">重抓持仓中…（前 40 大地址）</p>';
+  const addrs=[...new Set((snap.holders||[]).slice(0,40).map(h=>whaleFull(h.a)))];
+  const out=[];
+  for(let i=0;i<addrs.length;i+=8){
+    const batch=addrs.slice(i,i+8);
+    const rs=await Promise.all(batch.map(a=>hlPost({type:'clearinghouseState',user:a},12000).catch(()=>null)));
+    rs.forEach((d,idx)=>{if(d&&d.assetPositions)out.push({a:batch[idx],d})});
+  }
   const rows=[];
-  for(const {a,d} of states){
+  for(const {d} of out){
     for(const ap of d.assetPositions||[]){
       const p=ap.position||{};
       if(p.coin!==coin)continue;
       const szi=+p.szi||0;if(!szi)continue;
-      const lq=+p.liquidationPx||0;
-      if(!(lq>0))continue;
-      rows.push({a,s:szi>0?'L':'S',lq,v:Math.abs(+(p.positionValue||0)),e:+p.entryPx||0});
+      const lq=+p.liquidationPx||0;if(!(lq>0))continue;
+      rows.push({s:szi>0?'L':'S',lq,v:Math.abs(+(p.positionValue||0))});
     }
   }
-  WHALE.live={coin,ts:Date.now(),mark:mark!=null?mark:(snap.mark||null),rows,addrs:addrs.length};
-  const box=$('#liqLiveBox');
+  WHALE.live={...(WHALE.live||{}),coin,ts:Date.now(),deep:{rows,at:Date.now(),addrs:addrs.length},err:null};
   if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
+}
+function whaleBin(rows,cur){
+  const list=rows.slice().sort((a,b)=>a.lq-b.lq);
+  if(!list.length)return [];
+  const N=Math.min(10,Math.max(3,Math.round(list.length/3))),out=[];
+  for(let i=0;i<N;i++){
+    const seg=list.slice(Math.floor(i*list.length/N),Math.floor((i+1)*list.length/N));
+    if(!seg.length)continue;
+    out.push({lo:seg[0].lq,hi:seg[seg.length-1].lq,v:seg.reduce((a,h)=>a+h.v,0),n:seg.length});
+  }
+  return out;
 }
 function whaleLiveBlock(L){
   if(!L)return '';
-  if(L.err)return '<p class="muted hint">实时数据获取失败：'+L.err+'（下方为每小时快照）</p>';
-  const cur=L.mark,rows=L.rows||[];
-  if(!rows.length)return '<p class="muted hint">实时：这些地址当前没有 '+L.coin+' 持仓</p>';
+  if(L.err)return '<p class="muted hint">实时价格获取失败：'+L.err+'（下方为每小时快照）</p>';
+  const cur=L.mark;
+  const snap=WHALE.data&&WHALE.data.coins.find(x=>x.coin===L.coin);
+  const srcRows=(L.deep&&L.deep.rows&&L.deep.rows.length)?L.deep.rows:((snap&&snap.holders)||[]).filter(h=>h.lq>0).map(h=>({s:h.s,lq:h.lq,v:h.v}));
+  const rows=srcRows;
   const ps=v=>v>=1e6?(v/1e6).toPrecision(3).replace(/\.?0+$/,'')+'M':(v>=1e3?(v/1e3).toPrecision(3).replace(/\.?0+$/,'')+'K':v.toPrecision(4));
-  const bin=(list)=>{
-    if(!list.length)return [];
-    list=list.slice().sort((a,b)=>a.lq-b.lq);
-    const N=Math.min(12,Math.max(3,Math.round(list.length/3))),out=[];
-    for(let i=0;i<N;i++){
-      const seg=list.slice(Math.floor(i*list.length/N),Math.floor((i+1)*list.length/N));
-      if(!seg.length)continue;
-      out.push({lo:seg[0].lq,hi:seg[seg.length-1].lq,v:seg.reduce((a,h)=>a+h.v,0),n:seg.length});
-    }
-    return out;
-  };
-  const longs=bin(rows.filter(r=>r.s==='L')),shorts=bin(rows.filter(r=>r.s==='S'));
+  const longs=whaleBin(rows.filter(r=>r.s==='L'),cur),shorts=whaleBin(rows.filter(r=>r.s==='S'),cur);
   const sumL=longs.reduce((a,b)=>a+b.v,0),sumS=shorts.reduce((a,b)=>a+b.v,0);
   const near=(list)=>{let best=null,bd=Infinity;for(const b of list){const d=cur?Math.abs((b.lo+b.hi)/2-cur)/cur:Infinity;if(d<bd){bd=d;best=b}}return best?{...best,dist:bd}:null};
   const nl=near(longs),ns=near(shorts);
-  const t=new Date(L.ts);
-  const hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
+  const t=new Date(L.ts),hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
   let h='<div class="smc-pd" style="display:block;padding:8px 10px;margin:0 0 6px;line-height:1.7">';
-  h+='<div style="font-size:10.5px;color:var(--sub)">实时 · '+hh+':'+mm+':'+ss+' · 直连 Hyperliquid · '+L.addrs+' 个地址 · 30 秒自动刷新</div>';
+  h+='<div style="font-size:10.5px;color:var(--sub)">实时价格 '+hh+':'+mm+':'+ss+' · 15 秒刷新 · 爆仓簇来自每小时持仓快照'+
+     ' · <a href="javascript:void(0)" id="liqDeep" style="color:var(--acc)">重抓持仓</a></div>';
   h+='<div style="font-size:11.5px">现价 <b>'+fN(cur,cur>=100?1:4)+'</b>';
   if(nl)h+=' · <span class="up">最近多爆仓 $'+fC(nl.v)+' @ '+ps(nl.lo)+'–'+ps(nl.hi)+'（'+(nl.dist*100).toFixed(1)+'%）</span>';
   if(ns)h+=' · <span class="down">最近空爆仓 $'+fC(ns.v)+' @ '+ps(ns.lo)+'–'+ps(ns.hi)+'（'+(ns.dist*100).toFixed(1)+'%）</span>';
-  h+='</div>';
-  h+='<div style="font-size:10.5px;color:var(--dim)">实时多单爆仓 $'+fC(sumL)+' · 空单 $'+fC(sumS)+' · 覆盖 '+rows.length+' 笔持仓（快照地址列表）</div></div>';
+  h+='</div><div style="font-size:10.5px;color:var(--dim)">多单爆仓 $'+fC(sumL)+' · 空单 $'+fC(sumS)+
+     (L.deep?(' · 持仓重抓于 '+new Date(L.deep.at).toTimeString().slice(0,8)+'（'+L.deep.rows.length+' 笔）'):' · 持仓为每小时快照')+'</div></div>';
+  setTimeout(()=>{const d=$('#liqDeep');if(d)d.onclick=()=>whaleLiveDeep(L.coin)},0);
   return h;
 }
