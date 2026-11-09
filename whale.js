@@ -213,10 +213,12 @@ function whaleLiveStart(coin){
   const run=()=>{
     const box=$('#liqLiveBox');
     if(box&&!WHALE.live)box.innerHTML='<p class="muted hint">连接 Hyperliquid 实时价格…</p>';
-    return whaleLiveTick(coin).catch(e=>{
+    const tick=()=>whaleLiveTick(coin).catch(e=>{
       WHALE.live={coin,err:e.message,ts:Date.now()};
       const b2=$('#liqLiveBox');if(b2)b2.innerHTML=whaleLiveBlock(WHALE.live);
     });
+    // 看门狗：首次可能因快照/时序没返回，2 秒后若无结果再补一次
+    tick().then(()=>{if(!WHALE.live)setTimeout(()=>{if(!WHALE.live)tick()},2000)});
   };
   run();
   WHALE.liveTimer=setInterval(()=>{
@@ -226,14 +228,13 @@ function whaleLiveStart(coin){
 }
 async function whaleLiveTick(coin){
   const snap=WHALE.data&&WHALE.data.coins.find(x=>x.coin===coin);
-  if(!snap)return;
   const meta=await hlPost({type:'metaAndAssetCtxs'},10000);
   let mark=null;
   try{
     const i=meta[0].universe.findIndex(u=>u.name===coin);
     if(i>=0)mark=+meta[1][i].markPx;
   }catch(e){}
-  WHALE.live={coin,ts:Date.now(),mark:mark!=null?mark:(snap.mark||null),deep:WHALE.live&&WHALE.live.deep||null,err:null};
+  WHALE.live={coin,ts:Date.now(),mark:mark!=null?mark:(snap&&snap.mark)||null,deep:(WHALE.live&&WHALE.live.deep)||null,err:null};
   const box=$('#liqLiveBox');
   if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
 }
