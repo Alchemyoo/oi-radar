@@ -55,7 +55,7 @@ function whaleRender(){
     '<button data-t="ladder"'+(WHALE.tab==='ladder'?' class="on"':'')+'>价位分布</button>'+
     '<button data-t="liq"'+(WHALE.tab==='liq'?' class="on"':'')+'>爆仓分布</button></div>';
   if(WHALE.tab==='ladder')html+=whaleLadder(c);
-  else if(WHALE.tab==='liq')html+=whaleLiq(c)+(WHALE.live&&WHALE.live.coin===c.coin?whaleLiveBlock(WHALE.live):'<p class="muted hint" id="liqLiveNote">正在连接 Hyperliquid 实时数据…</p>');
+  else if(WHALE.tab==='liq')html+='<div id="liqLiveBox">'+(WHALE.live&&WHALE.live.coin===c.coin?whaleLiveBlock(WHALE.live):'<p class="muted hint">正在连接 Hyperliquid 实时数据…</p>')+'</div>'+whaleLiq(c);
   else{
     html+='<div class="tblwrap"><table class="tbl whale-tbl"><thead><tr>'+
       ['#','地址','向','持仓','价值','开仓价','未实现','杠杆','强平价'].map(h=>'<th>'+h+'</th>').join('')+
@@ -254,9 +254,9 @@ async function whaleLiveFetch(coin){
 }
 function whaleLiveBlock(L){
   if(!L)return '';
-  if(L.err)return '<div id="liqLiveBox"><p class="muted hint">实时数据获取失败：'+L.err+'（下方为每小时快照）</p></div>';
+  if(L.err)return '<p class="muted hint">实时数据获取失败：'+L.err+'（下方为每小时快照）</p>';
   const cur=L.mark,rows=L.rows||[];
-  if(!rows.length)return '<div id="liqLiveBox"><p class="muted hint">实时：这些地址当前没有 '+L.coin+' 持仓</p></div>';
+  if(!rows.length)return '<p class="muted hint">实时：这些地址当前没有 '+L.coin+' 持仓</p>';
   const ps=v=>v>=1e6?(v/1e6).toPrecision(3).replace(/\.?0+$/,'')+'M':(v>=1e3?(v/1e3).toPrecision(3).replace(/\.?0+$/,'')+'K':v.toPrecision(4));
   const bin=(list)=>{
     if(!list.length)return [];
@@ -275,7 +275,7 @@ function whaleLiveBlock(L){
   const nl=near(longs),ns=near(shorts);
   const t=new Date(L.ts);
   const hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
-  let h='<div id="liqLiveBox" class="smc-pd" style="display:block;padding:8px 10px;margin:6px 0;line-height:1.7">';
+  let h='<div class="smc-pd" style="display:block;padding:8px 10px;margin:0 0 6px;line-height:1.7">';
   h+='<div style="font-size:10.5px;color:var(--sub)">实时 · '+hh+':'+mm+':'+ss+' · 直连 Hyperliquid · '+L.addrs+' 个地址 · 30 秒自动刷新</div>';
   h+='<div style="font-size:11.5px">现价 <b>'+fN(cur,cur>=100?1:4)+'</b>';
   if(nl)h+=' · <span class="up">最近多爆仓 $'+fC(nl.v)+' @ '+ps(nl.lo)+'–'+ps(nl.hi)+'（'+(nl.dist*100).toFixed(1)+'%）</span>';
