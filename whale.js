@@ -196,21 +196,29 @@ function whaleInit(){
 
 /* ---------- 实时爆仓：前端直连 Hyperliquid（30s 刷新，仅爆仓 tab） ---------- */
 const HLI='https://api.hyperliquid.xyz/info';
-async function hlPost(body){
-  const r=await fetch(HLI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!r.ok)throw new Error('HL HTTP '+r.status);
-  return r.json();
+async function hlPost(body,timeout){
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),timeout||12000);
+  try{
+    const r=await fetch(HLI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctl.signal});
+    if(!r.ok)throw new Error('HL HTTP '+r.status);
+    return await r.json();
+  }finally{clearTimeout(t)}
+}
+async function hlPostRetry(body){
+  try{return await hlPost(body,12000)}
+  catch(e){await new Promise(r=>setTimeout(r,800));return hlPost(body,12000)}
 }
 function whaleLiveStop(){
   if(WHALE.liveTimer){clearInterval(WHALE.liveTimer);WHALE.liveTimer=null}
 }
 function whaleLiveStart(coin){
-  whaleLiveStop();
   if(!coin)return;
-  const run=()=>whaleLiveFetch(coin).catch(e=>{
+  if(WHALE.liveBusy===coin)return;      // 同一币正在抓取，不重复启动
+  whaleLiveStop();
+  const run=()=>{WHALE.liveBusy=coin;return whaleLiveFetch(coin).catch(e=>{
     WHALE.live={coin,err:e.message,ts:Date.now()};
     const box=$('#liqLiveBox');if(box)box.innerHTML=whaleLiveBlock(WHALE.live);
-  });
+  }).finally(()=>{WHALE.liveBusy=null})};
   run();
   WHALE.liveTimer=setInterval(()=>{if(WHALE.tab!=='liq'||!document.querySelector('#whaleHost'))return;run()},30000);
 }
@@ -220,13 +228,13 @@ async function whaleLiveFetch(coin){
   const addrs=[...new Set((snap.holders||[]).map(h=>whaleFull(h.a)))];
   if(!addrs.length)return;
   const [meta,states]=await Promise.all([
-    hlPost({type:'metaAndAssetCtxs'}),
+    hlPostRetry({type:'metaAndAssetCtxs'}),
     (async()=>{
       const out=[];
       const q=addrs.slice(0,90);
       for(let i=0;i<q.length;i+=8){
         const batch=q.slice(i,i+8);
-        const rs=await Promise.all(batch.map(a=>hlPost({type:'clearinghouseState',user:a}).catch(()=>null)));
+        const rs=await Promise.all(batch.map(a=>hlPostRetry({type:'clearinghouseState',user:a}).catch(()=>null)));
         rs.forEach((d,idx)=>{if(d&&d.assetPositions)out.push({a:batch[idx],d})});
       }
       return out;
