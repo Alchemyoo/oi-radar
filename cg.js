@@ -204,7 +204,7 @@ function cgDetail(sym){
     const lp=cgLongPct(r),liq=cgLiq(r);
     let h='<div class="cg-detgrid">'+
       '<div><span>24h 爆仓</span><b>'+(liq>0?'$'+fC(liq):'—')+'</b></div>'+
-      '<div><span>多 / 空</span><b style="font-size:10.5px"><span class="up">'+fC(r.ll||0)+'</span> / <span class="down">'+fC(r.ls||0)+'</span></b></div>'+
+      '<div><span>多 / 空</span><b style="font-size:10px;white-space:nowrap"><span class="up">'+fC(r.ll||0)+'</span> / <span class="down">'+fC(r.ls||0)+'</span></b></div>'+
       '<div><span>多单占</span><b class="'+(lp!=null?(lp>=60?'down':(lp<=40?'up':'muted')):'muted')+'">'+(lp!=null?lp.toFixed(0)+'%':'—')+'</b></div>'+
       '<div><span>OI 24h</span><b class="'+cgCls(r.oc)+'">'+cgPct(r.oc)+'</b></div>'+
       '<div><span>费率年化</span><b class="'+cgCls(r.fa)+'">'+(r.fa!=null?(r.fa>=0?'+':'')+r.fa.toFixed(2)+'%':'—')+'</b></div>'+
