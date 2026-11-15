@@ -217,3 +217,30 @@
   .cg-kpibar{display:grid;grid-template-columns:repeat(8,1fr);margin:0 0 9px}
   .cg-kpi{flex:auto}
 }
+/* ---------- 计价切换 / 新鲜度 / 预警气泡 / 复制提示 ---------- */
+.cg-fresh{font-size:9.5px;padding:1px 6px;border-radius:20px;border:1px solid var(--line);color:var(--sub);white-space:nowrap}
+.cg-fresh.ok{border-color:rgba(46,189,133,.35);color:#7fe0b8}
+.cg-fresh.warn{border-color:rgba(240,185,11,.5);background:rgba(240,185,11,.12);color:var(--acc)}
+.cg-unit{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;margin-left:2px;vertical-align:middle}
+.cg-unit button{background:transparent;border:0;color:var(--sub);font-size:9px;font-weight:700;padding:3px 5px;line-height:1.1}
+.cg-unit button.on{background:var(--acc);color:#000}
+.cg-head-sub{flex-wrap:wrap;align-items:center;row-gap:4px}
+.cg-bell.on{background:rgba(240,185,11,.18);border-color:rgba(240,185,11,.6);color:var(--acc)}
+.cg-pop{position:fixed;z-index:120;width:272px;background:#161d2b;border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:0 14px 40px rgba(0,0,0,.6);font-size:12px}
+.cg-pop-h{font-weight:700;font-size:12.5px;display:flex;gap:6px;align-items:baseline;margin-bottom:7px}
+.cg-pop-h span{font-size:10px;color:var(--acc);font-weight:600}
+.cg-pop-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cg-pop-row>span{font-size:10.5px;color:var(--sub);flex:none}
+.cg-pop-row input[type=number]{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px;color:var(--txt);outline:none;font-variant-numeric:tabular-nums}
+.cg-pop-dir{flex:1}
+.cg-pop-dir button{flex:1;font-size:11px;padding:5px 4px;min-height:0}
+.cg-pop-steps{gap:5px}
+.cg-pop-steps button{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:7px;color:var(--sub);font-size:10.5px;padding:5px 0}
+.cg-pop-steps button:active{border-color:var(--acc);color:var(--acc)}
+.cg-pop-note{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--sub);margin:2px 0 8px}
+.cg-pop-note input{accent-color:var(--acc)}
+.cg-pop-f{display:flex;gap:6px;justify-content:flex-end}
+.cg-pop-f button{min-width:64px}
+.cg-tip{position:fixed;z-index:130;background:rgba(20,26,38,.96);border:1px solid var(--line);color:var(--txt);font-size:11px;padding:5px 9px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .18s;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.cg-tip.on{opacity:1}
+[data-copy]{cursor:pointer}
