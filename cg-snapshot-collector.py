@@ -269,7 +269,7 @@ def main():
     ap.add_argument('--pace', type=float, default=0.45, help='每线程请求间隔秒')
     ap.add_argument('--workers', type=int, default=6, help='并发数')
     ap.add_argument('--limit', type=int, default=0, help='调试：只取前 N 个')
-    ap.add_argument('--levels', default='BTC,ETH,SOL,BNB',
+    ap.add_argument('--levels', default='BTC,ETH,SOL,BNB,XRP,DOGE,LINK,AVAX',
                     help='额外抓关键价位的币种，逗号分隔（空字符串关闭）')
     args = ap.parse_args()
 

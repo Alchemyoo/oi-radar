@@ -153,7 +153,7 @@ function cgLevelsHtml(){
   html+='<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">'+
         '<b style="font-size:13px">关键价位</b>'+
         '<span class="muted" style="font-size:10.5px">大额挂单 · 清算密集区 · 期权痛点</span></div>';
-  html+='<div class="seg" style="margin-bottom:8px" id="cgLvSym">'+syms.map(s=>
+  html+='<div class="seg" style="margin-bottom:8px;overflow-x:auto" id="cgLvSym">'+syms.map(s=>
         '<button data-s="'+s+'"'+(s===sym?' class="on"':'')+'>'+s+'</button>').join('')+'</div>';
   if(!rows.length){return html+'<p class="muted hint">暂无数据</p></div>'}
   rows.sort((a,b)=>(b[3]||0)-(a[3]||0));
