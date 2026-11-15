@@ -178,3 +178,50 @@ function cgBind(){
 }
 
 function cgInit(){cgLoad(false)}
+
+/* ---------- 单币详情页嵌入（v-detail） ---------- */
+function cgBase(sym){return String(sym||'').toUpperCase().replace(/USDT$/,'').replace(/^(1000000|10000|1000)/,'')}
+
+function cgMount(){
+  const card=document.querySelector('#v-detail .card');
+  if(!card||document.getElementById('dtCgFold'))return;
+  const el=document.createElement('details');
+  el.id='dtCgFold';el.className='fold';
+  el.innerHTML='<summary>Coinglass 快照 <span>24h 爆仓 · ETF · 情绪</span></summary>'+
+    '<div class="fold-body" id="dtCgBody"><p class="muted hint">加载中…</p></div>';
+  const anchor=document.getElementById('dtEvidence');
+  if(anchor&&anchor.parentElement===card)card.insertBefore(el,anchor);else card.appendChild(el);
+}
+
+function cgDetail(sym){
+  cgMount();
+  const host=document.getElementById('dtCgBody');
+  if(!host)return;
+  const base=cgBase(sym);
+  const paint=rows=>{
+    const r=(rows||[]).find(x=>cgBase(x.bs||x.s)===base||x.s===base);
+    if(!r){host.innerHTML='<p class="muted hint">Coinglass 无 '+cgEsc(base)+' 快照（未收录或非永续合约）</p>';return}
+    const lp=cgLongPct(r),liq=cgLiq(r);
+    let h='<div class="cg-detgrid">'+
+      '<div><span>24h 爆仓</span><b>'+(liq>0?'$'+fC(liq):'—')+'</b></div>'+
+      '<div><span>多 / 空</span><b style="font-size:10.5px"><span class="up">'+fC(r.ll||0)+'</span> / <span class="down">'+fC(r.ls||0)+'</span></b></div>'+
+      '<div><span>多单占</span><b class="'+(lp!=null?(lp>=60?'down':(lp<=40?'up':'muted')):'muted')+'">'+(lp!=null?lp.toFixed(0)+'%':'—')+'</b></div>'+
+      '<div><span>OI 24h</span><b class="'+cgCls(r.oc)+'">'+cgPct(r.oc)+'</b></div>'+
+      '<div><span>费率年化</span><b class="'+cgCls(r.fa)+'">'+(r.fa!=null?(r.fa>=0?'+':'')+r.fa.toFixed(2)+'%':'—')+'</b></div>'+
+      '<div><span>OI/市值</span><b>'+(r.omp!=null?r.omp.toFixed(1)+'%':'—')+'</b></div>'+
+      '<div><span>ETF 净流入</span><b class="'+cgCls(r.ef)+'">'+(r.ef!=null&&r.ef!==0?(r.ef>0?'+':'')+'$'+fC(r.ef):'—')+'</b></div>'+
+      '<div><span>恐贪指数</span><b>'+(r.fg!=null?r.fg:'—')+'</b></div>'+
+      '<div><span>距 ATH</span><b class="'+cgCls(r.athd)+'">'+cgPct(r.athd)+'</b></div>'+
+    '</div>';
+    const p=r.p||{};
+    h+='<div class="cg-detgrid">'+[['1h',p.h1],['4h',p.h4],['24h',p.h24],['7d',p.d7],['30d',p.d30],['90d',p.d90],['今年',p.ytd],['1年',p.y1]]
+      .map(([k,v])=>'<div><span>'+k+'</span><b class="'+cgCls(v)+'">'+cgPct(v)+'</b></div>').join('')+'</div>';
+    if(r.ed)h+='<p class="muted hint" style="margin-top:2px">ETF 数据日期 '+cgEsc(r.ed)+' · 快照 '+(CG.snapT?new Date(CG.snapT).toLocaleString('zh-CN',{hour12:false}):'—')+'</p>';
+    host.innerHTML=h;
+  };
+  if(CG.rows&&CG.rows.length)return paint(CG.rows);
+  host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
+  jget('cg-snapshot.json',20000).then(r=>{
+    CG.rows=(r&&r.coins)||[];CG.snapT=r&&r.generatedAt||null;paint(CG.rows);
+  }).catch(e=>{host.innerHTML='<p class="muted hint">加载失败：'+cgEsc(e&&e.message||e)+'</p>'});
+}
