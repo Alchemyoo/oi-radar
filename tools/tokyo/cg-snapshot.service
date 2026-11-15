@@ -1,0 +1,8 @@
+[Unit]
+Description=Coinglass coin snapshot (tokyo, hourly)
+
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/opt/alpha-card/oi-radar/tools/tokyo/cg-snapshot.sh
+TimeoutStartSec=1200

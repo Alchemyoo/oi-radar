@@ -33,7 +33,7 @@ function layoutNavigate(v,restore=false){
     $('#marketTools').open=true;
     const box=$(v==='fund'?'#toolFund':'#toolHeat');box.open=true;return;
   }
-  if(!['market','opportunity','signal','evidence','whale','alpha','cap','detail'].includes(v))return;
+  if(!['market','opportunity','signal','evidence','whale','alpha','cap','cg','detail'].includes(v))return;
   layoutSaveList();Layout.scroll[Layout.current]=$('#main').scrollTop;
   if(v==='detail'&&Layout.current!=='detail')Layout.returnTo={view:Layout.current,op:Layout.op,scroll:$('#main').scrollTop};
   Layout.current=v;
@@ -42,10 +42,11 @@ function layoutNavigate(v,restore=false){
   if(v==='whale'&&typeof whaleInit==='function')whaleInit();
   if(v==='alpha'&&typeof alphaInit==='function')alphaInit();
   if(v==='cap'&&typeof capInit==='function')capInit();
-  for(const id of ['market','opportunity','signal','evidence','whale','alpha','cap','detail'])$('#v-'+id).classList.toggle('on',id===v);
+  if(v==='cg'&&typeof cgInit==='function')cgInit();
+  for(const id of ['market','opportunity','signal','evidence','whale','alpha','cap','cg','detail'])$('#v-'+id).classList.toggle('on',id===v);
   const active=v==='detail'?(Layout.returnTo?.view||'market'):v;
   $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active;b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
-  $('#hdr h1').textContent=v==='detail'?'单币详情':(v==='whale'?'巨鲸持仓':(v==='alpha'?'Alpha 判断':(v==='cap'?'持仓市值':'OI 雷达')));
+  $('#hdr h1').textContent=v==='detail'?'单币详情':(v==='whale'?'巨鲸持仓':(v==='alpha'?'Alpha 判断':(v==='cap'?'持仓市值':(v==='cg'?'清算与资金':'OI 雷达'))));
   $('#detailBack').hidden=v!=='detail';
   $('#main').scrollTop=restore?(Layout.scroll[v]||0):0;
   if(v==='detail')setTimeout(dtChartRender,60);
@@ -100,6 +101,10 @@ function layoutInit(){
   const cap=layoutNode('section','v-cap','<div class="workspace-heading"><h2>持仓市值</h2><p>全永续 OI × 市值 · 杠杆集中度</p></div>');
   cap.className='view';main.append(cap);
   cap.append(layoutNode('div','capHost',''));
+  /* 清算：Coinglass 全币种快照（爆仓 · ETF · 情绪 · 费率） */
+  const cg=layoutNode('section','v-cg','<div class="workspace-heading"><h2>清算与资金</h2><p>Coinglass · 24h 爆仓 · ETF · 情绪</p></div>');
+  cg.className='view';main.append(cg);
+  cg.append(layoutNode('div','cgHost',''));
   execution.style.borderTop='none';execution.style.marginTop='0';execution.style.paddingTop='0';
   for(const [id,host,loader] of [['fund','toolFund',fdLoad],['heat','toolHeat',mgLoad]]){
     const el=$('#v-'+id);el.className='tool-panel';$('#'+host).append(el);

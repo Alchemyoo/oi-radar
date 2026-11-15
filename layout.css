@@ -79,3 +79,24 @@
 .smc-pd{position:relative;display:flex;justify-content:space-between;align-items:center;height:18px;border-radius:6px;background:linear-gradient(90deg,rgba(46,189,133,.22),rgba(139,148,169,.12),rgba(246,70,93,.22));padding:0 6px;font-size:9.5px;color:var(--sub)}
 .smc-pd-fill{position:absolute;top:0;bottom:0;width:2px;background:var(--acc);box-shadow:0 0 6px var(--acc)}
 .smc-pd-l,.smc-pd-m,.smc-pd-r{position:relative}
+
+/* ---------- 清算 / Coinglass 快照 (cg.js) ---------- */
+.cg-splitbar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--card2);margin-top:6px}
+.cg-splitbar i{display:block;height:100%}
+.cg-splitbar i.l{background:var(--up);opacity:.85}
+.cg-splitbar i.s{flex:1;background:var(--down);opacity:.85}
+.cg-kv4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center}
+.cg-kv4>div{background:var(--card2);border-radius:8px;padding:5px 2px;min-width:0}
+.cg-kv4 b{display:block;font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cg-kv4 span{display:block;font-size:9px;color:var(--sub);margin-top:1px}
+.cg-minibar{display:flex;height:3px;border-radius:2px;overflow:hidden;background:rgba(246,70,93,.55);margin-top:3px}
+.cg-minibar i.l{display:block;height:100%;background:var(--up);opacity:.85}
+.cg-tbl{font-size:12px}
+.cg-tbl th,.cg-tbl td{padding:6px 6px}
+.cg-tbl tbody tr.cg-row{cursor:pointer}
+.cg-tbl tbody tr.cg-row:active{background:rgba(255,255,255,.05)}
+.cg-tbl tbody tr.cg-det td{text-align:left;padding:6px 8px 10px;background:rgba(255,255,255,.02)}
+.cg-detgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 8px;margin-bottom:5px}
+.cg-detgrid>div{min-width:0}
+.cg-detgrid span{display:block;font-size:9px;color:var(--sub)}
+.cg-detgrid b{font-size:11.5px;white-space:nowrap}
