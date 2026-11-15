@@ -9,6 +9,14 @@ const CG={rows:null,snapT:null,levels:null,loading:false,err:null,q:'',sort:'liq
   kline:{key:'',rows:null,err:'',loading:false},alerts:null};
 
 function cgSnapUrl(){return 'cg-snapshot.json?v='+Math.floor(Date.now()/300000)}
+function cgGet(url,ms){
+  const ctl=typeof AbortController!=='undefined'?new AbortController():null;
+  const t=ctl?setTimeout(()=>ctl.abort(),ms||20000):null;
+  return fetch(url,ctl?{signal:ctl.signal}:undefined).then(r=>{
+    if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}
+    return r.json();
+  }).finally(()=>{if(t)clearTimeout(t)});
+}
 function cgEsc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function cgPct(v,d=2){return v==null||!isFinite(v)?'—':(v>=0?'+':'')+v.toFixed(d)+'%'}
 function cgCls(v){return v==null||!isFinite(v)?'muted':(v>0?'up':(v<0?'down':'muted'))}
@@ -20,7 +28,7 @@ function cgLoad(force){
   if(CG.rows&&!force)return cgRender();
   CG.loading=true;CG.err=null;
   host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
-  jget(cgSnapUrl(),20000).then(r=>{
+  cgGet(cgSnapUrl(),20000).then(r=>{
     if(!r||!Array.isArray(r.coins)||!r.coins.length)throw new Error('快照为空');
     CG.rows=r.coins.slice();
     CG.snapT=r.generatedAt||null;
@@ -352,7 +360,7 @@ function cgChartLoad(){
       CG.kline={key:key,rows:null,err:'无对应现货交易对，K 线不可用',loading:false};
       return cgChartDraw();
     }
-    jget('https://data-api.binance.vision/api/v3/klines?symbol='+cands[i]+'&interval='+iv+'&limit=168',12000).then(a=>{
+    cgGet('https://data-api.binance.vision/api/v3/klines?symbol='+cands[i]+'&interval='+iv+'&limit=168',12000).then(a=>{
       if(CG.kline.key!==key)return;
       if(!Array.isArray(a)||!a.length)throw new Error('empty');
       CG.kline={key:key,rows:a.map(k=>({t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4]})),err:'',loading:false};
@@ -569,7 +577,7 @@ function cgDetail(sym){
   };
   if(CG.rows&&CG.rows.length)return paint(CG.rows);
   host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
-  jget(cgSnapUrl(),20000).then(r=>{
+  cgGet(cgSnapUrl(),20000).then(r=>{
     CG.rows=(r&&r.coins)||[];CG.snapT=r&&r.generatedAt||null;CG.levels=(r&&r.levels)||{};paint(CG.rows);
   }).catch(e=>{host.innerHTML='<p class="muted hint">加载失败：'+cgEsc(e&&e.message||e)+'</p>'});
 }
