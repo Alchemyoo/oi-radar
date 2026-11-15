@@ -1,7 +1,7 @@
 /* 清算 — Coinglass 全币种快照（cg-snapshot.json，每小时）
    指标：24h 爆仓多空、OI 24h、资金费率（年化）、ETF 净流入、多周期涨跌、OI/市值、主动买占比。 */
 'use strict';
-const CG={rows:null,snapT:null,loading:false,err:null,q:'',sort:'liq',dir:-1,open:{}};
+const CG={rows:null,snapT:null,levels:null,loading:false,err:null,q:'',sort:'liq',dir:-1,open:{},lvSym:null};
 
 function cgEsc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function cgPct(v,d=2){return v==null||!isFinite(v)?'—':(v>=0?'+':'')+v.toFixed(d)+'%'}
@@ -17,6 +17,8 @@ function cgLoad(force){
     if(!r||!Array.isArray(r.coins)||!r.coins.length)throw new Error('快照为空');
     CG.rows=r.coins.slice();
     CG.snapT=r.generatedAt||null;
+    CG.levels=r.levels||{};
+    CG.lvSym=CG.lvSym||Object.keys(CG.levels)[0]||null;
     CG.missing=r.missing||[];
     CG.loading=false;cgRender();
   }).catch(e=>{
@@ -68,6 +70,9 @@ function cgRender(){
     (btc?cgNarrative(btc):'')+
   '</div>';
 
+  /* 关键价位（大额挂单墙 / 清算密集区 / 期权最大痛点） */
+  html+=cgLevelsHtml();
+
   /* 控制条 */
   const sorts=[['liq','爆仓额'],['lp','多单占比'],['oi','OI'],['oc','OI 24h'],['fr','费率'],['etf','ETF'],['omp','OI/市值'],['chg','涨跌幅']];
   html+='<div class="seg" style="margin-bottom:8px;flex-wrap:wrap" id="cgSort">'+sorts.map(s=>
@@ -113,6 +118,62 @@ function cgRender(){
 
   host.innerHTML=html;
   cgBind();
+}
+
+
+/* ---------- 关键价位：大额挂单墙 / 清算密集区 / 期权最大痛点 ---------- */
+const CG_LV_KIND={
+  spot_sell_wall:{c:'down',tag:'现货'},
+  futures_sell_wall:{c:'down',tag:'合约'},
+  spot_buy_wall:{c:'up',tag:'现货'},
+  futures_buy_wall:{c:'up',tag:'合约'},
+  liquidation_short:{c:'down',tag:'清算'},
+  liquidation_long:{c:'up',tag:'清算'},
+  option_max_pain:{c:'lv-opt',tag:'期权'},
+  current_price:{c:'lv-cur',tag:''},
+};
+
+function cgLvMoney(v){
+  if(v==null||!isFinite(v))return '';
+  if(v>=1e9)return '$'+(v/1e9).toFixed(2)+'B';
+  if(v>=1e6)return '$'+(v/1e6).toFixed(1)+'M';
+  if(v>=1e3)return '$'+(v/1e3).toFixed(0)+'K';
+  return '$'+v.toFixed(0);
+}
+
+function cgLevelsHtml(){
+  const L=CG.levels||{};
+  const syms=Object.keys(L);
+  if(!syms.length)return '';
+  const sym=CG.lvSym&&L[CG.lvSym]?CG.lvSym:syms[0];
+  const d=L[sym]||{};
+  const rows=(d.rows||[]).slice();
+  const cur=d.px||(rows.find(r=>r[0]==='current_price')||[])[3]||null;
+  let html='<div class="card" style="padding:10px 12px;margin-bottom:8px">';
+  html+='<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">'+
+        '<b style="font-size:13px">关键价位</b>'+
+        '<span class="muted" style="font-size:10.5px">大额挂单 · 清算密集区 · 期权痛点</span></div>';
+  html+='<div class="seg" style="margin-bottom:8px" id="cgLvSym">'+syms.map(s=>
+        '<button data-s="'+s+'"'+(s===sym?' class="on"':'')+'>'+s+'</button>').join('')+'</div>';
+  if(!rows.length){return html+'<p class="muted hint">暂无数据</p></div>'}
+  rows.sort((a,b)=>(b[3]||0)-(a[3]||0));
+  html+='<div class="cg-lv-list">';
+  for(const r of rows){
+    const k=CG_LV_KIND[r[0]]||{c:'',tag:r[1]==='spot'?'现货':(r[1]==='futures'?'合约':'')};
+    const isCur=r[0]==='current_price';
+    const dist=r[4], price=r[3];
+    html+='<div class="cg-lv'+(isCur?' cur':'')+'" data-k="'+cgEsc(r[0])+'">'+
+      '<span class="cg-lv-d '+k.c+'">'+(isCur?'现价':(dist==null?'':(dist>=0?'+':'')+dist.toFixed(2)+'%'))+'</span>'+
+      '<i class="cg-lv-dot '+k.c+'"></i>'+
+      '<div class="cg-lv-m"><b class="'+k.c+'">'+cgEsc(r[6]||'')+'</b>'+
+        (k.tag?'<em>'+cgEsc(k.tag)+'</em>':'')+
+        '<span>'+cgEsc([r[2],cgLvMoney(r[5])].filter(Boolean).join(' · '))+'</span></div>'+
+      '<span class="cg-lv-p">'+(price!=null?fN(price,price>=100?1:4):'—')+'</span>'+
+      '</div>';
+  }
+  html+='</div>';
+  html+='<p class="muted hint" style="margin-top:6px">挂单墙=盘口真实挂单；清算密集区=24h 爆仓热力聚合价位；期权最大痛点=到期日买方最不利的结算价。现价 '+(cur!=null?fN(cur,2):'—')+'。</p>';
+  return html+'</div>';
 }
 
 function cgRowDetail(r){
@@ -173,6 +234,7 @@ function cgBind(){
     if(CG.sort===k)CG.dir*=-1;else{CG.sort=k;CG.dir=-1}
     cgRender()});
   const rb=$('#cgReload');if(rb)rb.onclick=()=>{CG.rows=null;cgLoad(true)};
+  $$('#cgLvSym button').forEach(b=>b.onclick=e=>{e.stopPropagation();CG.lvSym=b.dataset.s;cgRender()});
   $$('#cgHost .cg-row').forEach(tr=>tr.onclick=()=>{
     const s=tr.dataset.s;CG.open[s]=!CG.open[s];cgRender()});
 }
@@ -193,12 +255,35 @@ function cgMount(){
   if(anchor&&anchor.parentElement===card)card.insertBefore(el,anchor);else card.appendChild(el);
 }
 
+
+/* 单币详情：只保留现价上下最近的几条 */
+function cgLevelsMini(sym){
+  const L=CG.levels||{};
+  const d=L[String(sym||'').toUpperCase()];
+  if(!d||!d.rows||!d.rows.length)return '';
+  const cur=d.px;
+  const rows=d.rows.filter(r=>r[0]!=='current_price'&&r[3]!=null).slice();
+  rows.sort((a,b)=>Math.abs(a[4]||0)-Math.abs(b[4]||0));
+  const pick=rows.slice(0,4);
+  let h='<div style="margin-top:8px"><div class="muted" style="font-size:10.5px;margin-bottom:2px">关键价位（最近的 '+pick.length+' 条）</div><div class="cg-lv-list">';
+  for(const r of pick){
+    const k=CG_LV_KIND[r[0]]||{c:'',tag:r[1]==='spot'?'现货':(r[1]==='futures'?'合约':'')};
+    h+='<div class="cg-lv"><span class="cg-lv-d '+k.c+'">'+(r[4]!=null?(r[4]>=0?'+':'')+r[4].toFixed(2)+'%':'')+'</span>'+
+      '<i class="cg-lv-dot '+k.c+'"></i>'+
+      '<div class="cg-lv-m"><b class="'+k.c+'">'+cgEsc(r[6]||'')+'</b>'+(k.tag?'<em>'+cgEsc(k.tag)+'</em>':'')+
+      '<span>'+cgEsc([r[2],cgLvMoney(r[5])].filter(Boolean).join(' · '))+'</span></div>'+
+      '<span class="cg-lv-p">'+fN(r[3],r[3]>=100?1:4)+'</span></div>';
+  }
+  return h+'</div></div>';
+}
+
 function cgDetail(sym){
   cgMount();
   const host=document.getElementById('dtCgBody');
   if(!host)return;
   const base=cgBase(sym);
   const paint=rows=>{
+    const lvHtml=cgLevelsMini(base);
     const r=(rows||[]).find(x=>cgBase(x.bs||x.s)===base||x.s===base);
     if(!r){host.innerHTML='<p class="muted hint">Coinglass 无 '+cgEsc(base)+' 快照（未收录或非永续合约）</p>';return}
     const lp=cgLongPct(r),liq=cgLiq(r);
@@ -216,12 +301,13 @@ function cgDetail(sym){
     const p=r.p||{};
     h+='<div class="cg-detgrid">'+[['1h',p.h1],['4h',p.h4],['24h',p.h24],['7d',p.d7],['30d',p.d30],['90d',p.d90],['今年',p.ytd],['1年',p.y1]]
       .map(([k,v])=>'<div><span>'+k+'</span><b class="'+cgCls(v)+'">'+cgPct(v)+'</b></div>').join('')+'</div>';
+    h+=lvHtml;
     if(r.ed)h+='<p class="muted hint" style="margin-top:2px">ETF 数据日期 '+cgEsc(r.ed)+' · 快照 '+(CG.snapT?new Date(CG.snapT).toLocaleString('zh-CN',{hour12:false}):'—')+'</p>';
     host.innerHTML=h;
   };
   if(CG.rows&&CG.rows.length)return paint(CG.rows);
   host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
   jget('cg-snapshot.json',20000).then(r=>{
-    CG.rows=(r&&r.coins)||[];CG.snapT=r&&r.generatedAt||null;paint(CG.rows);
+    CG.rows=(r&&r.coins)||[];CG.snapT=r&&r.generatedAt||null;CG.levels=(r&&r.levels)||{};paint(CG.rows);
   }).catch(e=>{host.innerHTML='<p class="muted hint">加载失败：'+cgEsc(e&&e.message||e)+'</p>'});
 }

@@ -13,7 +13,7 @@ Universe: top N USDT-perp base symbols by market cap from cap-snapshot.json
 Output rows are compact (short keys) so the file stays small enough to serve
 cheaply from GitHub Pages.
 """
-import argparse, json, re, subprocess, sys, threading, time
+import argparse, base64, gzip, json, re, subprocess, sys, tempfile, threading, time, zlib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -154,6 +154,85 @@ def compact(snap):
     return {k: v for k, v in rec.items() if v not in (None, {}, '')}
 
 
+
+# ---------- Coinglass 加密接口（关键价位 / 清算密集区 / 期权痛点） ----------
+# 响应 = base64(AES-128-ECB(gzip(json)))，密钥链：
+#   k1 = b64(pathname)[:16] -> 解密响应头 user 得到 k2 -> 用 k2 解密 data
+def _aes_dec(raw, key16):
+    p = subprocess.run(['openssl', 'enc', '-aes-128-ecb', '-d', '-nopad', '-K', key16.encode().hex()],
+                       input=raw, capture_output=True)
+    if p.returncode != 0:
+        raise RuntimeError('openssl: ' + (p.stderr or b'').decode('utf8', 'ignore')[:120])
+    out = p.stdout
+    pad = out[-1] if out else 0
+    if 1 <= pad <= 16:
+        out = out[:-pad]
+    return out
+
+
+def _unzip(b):
+    if b[:2] == b'\x1f\x8b':
+        return gzip.decompress(b)
+    try:
+        return zlib.decompress(b)
+    except Exception:  # noqa: BLE001
+        return b
+
+
+def cg_api(path, params=None, host='fapi', timeout=20):
+    """Call a Coinglass protected JSON endpoint and return the decrypted payload."""
+    q = ('?' + '&'.join('%s=%s' % (k, v) for k, v in params.items())) if params else ''
+    hdr = tempfile.NamedTemporaryFile(delete=False)
+    body = tempfile.NamedTemporaryFile(delete=False)
+    hdr.close()
+    body.close()
+    try:
+        subprocess.run(['curl', '-sS', '--compressed', '-m', str(timeout), '-A', UA,
+                        '-H', 'accept: application/json',
+                        '-H', 'origin: https://www.coinglass.com',
+                        '-H', 'referer: https://www.coinglass.com/',
+                        '-H', 'language: zh',
+                        '-H', 'cache-ts-v2: %d' % (time.time() * 1000),
+                        '-D', hdr.name, '-o', body.name,
+                        'https://%s.coinglass.com%s%s' % (host, path, q)],
+                       check=True, capture_output=True)
+        head = open(hdr.name, 'rb').read().decode('latin1')
+        user = None
+        for line in head.split('\n'):
+            if line.lower().startswith('user:'):
+                user = line.split(':', 1)[1].strip()
+        j = json.loads(open(body.name, 'rb').read())
+        if not user or not isinstance(j.get('data'), str):
+            return j
+        k1 = base64.b64encode(path.encode()).decode()[:16]
+        key2 = _unzip(_aes_dec(base64.b64decode(user), k1)).decode('utf8', 'ignore')
+        txt = _unzip(_aes_dec(base64.b64decode(j['data']), key2[:16])).decode('utf8', 'ignore')
+        return json.loads(txt)
+    finally:
+        for f in (hdr.name, body.name):
+            try:
+                import os
+                os.unlink(f)
+            except OSError:
+                pass
+
+
+LEVEL_KEEP = ('type', 'market', 'exchange', 'price', 'distancePercent', 'amountUsd', 'label')
+
+
+def fetch_levels(sym, limit=12):
+    """Key price levels: order-book walls / liquidation clusters / option max pain."""
+    d = cg_api('/api/coin/overview/key-levels', {'symbol': sym, 'range': '24h', 'limit': str(limit)})
+    v = (d or {}).get('values') or {}
+    rows = []
+    for r in v.get('rows') or []:
+        rows.append([r.get('type'), r.get('market') or '', r.get('exchange') or '',
+                     r.get('price'), rnd(r.get('distancePercent'), 3),
+                     rnd(r.get('amountUsd'), 0), r.get('label') or ''])
+    return {'t': d.get('readTime'), 'px': v.get('referencePrice'), 'st': d.get('status'),
+            'rows': rows}
+
+
 def universe(n):
     """Top-N base symbols that actually have a Binance USDT perp."""
     rows = []
@@ -190,6 +269,8 @@ def main():
     ap.add_argument('--pace', type=float, default=0.45, help='每线程请求间隔秒')
     ap.add_argument('--workers', type=int, default=6, help='并发数')
     ap.add_argument('--limit', type=int, default=0, help='调试：只取前 N 个')
+    ap.add_argument('--levels', default='BTC,ETH,SOL,BNB',
+                    help='额外抓关键价位的币种，逗号分隔（空字符串关闭）')
     args = ap.parse_args()
 
     bid = load_build_id()
@@ -246,12 +327,21 @@ def main():
     if not coins:
         log('无有效数据，保留旧文件')
         return 1
+    levels = {}
+    for sym in [x.strip().upper() for x in (args.levels or '').split(',') if x.strip()]:
+        try:
+            levels[sym] = fetch_levels(sym)
+            log('levels', sym, len(levels[sym]['rows']), '行')
+        except Exception as e:  # noqa: BLE001
+            log('levels 失败', sym, e)
+
     out = {
         'generatedAt': int(time.time() * 1000),
         'source': 'coinglass.com/_next/data',
         'buildId': bid,
         'note': 'Coinglass 币种快照：价格/市值/OI/24h爆仓/资金费率/ETF净流入/恐慌贪婪/多周期涨跌',
         'coins': coins,
+        'levels': levels,
         'missing': miss[:40],
     }
     Path(args.out).write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')))
