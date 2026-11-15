@@ -3,6 +3,7 @@
 'use strict';
 const CG={rows:null,snapT:null,levels:null,loading:false,err:null,q:'',sort:'liq',dir:-1,open:{},lvSym:null};
 
+function cgSnapUrl(){return 'cg-snapshot.json?v='+Math.floor(Date.now()/300000)}
 function cgEsc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function cgPct(v,d=2){return v==null||!isFinite(v)?'—':(v>=0?'+':'')+v.toFixed(d)+'%'}
 function cgCls(v){return v==null||!isFinite(v)?'muted':(v>0?'up':(v<0?'down':'muted'))}
@@ -13,7 +14,7 @@ function cgLoad(force){
   if(CG.rows&&!force)return cgRender();
   CG.loading=true;CG.err=null;
   host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
-  jget('cg-snapshot.json',20000).then(r=>{
+  jget(cgSnapUrl(),20000).then(r=>{
     if(!r||!Array.isArray(r.coins)||!r.coins.length)throw new Error('快照为空');
     CG.rows=r.coins.slice();
     CG.snapT=r.generatedAt||null;
@@ -307,7 +308,7 @@ function cgDetail(sym){
   };
   if(CG.rows&&CG.rows.length)return paint(CG.rows);
   host.innerHTML='<p class="muted hint">加载 Coinglass 快照…</p>';
-  jget('cg-snapshot.json',20000).then(r=>{
+  jget(cgSnapUrl(),20000).then(r=>{
     CG.rows=(r&&r.coins)||[];CG.snapT=r&&r.generatedAt||null;CG.levels=(r&&r.levels)||{};paint(CG.rows);
   }).catch(e=>{host.innerHTML='<p class="muted hint">加载失败：'+cgEsc(e&&e.message||e)+'</p>'});
 }
