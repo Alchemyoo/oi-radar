@@ -105,7 +105,7 @@ function cgRender(){
       '<td class="'+cgCls(r.fa)+'">'+(r.fa!=null?(r.fa>=0?'+':'')+r.fa.toFixed(1)+'%':'—')+'</td>'+
 
       '</tr>';
-    if(CG.open[r.bs||r.s])html+='<tr class="cg-det"><td colspan="5">'+cgDetail(r)+'</td></tr>';
+    if(CG.open[r.bs||r.s])html+='<tr class="cg-det"><td colspan="5">'+cgRowDetail(r)+'</td></tr>';
   });
   html+='</tbody></table></div>';
   if(list.length>shown.length)html+='<p class="muted hint">显示前 '+shown.length+' / '+list.length+'，可用搜索缩小范围。</p>';
@@ -115,7 +115,7 @@ function cgRender(){
   cgBind();
 }
 
-function cgDetail(r){
+function cgRowDetail(r){
   const p=r.p||{};
   const cells=[['1h',p.h1],['4h',p.h4],['24h',p.h24],['7d',p.d7],['30d',p.d30],['90d',p.d90],['今年',p.ytd],['1年',p.y1]];
   let h='<div class="cg-detgrid">';
