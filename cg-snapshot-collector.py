@@ -156,8 +156,15 @@ def compact(snap):
 
 
 # ---------- Coinglass 加密接口（关键价位 / 清算密集区 / 期权痛点） ----------
+# 请求必须带 `encryption: true`，否则服务端回 {"code":"0","success":true} 无 data（静默空）。
 # 响应 = base64(AES-128-ECB(gzip(json)))，密钥链：
-#   k1 = b64(pathname)[:16] -> 解密响应头 user 得到 k2 -> 用 k2 解密 data
+#   k1 = b64(密钥材料)[:16] -> 解密响应头 user 得到 k2 -> 用 k2 解密 data
+# 密钥材料由响应头 v 决定（前端 _app 拦截器 ef 反混淆后）：
+#   v=0 -> 请求头 cache-ts-v2（毫秒时间戳）    ← 当前线上
+#   v=1 -> 请求 URL
+#   v=2 -> 请求头 time
+#   v=55/66/77 -> 站点内置常量（本脚本不内置，直接报错）
+# 密钥材料按 v 优先、其余兜底依次尝试，解出 JSON 即认。
 def _aes_dec(raw, key16):
     p = subprocess.run(['openssl', 'enc', '-aes-128-ecb', '-d', '-nopad', '-K', key16.encode().hex()],
                        input=raw, capture_output=True)
@@ -179,9 +186,36 @@ def _unzip(b):
         return b
 
 
+def _hdr(head, name):
+    for line in head.split('\n'):
+        if line.lower().startswith(name + ':'):
+            return line.split(':', 1)[1].strip()
+    return None
+
+
+def _cg_decrypt(user_b64, data_b64, materials):
+    """Try key materials in order; return the first payload that parses as JSON."""
+    errs = []
+    for mat in materials:
+        if not mat:
+            continue
+        try:
+            k1 = base64.b64encode(mat.encode()).decode()[:16]
+            key2 = _unzip(_aes_dec(base64.b64decode(user_b64), k1)).decode('utf8', 'ignore')
+            if len(key2) < 8:
+                continue
+            txt = _unzip(_aes_dec(base64.b64decode(data_b64), key2[:16])).decode('utf8', 'ignore')
+            return json.loads(txt)
+        except Exception as e:  # noqa: BLE001
+            errs.append('%s:%s' % (mat[:16], e.__class__.__name__))
+    raise RuntimeError('解密失败（' + ', '.join(errs[:4]) + '）')
+
+
 def cg_api(path, params=None, host='fapi', timeout=20):
     """Call a Coinglass protected JSON endpoint and return the decrypted payload."""
     q = ('?' + '&'.join('%s=%s' % (k, v) for k, v in params.items())) if params else ''
+    ts = str(int(time.time() * 1000))
+    url = 'https://%s.coinglass.com%s%s' % (host, path, q)
     hdr = tempfile.NamedTemporaryFile(delete=False)
     body = tempfile.NamedTemporaryFile(delete=False)
     hdr.close()
@@ -192,22 +226,28 @@ def cg_api(path, params=None, host='fapi', timeout=20):
                         '-H', 'origin: https://www.coinglass.com',
                         '-H', 'referer: https://www.coinglass.com/',
                         '-H', 'language: zh',
-                        '-H', 'cache-ts-v2: %d' % (time.time() * 1000),
-                        '-D', hdr.name, '-o', body.name,
-                        'https://%s.coinglass.com%s%s' % (host, path, q)],
+                        '-H', 'encryption: true',
+                        '-H', 'cache-ts-v2: ' + ts,
+                        '-H', 'req-time: ' + ts,
+                        '-H', 'time: ' + ts,
+                        '-D', hdr.name, '-o', body.name, url],
                        check=True, capture_output=True)
         head = open(hdr.name, 'rb').read().decode('latin1')
-        user = None
-        for line in head.split('\n'):
-            if line.lower().startswith('user:'):
-                user = line.split(':', 1)[1].strip()
+        user = _hdr(head, 'user')
+        ver = _hdr(head, 'v') or ''
         j = json.loads(open(body.name, 'rb').read())
         if not user or not isinstance(j.get('data'), str):
-            return j
-        k1 = base64.b64encode(path.encode()).decode()[:16]
-        key2 = _unzip(_aes_dec(base64.b64decode(user), k1)).decode('utf8', 'ignore')
-        txt = _unzip(_aes_dec(base64.b64decode(j['data']), key2[:16])).decode('utf8', 'ignore')
-        return json.loads(txt)
+            # 未加密响应：要么缺 encryption 头，要么端点改成公开/换了协议
+            raise RuntimeError('未加密响应 code=%s msg=%s' % (j.get('code'), j.get('msg')))
+        if ver == '0':
+            mats = [ts, path + q, path, url]
+        elif ver == '1':
+            mats = [path + q, path, url, ts]
+        elif ver == '2':
+            mats = [ts, path, url]
+        else:
+            mats = [ts, path + q, path, url]
+        return _cg_decrypt(user, j['data'], mats)
     finally:
         for f in (hdr.name, body.name):
             try:
@@ -229,6 +269,9 @@ def fetch_levels(sym, limit=12):
         rows.append([r.get('type'), r.get('market') or '', r.get('exchange') or '',
                      r.get('price'), rnd(r.get('distancePercent'), 3),
                      rnd(r.get('amountUsd'), 0), r.get('label') or ''])
+    if not rows:
+        # 空 rows = 协议/鉴权变了，不能当成「没有关键价位」写进快照
+        raise RuntimeError('rows 为空 status=%s supported=%s' % (d.get('status'), v.get('supported')))
     return {'t': d.get('readTime'), 'px': v.get('referencePrice'), 'st': d.get('status'),
             'rows': rows}
 
