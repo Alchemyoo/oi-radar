@@ -1,5 +1,5 @@
 /* OI 雷达 SW：哈希资产永久缓存 + 快照 JSON 网络优先 + HTML 后台更新 */
-const V='oir-20261125-decide3';
+const V='oir-20261125-decide4';
 const ASSETS=['./','./index.html','assets/app.0457d4bb73.js','manifest.webmanifest','icon-180.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
