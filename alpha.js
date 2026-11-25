@@ -1,6 +1,15 @@
-/* Alpha 判断卡片 — hourly snapshot cache (alpha-card-collector.py). 判断公式为自建公开口径。 */
+/* Alpha 判断卡片 — hourly snapshot cache (alpha-card-collector.py) + 合约作战室联动。 */
 'use strict';
 const ALPHA={data:null,loading:false,err:null,sym:null,loadTs:0};
+
+async function alphaEnsureQuiet(){
+  if(ALPHA.data)return ALPHA.data;
+  try{
+    const r=await fetch('alpha-card-cache.json',{cache:'no-store'});
+    if(r.ok){ALPHA.data=await r.json();return ALPHA.data}
+  }catch(e){}
+  return null;
+}
 
 function alphaOpen(){
   if(ALPHA.data||ALPHA.loading)return alphaRender();
@@ -23,6 +32,10 @@ function alphaExplorer(c){
   if(ch==='8453')return 'https://basescan.org/token/'+c.ca;
   return 'https://solscan.io/token/'+c.ca;
 }
+function alphaPerpSym(raw){
+  const s=String(raw||'').toUpperCase();
+  return s.endsWith('USDT')?s:s+'USDT';
+}
 
 function alphaRender(){
   const host=$('#alphaHost');if(!host)return;
@@ -38,27 +51,35 @@ function alphaRender(){
 }
 
 function alphaList(d,coins,hh,mm){
-  let html='<p class="muted hint" style="margin-bottom:8px">口径：Binance Alpha 代币 ∩ Binance USDT 永续（按 Alpha 24h 量取前 '+coins.length+'）· 数据截至 '+hh+':'+mm+' · 每小时 ：07 刷新</p>';
-  html+='<div class="tblwrap"><table class="tbl alpha-tbl"><thead><tr><th>币</th><th>现价</th><th>24h</th><th>判断</th><th>组合</th><th>异动</th></tr></thead><tbody>';
+  let html='<p class="muted hint" style="margin-bottom:8px">口径：Binance Alpha 代币 ∩ Binance USDT 永续（按 Alpha 24h 量取前 '+coins.length+'）· 数据截至 '+hh+':'+mm+' · 点行看历史，点「作战」直达合约 SMC/算仓</p>';
+  html+='<div class="tblwrap"><table class="tbl alpha-tbl"><thead><tr><th>币</th><th>现价</th><th>24h</th><th>判断</th><th>组合</th><th>异动</th><th>合约</th></tr></thead><tbody>';
   for(const c of coins){
     const sc=c.score==null?'—':'<span class="'+alphaLabelCls(c.label)+'">'+c.label+' '+c.score+'</span>';
     html+='<tr data-sym="'+c.sym+'" class="alpha-row"><td class="ta-l"><b>'+c.sym+'</b></td>'+
       '<td>'+(c.price!=null?fN(c.price,c.price>=100?2:5):'—')+'</td>'+
       '<td class="'+whaleUp(c.pct24h)+'">'+(c.pct24h!=null?(c.pct24h>=0?'+':'')+c.pct24h+'%':'—')+'</td>'+
       '<td>'+sc+'</td><td class="muted">'+(c.quad||'—')+'</td>'+
-      '<td class="muted" style="font-size:10px">'+(c.tags||[]).map(alphaTag).join('')+'</td></tr>';
+      '<td class="muted" style="font-size:10px">'+(c.tags||[]).map(alphaTag).join('')+'</td>'+
+      '<td><button type="button" class="btn mini" data-alpha-jump="'+alphaPerpSym(c.sym)+'">作战 ›</button></td></tr>';
   }
   html+='</tbody></table></div>';
   html+='<p class="muted hint" style="margin-top:6px">点行看单币卡片：异动标签 · 判断 · 判断历史。判断分数是自建公式（价/OI/量组合，50 为中性），非原卡片算法；聪明钱持仓与 Gate 借币利率无公开接口，恒为「—」。</p>';
   const host=$('#alphaHost');host.innerHTML=html;
+  $$('#alphaHost [data-alpha-jump]').forEach(btn=>btn.onclick=e=>{
+    e.stopPropagation();
+    if(typeof setJumpContext==='function')setJumpContext(coins.map(x=>alphaPerpSym(x.sym)),'Alpha榜');
+    if(typeof jumpSym==='function')jumpSym(btn.dataset.alphaJump);
+  });
   $$('#alphaHost .alpha-row').forEach(tr=>tr.onclick=()=>{ALPHA.sym=tr.dataset.sym;alphaRender();$('#main').scrollTop=0});
 }
 
 function alphaDetail(d,c,hh,mm){
+  const perpSym=alphaPerpSym(c.sym);
   let html='<div class="row" style="margin-bottom:6px"><button class="btn mini" id="alphaBack">‹ 列表</button>'+
     '<b style="font-size:15px">'+c.sym+'</b><span>'+fN(c.price,c.price>=100?3:6)+'</span>'+
     '<span class="'+whaleUp(c.pct24h)+'">'+(c.pct24h!=null?(c.pct24h>=0?'+':'')+c.pct24h+'%':'')+' 24h</span>'+
-    '<span class="r muted" style="margin-left:auto;font-size:11px">截至 '+hh+':'+mm+'</span></div>';
+    '<button type="button" class="btn mini pri" id="alphaToCockpit" style="margin-left:auto">🎯 合约作战室</button>'+
+    '<span class="muted" style="font-size:11px">截至 '+hh+':'+mm+'</span></div>';
   html+='<p class="muted hint" style="margin-bottom:4px">Alpha 市值 $'+fC(c.mcap)+' · 24h 量 $'+fC(c.vol24h)+' · 持有人 '+(c.holders!=null?fN(c.holders,0):'—')+
     ' · 永续 OI '+(c.oi!=null?'$'+fC(c.oi):'—')+'</p>';
   html+='<p style="margin:6px 0">'+((c.tags&&c.tags.length)?c.tags.map(alphaTag).join(' '):'<span class="muted">无异动标签</span>')+'</p>';
@@ -84,9 +105,15 @@ function alphaDetail(d,c,hh,mm){
   html+='<p class="muted hint" style="margin-top:6px">合约 <a href="'+alphaExplorer(c)+'" target="_blank" rel="noopener">'+alphaShort(c)+'</a> · 链 '+c.chain+' · 每小时快照含 OKX 全币种借币利率（estRate，小时%）；聪明钱持仓与 Gate 借币利率无公开接口，恒为「—」。</p>';
   const host=$('#alphaHost');host.innerHTML=html;
   $('#alphaBack').onclick=()=>{ALPHA.sym=null;alphaRender()};
+  const ck=$('#alphaToCockpit');
+  if(ck)ck.onclick=()=>{
+    if(typeof setJumpContext==='function')setJumpContext((d.coins||[]).map(x=>alphaPerpSym(x.sym)),'Alpha榜');
+    if(typeof jumpSym==='function')jumpSym(perpSym);
+  };
 }
 
 function alphaInit(){
   const host=$('#alphaHost');if(!host)return;
   alphaOpen();
 }
+globalThis.alphaEnsureQuiet=alphaEnsureQuiet;

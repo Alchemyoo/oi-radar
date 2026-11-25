@@ -122,7 +122,8 @@ function cgHeadHtml(r){
   return '<div class="cg-head" id="cgTop">'+
     '<div class="cg-head-top">'+
       '<div class="cg-head-id"><b>'+cgEsc(cgKey(r))+'</b><span class="cg-rank">'+cgRank(r)+'</span>'+
-        '<span class="muted" style="font-size:10.5px">'+cgEsc(r.n||'')+'</span></div>'+
+        '<span class="muted" style="font-size:10.5px">'+cgEsc(r.n||'')+'</span>'+
+        '<button type="button" class="btn mini pri" data-cg-cockpit="'+cgEsc(cgKey(r))+'" style="padding:3px 8px;font-size:11px">🎯 作战室</button></div>'+
       '<div class="cg-head-px"><b data-copy="'+(px!=null?px:'')+'" title="点击复制裸数值">'+cgPx(px)+'</b>'+
         '<span class="'+cgCls(r.c)+'">'+cgPct(r.c)+'</span>'+
         '<span class="cg-unit" id="cgUnit"><button data-unit="usd"'+(CG.unit==='usd'?' class="on"':'')+' title="U 本位（USD）">USD</button>'+
@@ -339,7 +340,8 @@ function cgTableHtml(rows){
       '<td>'+(lp!=null?lp.toFixed(0)+'%':'—')+'</td>'+
       '<td class="'+cgCls(r.fa)+'">'+(r.fa!=null?cgPct(r.fa,1):'—')+'</td></tr>';
     if(CG.open[s])h+='<tr class="cg-det"><td colspan="6">'+cgRowDetail(r)+
-      '<button class="btn mini" data-pick="'+cgEsc(s)+'">切换到 '+cgEsc(s)+' 终端 ↑</button></td></tr>';
+      '<div class="row" style="gap:6px;margin-top:4px"><button class="btn mini" data-pick="'+cgEsc(s)+'">切换到 '+cgEsc(s)+' 终端 ↑</button>'+
+      '<button class="btn mini pri" data-cg-cockpit="'+cgEsc(s)+'">🎯 单币作战室（SMC · 多空 · 算仓）</button></div></td></tr>';
   });
   h+='</tbody></table></div>';
   if(list.length>shown.length)h+='<p class="muted hint">显示前 '+shown.length+' / '+list.length+'，用搜索缩小范围。</p>';
@@ -643,6 +645,13 @@ function cgBind(){
     const s=tr.dataset.s;CG.open[s]=!CG.open[s];cgRender()});
   $$('#cgHost [data-pick]').forEach(b=>b.onclick=e=>{
     e.stopPropagation();CG.sym=b.dataset.pick;CG.open={};CG.lvOpen=false;cgRender();cgGo('cgTop')});
+  $$('#cgHost [data-cg-cockpit]').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const base=b.dataset.cgCockpit;
+    const cand=(typeof S!=='undefined'&&S.symSet&&!S.symSet.has(base+'USDT')&&S.symSet.has('1000'+base+'USDT'))?'1000'+base+'USDT':base+'USDT';
+    if(typeof setJumpContext==='function'&&Array.isArray(CG.rows))setJumpContext(CG.rows.slice(0,60).map(x=>cgKey(x)+'USDT'),'清算深度表');
+    if(typeof jumpSym==='function')jumpSym(cand);
+  });
   const rb=$('#cgReload');if(rb)rb.onclick=()=>{CG.rows=null;cgLoad(true)};
   const rt=$('#cgRetry');if(rt)rt.onclick=()=>cgLoad(true);
 }

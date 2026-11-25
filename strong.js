@@ -117,7 +117,8 @@
     if (j && j.committed) {
       const stop = j.rateLimited ? '限流停止（部分结果）' : j.cancelled ? '已停止（部分结果）' :
         st.run ? '扫描中' : '扫描完成';
-      label = `${stop}：已完成 ${j.done}/${j.total}；成功 ${j.ok}；失败 ${j.failed}；缺少当前收盘K线 ${j.missing}；历史不完整 ${j.short}；未扫描 ${j.total - j.done}。`;
+      const fastTag = j.fastPreFilter > 0 ? `；极速预筛跳过低流动性 ${j.fastPreFilter} 个（≥${(j.fastMinVol / 1e6).toFixed(0)}M）` : '';
+      label = `${stop}：已完成 ${j.done}/${j.total}；成功 ${j.ok}；失败 ${j.failed}；缺少当前收盘K线 ${j.missing}；历史不完整 ${j.short}；未扫描 ${j.total - j.done}${fastTag}。`;
       if (!st.run && j.total > 0 && j.ok === 0) label += ' 无有效币种数据。';
       if (!st.run && j.total === 0) label += ' 当前没有符合条件的非BTC USDT永续。';
     } else label = '点击「扫描全市场」开始统计（USDT 永续，不含BTC）。';
@@ -132,6 +133,7 @@
     const eligible = stCandidates(st.rows, st.btc, d, st.mode, st.order, st.minVol);
     st.displayed = eligible.slice(0, 30);
     disable('#stGo', st.run);
+    disable('#stFastGo', st.run);
     disable('#stStop', !st.run || !!(st.job && st.job.cancelled));
     disable('#stCsv', st.run || st.displayed.length === 0);
     text('#stTime', st.E === null ? '待扫描' : '收盘快照 UTC ' + utc(st.E));
@@ -244,11 +246,13 @@
     if (!Array.isArray(data)) throw new Error('K线响应不是数组');
     return stCalcReturns(data, E);
   }
-  async function stScan() {
+  async function stScan(opts) {
+    const fast = !!(opts && opts.fast === true);
     const st = state();
     if (st.run) return;
     const job = {phase: '获取币安服务器时间', committed: false, cancelled: false,
-      rateLimited: false, total: 0, done: 0, ok: 0, failed: 0, missing: 0, short: 0};
+      rateLimited: false, total: 0, done: 0, ok: 0, failed: 0, missing: 0, short: 0,
+      fastPreFilter: 0, fastMinVol: 0};
     st.run = true; st.job = job; st.setupError = ''; st.notice = '';
     stRender();
     try {
@@ -267,11 +271,24 @@
       if (job.cancelled) return;
       if (!Array.isArray(raw) || !raw.length || raw.some(sym => typeof sym !== 'string' || !sym.endsWith('USDT')))
         throw new Error('全市场合约列表无效或为空');
-      const syms = [...new Set(raw)].filter(sym => sym !== 'BTCUSDT');
+      const allSyms = [...new Set(raw)].filter(sym => sym !== 'BTCUSDT');
       job.phase = '刷新滚动24h成交额（仅作背景/成交额筛选）'; stRender();
       const tick = await loadTickers();
       if (job.cancelled) return;
       if (!tick || typeof tick !== 'object' || Array.isArray(tick)) throw new Error('24h行情响应无效');
+      let syms = allSyms;
+      if (fast) {
+        const minV = st.minVol > 0 ? st.minVol : 10 * 1e6;
+        if (st.minVol === 0) {
+          st.minVol = minV;
+          const volInput = $('#stMinVol');
+          if (volInput) volInput.value = minV / 1e6;
+        }
+        syms = allSyms.filter(sym => tick[sym] && finite(tick[sym].vol) && tick[sym].vol >= minV)
+          .sort((a, b) => (tick[b].vol || 0) - (tick[a].vol || 0));
+        job.fastPreFilter = allSyms.length - syms.length;
+        job.fastMinVol = minV;
+      }
       const tickerTime = Date.now();
       /* Transaction boundary: never combine old rows/BTC/tickers with a new E.
        * Setup failure/cancellation preserves the entire previous scan instead.
@@ -280,7 +297,7 @@
       job.total = syms.length; job.committed = true; st.stats = job;
       stRender();
       let lastRender = 0;
-      await pool(syms, 6, async sym => {
+      await pool(syms, fast ? 10 : 6, async sym => {
         try {
           const calc = await hourly(sym, E);
           if (!calc.currentValid) job.missing++;
@@ -349,10 +366,13 @@
     return true;
   }
 
+  function stFastScan() { return stScan({fast: true}); }
+
   function stBind(render=true) {
     const st = state();
     const bind = (sel, event, fn) => { const el = $(sel); if (el) el[event] = fn; };
-    bind('#stGo', 'onclick', stScan);
+    bind('#stGo', 'onclick', () => stScan());
+    bind('#stFastGo', 'onclick', stFastScan);
     bind('#stStop', 'onclick', () => {
       if (st.run && st.job) { st.job.cancelled = true; stRender(); }
     });
@@ -392,11 +412,14 @@
     }
     bind('#stTbl tbody', 'onclick', e => {
       const link = e.target && e.target.closest && e.target.closest('[data-st-sym]');
-      if (link) jumpSym(link.dataset.stSym);
+      if (link) {
+        if (typeof setJumpContext === 'function') setJumpContext(st.displayed.map(r => r.sym), '强势榜');
+        jumpSym(link.dataset.stSym);
+      }
     });
     if (render) stRender();
   }
 
   /* Globals needed by the parent classic script and Node vm tests. */
-  Object.assign(globalThis, {stCalcReturns, stRegime, stRank, stBind, stRender, stScan, stCsv});
+  Object.assign(globalThis, {stCalcReturns, stRegime, stRank, stBind, stRender, stScan, stFastScan, stCsv, StSmcCache: SMC_CACHE});
 })();

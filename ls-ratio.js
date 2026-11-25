@@ -1,7 +1,5 @@
-/* Long/short ratio card for v-detail. Data source: Binance daily metrics archive rows already
- * loaded into S.dt.rows by the detail loader (5m granularity, T-1) — sparkline & 24h change.
- * Latest snapshot: ls-relay (vps-01 live relay via https://ls-relay.shen123lan.workers.dev,
- * direct http://3.107.187.97:3435 as fallback); falls back to archive when unreachable.
+/* Long/short ratio card for v-detail + Smart-Money vs Retail Divergence metric.
+ * Data source: Binance daily metrics archive rows in S.dt.rows + live ls-relay.
  * Exposes globalThis.lsRender(); called from dtLoad/dtOpen hooks in index.html. */
 'use strict';
 (function () {
@@ -9,9 +7,8 @@
   const pct1 = v => (v == null || !isFinite(v)) ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 
   const RELAYS = ['https://ls-relay.shen123lan.workers.dev/ls'];
-  const RT = { inFlight: null, cache: new Map(), timer: null, retry: 0 };   /* sym → {j, at} */
+  const RT = { inFlight: null, cache: new Map(), timer: null, retry: 0 };
 
-  /* keep the live snapshot fresh: re-render after the 45s cache expires */
   function scheduleRefresh(sym) {
     clearTimeout(RT.timer);
     RT.timer = setTimeout(() => {
@@ -19,8 +16,7 @@
     }, 50000);
   }
 
-  /* one delayed self-heal attempt when every relay attempt failed */
-  function scheduleRetry(sym) {
+  function scheduleRetry() {
     if (RT.retry) return;
     RT.retry = 1;
     setTimeout(() => { RT.retry = 0; if (document.querySelector('#lsBody')) lsRender(); }, 12000);
@@ -31,7 +27,6 @@
     if (hit && Date.now() - hit.at < 45000) return { j: hit.j, at: hit.at };
     if (RT.inFlight) return RT.inFlight;
     RT.inFlight = (async () => {
-      /* first connection to workers.dev often fails in WKWebView; retry once per relay */
       for (const base of RELAYS) {
         for (let attempt = 0; attempt < 2; attempt++) {
           try {
@@ -44,7 +39,7 @@
               RT.cache.set(sym, d);
               return d;
             }
-          } catch (e) { /* retry / next relay */ }
+          } catch (e) { /* retry */ }
         }
       }
       return null;
@@ -56,7 +51,6 @@
     return rows.filter(r => r[key] != null && isFinite(r[key])).map(r => ({ t: r.t, v: r[key] }));
   }
 
-  /* change of `cur` value vs the archive sample ~24h before refT */
   function chgMix(rows, archKey, refT, cur) {
     const s = series(rows, archKey);
     if (cur == null || !isFinite(cur)) return null;
@@ -77,7 +71,6 @@
     return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:${h}px;display:block;margin-top:8px"><line x1="0" x2="${w}" y1="${h / 2}" y2="${h / 2}" stroke="var(--line)" stroke-width="1"/><polyline points="${pts}" fill="none" stroke="var(--blue)" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
   }
 
-  /* long/short share bar from an account ratio r: long% = r/(1+r) */
   function bar(r) {
     if (!isFinite(r) || r == null || r < 0) return '';
     const lg = r / (1 + r) * 100;
@@ -85,17 +78,16 @@
       <div class="mut" style="display:flex;justify-content:space-between;font-size:11px;margin-top:2px">多 ${lg.toFixed(2)}%<span>空 ${(100 - lg).toFixed(2)}%</span></div>`;
   }
 
-  function cell(label, v, chg) {
+  function cell(label, v, chg, extraHtml) {
     const cls = chg == null ? '' : (chg > 0 ? 'up' : chg < 0 ? 'down' : '');
-    return `<div class="lsCell"><span class="mut">${label}</span><b>${f4(v)} <em class="${cls}" style="font-style:normal;font-size:11px;font-weight:600">${chg == null ? '' : pct1(chg) + ' 24h'}</em></b></div>`;
+    return `<div class="lsCell"><span class="mut">${label}</span><b>${f4(v)} <em class="${cls}" style="font-style:normal;font-size:11px;font-weight:600">${chg == null ? '' : pct1(chg) + ' 24h'}</em></b>${extraHtml || ''}</div>`;
   }
 
-  /* One value: live snapshot preferred, archive as fallback. */
   function pickVal(live, liveKey, last, archKey) {
     const d = live && live[liveKey];
     if (d && isFinite(+d.longShortRatio)) return { v: +d.longShortRatio, t: +d.timestamp, live: true };
-    const v = last[archKey];
-    return { v: (v == null || !isFinite(v)) ? null : v, t: last.t, live: false };
+    const v = last ? last[archKey] : null;
+    return { v: (v == null || !isFinite(v)) ? null : v, t: last ? last.t : 0, live: false };
   }
 
   function lsBadge(isLive, ts) {
@@ -104,31 +96,42 @@
     return `<span class="lsLive"><i></i>实时 · Binance fapi · UTC ${('0' + d.getUTCHours()).slice(-2)}:${('0' + d.getUTCMinutes()).slice(-2)}</span>`;
   }
 
+  function divergenceHtml(tpVal, gVal, takerVal) {
+    if (!(tpVal > 0 && gVal > 0)) return '';
+    const ratio = tpVal / gVal;
+    let cls = 'mut', desc = '大户持仓与全网账户多空倾向接近';
+    if (ratio >= 1.20) { cls = 'up'; desc = '正背离：大户持仓偏多而全网散户偏空（主力多头集中）'; }
+    else if (ratio <= 0.82) { cls = 'down'; desc = '负背离：全网散户扎堆做多而大户持仓偏空（警惕多头拥挤）'; }
+    const takerNote = takerVal != null && isFinite(takerVal)
+      ? ` · 主动买卖比 <b class="${takerVal > 1.04 ? 'up' : (takerVal < 0.96 ? 'down' : '')}">${takerVal.toFixed(2)}</b>` : '';
+    return `<div class="lsDivBox"><div class="row" style="justify-content:space-between;gap:6px"><span class="mut">主力/全网多空背离度（大户持仓比 ÷ 全网账户比）</span><b class="${cls}" style="font-size:14px">${ratio.toFixed(2)}x</b></div><div class="mut" style="font-size:11px;margin-top:2px"><span class="${cls}">${desc}</span>${takerNote}</div></div>`;
+  }
+
   window.lsRender = function () {
     const el = document.querySelector('#lsBody');
     if (!el) return;
     const stamp = document.querySelector('#lsStamp');
     const dt = (typeof S !== 'undefined') ? S.dt : {};
     const rows = dt.rows || [];
-    if (!rows.length) {
-      if (stamp) stamp.textContent = 'Binance 归档 · 待加载';
-      el.innerHTML = '<p class="mut">加载单币明细后，显示 Binance 全网账户多空比、大户账户/持仓多空比的最新值与 72 小时走势。</p>';
-      return;
-    }
     const sym = dt.sym || '';
-    const hit = RT.cache.get(sym);
+    const hit = sym ? RT.cache.get(sym) : null;
     const live = hit ? hit.j : null;
-    const stale = !hit || (Date.now() - hit.at >= 45000);
+    const stale = sym && (!hit || (Date.now() - hit.at >= 45000));
     if (stale) {
       fetchLive(sym).then(d => { if (d) lsRender(); else scheduleRetry(sym); }).catch(() => scheduleRetry(sym));
     }
-    const last = rows[rows.length - 1];
-    const d = new Date(last.t);
+    if (!rows.length && !live) {
+      if (stamp) stamp.textContent = 'Binance 归档/实时 · 加载中';
+      el.innerHTML = '<p class="mut">正在获取实时多空比与 72 小时归档走势…</p>';
+      return;
+    }
+    const last = rows.length ? rows[rows.length - 1] : null;
     const g = pickVal(live, 'global', last, 'ret');
     const ta = pickVal(live, 'topAccount', last, 'top');
     const tp = pickVal(live, 'topPosition', last, 'pos');
-    if (stamp) stamp.textContent = (g.live ? '实时值 · ' : '') + `Binance 归档 · 最新 UTC ${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}`;
-    const cut = last.t - 72 * 3600000;
+    const refDate = new Date(last ? last.t : (g.t || Date.now()));
+    if (stamp) stamp.textContent = (g.live ? '实时值 · ' : '') + `最新 UTC ${('0' + (refDate.getUTCMonth() + 1)).slice(-2)}-${('0' + refDate.getUTCDate()).slice(-2)} ${('0' + refDate.getUTCHours()).slice(-2)}:${('0' + refDate.getUTCMinutes()).slice(-2)}`;
+    const cut = (last ? last.t : Date.now()) - 72 * 3600000;
     const dsampled = key => {
       const s = series(rows, key), out = [];
       let bucket = -1;
@@ -141,24 +144,26 @@
     };
     let sp = dsampled('ret');
     if (g.live && g.t > (sp.length ? sp[sp.length - 1].t : 0)) sp = sp.concat([{ t: g.t, v: g.v }]);
-    const cg = (p, key) => chgMix(rows, key, p.t, p.v);
+    const cg = (p, key) => rows.length ? chgMix(rows, key, p.t, p.v) : null;
+    const takerCur = last ? last.taker : null;
     const html = `
       <div class="lsMain">
         <div class="row" style="align-items:center;gap:8px;margin-bottom:2px">
           <b class="lsBig">${f4(g.v)}</b>
           <span class="mut">全网账户多空比</span>
-          <em class="${cg(g, 'ret') == null ? 'mut' : (cg(g, 'ret') > 0 ? 'up' : 'down')}" style="font-style:normal;font-size:12px;font-weight:600">${pct1(cg(g, 'ret'))} / 24h</em>
+          <em class="${cg(g, 'ret') == null ? 'mut' : (cg(g, 'ret') > 0 ? 'up' : 'down')}" style="font-style:normal;font-size:12px;font-weight:600">${cg(g, 'ret') == null ? '' : pct1(cg(g, 'ret')) + ' / 24h'}</em>
           <span style="margin-left:auto">${lsBadge(g.live, g.t)}</span>
         </div>
         ${bar(g.v)}
         ${spark(sp)}
       </div>
+      ${divergenceHtml(tp.v, g.v, takerCur)}
       <div class="lsGrid">
         ${cell('大户账户多空比', ta.v, cg(ta, 'top'))}
         ${cell('大户持仓多空比', tp.v, cg(tp, 'pos'))}
-        ${cell('Taker 主动买卖比', last.taker, chgMix(rows, 'taker', last.t, last.taker))}
+        ${cell('Taker 主动买卖比', takerCur, last ? chgMix(rows, 'taker', last.t, takerCur) : null)}
       </div>
-      <p class="mut" style="margin-top:8px">口径：Binance 单所；实时值经 vps-01 中继（5m 粒度、40s 缓存），走势与 24h 变化基于 daily 归档。</p>`;
+      <p class="mut" style="margin-top:8px">口径：Binance 单所；实时值经 vps-01 中继（5m 粒度、40s 缓存），背离度 = 大户持仓多空比 ÷ 全网账户多空比（客观集中度比值）。</p>`;
     el.innerHTML = html;
     if (g.live) scheduleRefresh(sym);
   };

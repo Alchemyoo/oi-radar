@@ -8,6 +8,32 @@ function whaleSym(coin){return coin.endsWith('-USD')?coin.slice(0,-4):coin}
 function whalePct(x){return x==null||!isFinite(x)?'—':(x>=0?'+':'')+ (x*100).toFixed(1)+'%'}
 function whaleUp(v,pos,neg){return v>0?'up':(v<0?'down':(pos||''))}
 
+async function whaleEnsureQuiet(){
+  if(WHALE.data)return WHALE.data;
+  try{
+    const r=await fetch('hl-whale-cache.json',{cache:'no-store'});
+    if(r.ok){WHALE.data=await r.json();WHALE.loadTs=Date.now();return WHALE.data}
+  }catch(e){}
+  return null;
+}
+function whaleGetCoinSummary(sym){
+  if(!WHALE.data||!Array.isArray(WHALE.data.coins))return null;
+  const base=String(sym||'').toUpperCase().replace(/USDT$/,'').replace(/^(1000000|10000|1000)/,'');
+  const c=WHALE.data.coins.find(x=>whaleSym(x.coin)===base);
+  if(!c)return null;
+  const cur=c.mark,hs=(c.holders||[]).filter(h=>h.lq>0);
+  const near=(side)=>{
+    const list=hs.filter(h=>h.s===side&&(side==='L'?h.lq<cur:h.lq>cur));
+    if(!list.length||!(cur>0))return null;
+    const best=list.reduce((a,b)=>Math.abs(b.lq-cur)<Math.abs(a.lq-cur)?b:a);
+    return {px:best.lq,v:best.v,dist:(best.lq/cur-1)*100};
+  };
+  const nl=near('L'),ns=near('S'),tot=(c.wl?.vL||0)+(c.wl?.vS||0);
+  return {coin:c.coin,base,mark:cur,wl:c.wl,longPct:tot>0?c.wl.vL/tot*100:null,nearLong:nl,nearShort:ns,nearLongPx:nl?.px||null,nearShortPx:ns?.px||null};
+}
+globalThis.whaleEnsureQuiet=whaleEnsureQuiet;
+globalThis.whaleGetCoinSummary=whaleGetCoinSummary;
+
 async function whaleOpen(){
   if(WHALE.data)return whaleRender();
   if(WHALE.loading)return;
@@ -40,6 +66,7 @@ function whaleRender(){
     '<select id="whaleSel" class="whale-sel" aria-label="选择币种">'+
       coins.map(x=>'<option value="'+x.coin+'"'+(x.coin===WHALE.coin?' selected':'')+'>'+whaleSym(x.coin)+'</option>').join('')+
     '</select>'+
+    '<button type="button" class="btn mini pri" id="whaleToCockpit">🎯 单币作战室</button>'+
     '<span class="muted" style="font-size:11.5px">现价 '+(c.mark!=null?fN(c.mark,c.mark>=100?1:4):'—')+
     ' · 资金费 '+(c.fund!=null?whalePct(c.fund):'—')+'</span>'+
     '<span class="r muted" style="margin-left:auto;font-size:11px">数据截至 '+hh+':'+mm+' · 扫描前 '+d.usersScanned+' 大账户</span></div>';
@@ -78,6 +105,11 @@ function whaleRender(){
   html+='<p class="muted hint" style="margin-top:6px">每小时 ：45 由服务端定时抓取 Hyperliquid 公开 API（leaderboard + clearinghouseState）生成快照；'+d.lagNote+'。地址尾部可点开 Hyperliquid 资产页。</p>';
   host.innerHTML=html;
   const sel=$('#whaleSel');if(sel)sel.onchange=()=>{WHALE.coin=sel.value;whaleRender()};
+  const ck=$('#whaleToCockpit');if(ck)ck.onclick=()=>{
+    const base=whaleSym(c.coin),cand=(typeof S!=='undefined'&&S.symSet&&!S.symSet.has(base+'USDT')&&S.symSet.has('1000'+base+'USDT'))?'1000'+base+'USDT':base+'USDT';
+    if(typeof setJumpContext==='function')setJumpContext(coins.map(x=>whaleSym(x.coin)+'USDT'),'巨鲸持仓');
+    if(typeof jumpSym==='function')jumpSym(cand);
+  };
   $$('#whaleTabs button').forEach(b=>b.onclick=()=>{WHALE.tab=b.dataset.t;whaleRender();if(WHALE.tab==='liq')whaleLiveStart(c.coin);else whaleLiveStop()});
   if(WHALE.tab==='liq')whaleLiveStart(c.coin);else whaleLiveStop();
 }

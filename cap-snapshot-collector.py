@@ -129,6 +129,8 @@ def fetch_cg(pages=10):
     return out
 
 def collect():
+    ex=get(FAPI+'/fapi/v1/exchangeInfo', retries=4, timeout=30)
+    ctype={s['symbol']:s.get('contractType','PERPETUAL') for s in (ex.get('symbols') or []) if s.get('status')=='TRADING' and s.get('quoteAsset')=='USDT'}
     tk=get(FAPI+'/fapi/v1/ticker/24hr', retries=4, timeout=30)
     if not isinstance(tk,list) or not tk: raise ValueError('ticker 响应异常')
     tk=[x for x in tk if str(x.get('symbol','')).endswith('USDT')]
@@ -159,10 +161,11 @@ def collect():
     for x in tk:
         s=x['symbol']; base=s[:-4]; p=px[s]; o=oi.get(s)
         if not p or not o: continue
-        oiv=o*p
-        c=cg.get(base)
+        ct=ctype.get(s,'PERPETUAL')
+        is_crypto=(ct=='PERPETUAL')
+        c=cg.get(base) if is_crypto else None
         mc=c['mc'] if c and c.get('mc',0)>0 else None
-        rows.append({'s':s,'p':p,'c':chg[s],'v':num(vol[s]),'oi':num(o,4),'mc':mc,'nm':(c or {}).get('nm','')})
+        rows.append({'s':s,'ct':ct,'p':p,'c':chg[s],'v':num(vol[s]),'oi':num(o,4),'mc':mc,'nm':(c or {}).get('nm','') if is_crypto else ''})
     rows.sort(key=lambda r:-(r['mc'] or 0))
     return rows
 
