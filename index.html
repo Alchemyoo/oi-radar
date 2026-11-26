@@ -432,15 +432,12 @@ input[type=number]{text-align:right}
   <button data-v="stock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 15l4-5 4 3 5-7"/><circle cx="19" cy="6" r="2"/></svg>股票</button>
   <button data-v="cg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-5 3 4 4-6"/></svg>清算</button>
   <button data-v="whale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17c3 0 4-2 5-4 1 2 2 3 4 3s3-1 4-3c1 2 2 4 5 4"/><circle cx="17" cy="6" r="2"/></svg>巨鲸</button>
-  <button data-v="alpha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>Alpha</button>
-  <button data-v="cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>市值</button>
 </nav>
 <div id="toast"></div>
 <script src="radar.js?v=20261004-3"></script>
 <script src="rolling-oi.js?v=20261007-rolling1"></script>
 <script src="rolling-scan.js?v=20261125-rs2"></script>
 <script src="whale.js?v=20261125-live6"></script>
-<script src="alpha.js?v=20261125-alpha3"></script>
 <script src="stock.js?v=20261125-sk2"></script>
 <script src="capview.js?v=20261125-cap12"></script>
 <script src="cg.js?v=20261115-cg24"></script>
@@ -2304,7 +2301,7 @@ function rtNotifyAlert(msg){
 })();
 </script>
 <script src="strong.js?v=20261125-smc3"></script>
-<script src="layout.js?v=20261027-cap1-20261125"></script><script src="oi-cap-radar.js?v=20261007-adv1"></script>
+<script src="layout.js?v=20261027-cap1-20261126b"></script><script src="oi-cap-radar.js?v=20261007-adv1"></script>
 <script src="coin-evidence.js?v=20261125-rolling2"></script>
 <script src="ls-ratio.js?v=20261125-ls9"></script>
 <script>stBind(false);layoutInit();window.capRadar=OiCapRadar.init(document.querySelector('#oiMarketCapRadar'),{cacheURL:'oi-radar-live.json',onCollect:true,getUniverse:()=>S.ov.list,relaySymbols:()=>[...S.ov.list].sort((a,b)=>b.vol-a.vol).slice(0,50).map(x=>x.sym),onSymbol:jumpSym});</script>

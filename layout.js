@@ -41,26 +41,24 @@ function layoutNavigate(v,restore=false){
     $('#marketTools').open=true;
     const box=$(v==='fund'?'#toolFund':'#toolHeat');box.open=true;return;
   }
-  if(!['market','decide','opportunity','stock','signal','evidence','whale','alpha','cap','cg','detail'].includes(v))return;
+  if(!['market','decide','opportunity','stock','signal','evidence','whale','cg','detail'].includes(v))return;
   layoutSaveList();Layout.scroll[Layout.current]=$('#main').scrollTop;
-  if(['decide','opportunity','stock','cg','whale','alpha','cap'].includes(v))Layout.lastPrimary=v;
+  if(['decide','opportunity','stock','cg','whale'].includes(v))Layout.lastPrimary=v;
   if(v==='detail'&&Layout.current!=='detail')Layout.returnTo={view:Layout.current,op:Layout.op,scroll:$('#main').scrollTop};
   Layout.current=v;
+  for(const id of ['market','decide','opportunity','stock','signal','evidence','whale','cg','detail'])$('#v-'+id).classList.toggle('on',id===v);
+  const active=v==='detail'?(Layout.returnTo?.view||'market'):(v==='market'?Layout.lastPrimary:v);
+  $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active&&v!=='market';b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
+  $('#hdr h1').textContent=v==='detail'?'单币作战室':(v==='decide'?'实战交易决策总台':(v==='market'?'自选雷达 · 资金费率':(v==='stock'?'币安股票合约':(v==='whale'?'巨鲸持仓':(v==='cg'?'清算与资金':'OI 雷达')))));
+  $('#detailBack').hidden=v!=='detail';
+  layoutSyncWatchBtn();
+  $('#main').scrollTop=restore?(Layout.scroll[v]||0):0;
   if(v==='market')layoutList(v);
   if(v==='decide'&&typeof decideInit==='function')decideInit();
   if(v==='opportunity'){layoutOp(Layout.op);if(typeof resScreenerInit==='function')resScreenerInit()}
   if(v==='stock'&&typeof stockInit==='function')stockInit();
   if(v==='whale'&&typeof whaleInit==='function')whaleInit();
-  if(v==='alpha'&&typeof alphaInit==='function')alphaInit();
-  if(v==='cap'&&typeof capInit==='function')capInit();
   if(v==='cg'&&typeof cgInit==='function')cgInit();
-  for(const id of ['market','decide','opportunity','stock','signal','evidence','whale','alpha','cap','cg','detail'])$('#v-'+id).classList.toggle('on',id===v);
-  const active=v==='detail'?(Layout.returnTo?.view||'market'):(v==='market'?Layout.lastPrimary:v);
-  $$('#tabbar button').forEach(b=>{const on=b.dataset.v===active&&v!=='market';b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
-  $('#hdr h1').textContent=v==='detail'?'单币作战室':(v==='decide'?'实战交易决策总台':(v==='market'?'自选雷达 · 资金费率':(v==='stock'?'币安股票合约':(v==='whale'?'巨鲸持仓':(v==='alpha'?'Alpha 判断':(v==='cap'?'持仓市值':(v==='cg'?'清算与资金':'OI 雷达')))))));
-  $('#detailBack').hidden=v!=='detail';
-  layoutSyncWatchBtn();
-  $('#main').scrollTop=restore?(Layout.scroll[v]||0):0;
   if(v==='detail'){setTimeout(dtChartRender,60);if(typeof dtTacticalDraw==='function')setTimeout(dtTacticalDraw,60)}
 }
 function layoutBack(){
@@ -110,14 +108,6 @@ function layoutInit(){
   const whale=layoutNode('section','v-whale','<div class="workspace-heading"><h2>巨鲸持仓</h2><p>Hyperliquid 大户 · 每小时快照</p></div>');
   whale.className='view';main.append(whale);
   whale.append(layoutNode('div','whaleHost',''));
-  /* Alpha 判断卡片：Binance Alpha∩USDT 永续，每小时快照+判断历史 */
-  const alpha=layoutNode('section','v-alpha','<div class="workspace-heading"><h2>Alpha 判断</h2><p>Alpha 币种 · 每小时快照与判断</p></div>');
-  alpha.className='view';main.append(alpha);
-  alpha.append(layoutNode('div','alphaHost',''));
-  /* 持仓市值：全永续 OI × CoinGecko 市值 */
-  const cap=layoutNode('section','v-cap','<div class="workspace-heading"><h2>持仓市值</h2><p>全永续 OI × 市值 · 杠杆集中度</p></div>');
-  cap.className='view';main.append(cap);
-  cap.append(layoutNode('div','capHost',''));
   /* 清算：Coinglass 全币种快照（爆仓 · ETF · 情绪 · 费率） */
   const cg=layoutNode('section','v-cg','<div class="workspace-heading"><h2>清算与资金</h2><p>Coinglass · 24h 爆仓 · ETF · 情绪</p></div>');
   cg.className='view';main.append(cg);
@@ -128,6 +118,7 @@ function layoutInit(){
     $('#'+host).ontoggle=()=>{if($('#'+host).open)loader()};
   }
   $('#rtTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]');if(a)jumpSym(a.dataset.sym)});
+  const tb=$('#tabbar');if(tb)tb.onclick=e=>{const b=e.target.closest('button[data-v]');if(b)layoutNavigate(b.dataset.v)};
   $$('#opTabs button').forEach(b=>b.onclick=()=>{layoutOp(b.dataset.op);$('#main').scrollTop=0});
   const back=layoutNode('button','detailBack','‹ 返回');back.className='btn mini';back.hidden=true;back.onclick=layoutBack;$('#hdr').insertBefore(back,$('#hdr .logo'));
   const wbtn=layoutNode('button','hdrWatchBtn','⭐ 自选/费率');wbtn.className='hdr-watch-btn';
