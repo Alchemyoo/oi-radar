@@ -297,6 +297,8 @@
 
     const useH4=(!isSwing&&Array.isArray(closedH4)&&closedH4.length>=40);
     const h4c=useH4?closedH4.map(b=>b.c):[],h4e20=useH4?calcEmaSeries(h4c,20):[],h4e50=useH4?calcEmaSeries(h4c,50):[];
+    const rsData=(!isStock&&isSwing&&n>=215&&typeof SmcCore!=='undefined'&&typeof SmcCore.calcRegimeSwitch==='function')
+      ?SmcCore.calcRegimeSwitch(closedLtf):null;
 
     const bMap=new Map();
     let bE20=[],bE50=[];
@@ -380,13 +382,39 @@
         }
       }
 
-      /* 战法 ③：超卖急跌放量承接反抽（专抓极值宣泄后的高胜率 V 反多单） */
+      /* 战法 ③：超卖急跌放量承接反抽 */
       if(!sig){
         let swLo16=1e18;
         for(let k=i-16;k<i;k++)if(closedLtf[k].l<swLo16)swLo16=closedLtf[k].l;
         if(l<swLo16&&rsi[i-1]<=28&&c>o&&clvB>=0.68&&b.delta>0&&b.q>=avgQ*1.40){
           const sl=Math.min(l-a*slBuf,c-a*slAtr,c*(1-minStop));
           if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*tp1R,c+rk*tp2R]}
+        }
+      }
+
+      /* 战法 ④：RegimeSwitch 吊灯反转趋势追随 (Chandelier 22,3.0 + EMA200，仅加密4h+1h) */
+      if(!sig&&rsData&&i>=210&&rsData.sigma[i]>0){
+        const m=rsData.e200[i],s=rsData.sigma[i];
+        const fl=(rsData.chanDir[i]===1&&rsData.chanDir[i-1]===-1&&c>m&&b.q>=avgQ*0.90&&noLateLong);
+        const fs=(rsData.chanDir[i]===-1&&rsData.chanDir[i-1]===1&&c<m&&b.q>=avgQ*0.90&&noLateShort);
+        if(fl){
+          const sl=Math.min(rsData.chanLo[i],c*(1-minStop)),sp=(c-sl)/c;
+          if(sp>=0.008&&sp<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*1.15,c+rk*2.50]}
+        }else if(fs){
+          const sl=Math.max(rsData.chanHi[i],c*(1+minStop)),sp=(sl-c)/c;
+          if(sp>=0.008&&sp<=maxStop){const rk=sl-c;sig=['short','market',c,sl,c-rk*1.15,c-rk*2.50]}
+        }
+        /* 战法 ⑤：RegimeSwitch 中继震荡波动轨 (±1σ进 / ±2σ止盈 / 止损EMA200 + 4H POC同向过滤，仅ADX<28) */
+        if(!sig&&adx[i]<28&&rsData.sigma[i-1]>0){
+          const z=(c-m)/s,pz=(prev.c-rsData.e200[i-1])/rsData.sigma[i-1];
+          const poc=rsData.poc4h[i];
+          if(noLateShort&&m<rsData.e200[i-10]&&pz>-1.0&&z<=-1.0&&c<o&&(poc==null||c<poc)){
+            const sl=m,sp=(sl-c)/c;
+            if(sp>=0.010&&sp<=0.065)sig=['short','market',c,sl,m-2.0*s,m-2.8*s];
+          }else if(noLateLong&&m>rsData.e200[i-10]&&pz<1.0&&z>=1.0&&c>o&&(poc==null||c>poc)){
+            const sl=m,sp=(c-sl)/c;
+            if(sp>=0.010&&sp<=0.065)sig=['long','market',c,sl,m+2.0*s,m+2.8*s];
+          }
         }
       }
 
@@ -802,11 +830,78 @@
       }
     }
 
+    /* === 战法 ④ & ⑤：RegimeSwitch 加密双态模块（吊灯趋势追随 + EMA200±σ 震荡中继 + 4H POC） === */
+    if(!archetype&&!isSk&&isSwing&&n>=215&&typeof SmcCore!=='undefined'&&typeof SmcCore.calcRegimeSwitch==='function'){
+      const rsData=SmcCore.calcRegimeSwitch(closedLtf);
+      if(rsData&&rsData.sigma[lastIdx]>0){
+        /* 战法 ④：吊灯反转趋势追随 (Chandelier 22,3.0 + EMA200，近两根闭线内翻转且现价未追远) */
+        for(const idx of [lastIdx,lastIdx-1]){
+          if(archetype||idx<210)continue;
+          const b=closedLtf[idx],m=rsData.e200[idx];
+          if(isLong&&noLateLong&&rsData.chanDir[idx]===1&&rsData.chanDir[idx-1]===-1&&b.c>m&&b.q>=avgQ20*0.90&&allowMarket&&Math.abs(livePx-b.c)<=atr*0.55){
+            const sl=Math.min(rsData.chanLo[idx],livePx*(1-minStopPct));
+            if(livePx>sl&&(livePx-sl)/livePx>=0.008&&(livePx-sl)/livePx<=maxStopPct){
+              archetype={
+                tier:'S',tag:'吊灯反转趋势追随',execMode:'market',entry:livePx,sl,tp1Mult:1.15,
+                entryReason:`价格站稳 EMA200 (${fmtScale(m,livePx)}) 上方且 Chandelier(22,3.0) 吊灯由空翻多，配合 1.15R 平70%保本锁定趋势波段`,
+                slReason:`跌破 Chandelier 吊灯动态止损轨 (${fmtScale(rsData.chanLo[idx],livePx)})`,
+                baseScore:35
+              };
+            }
+          }else if(!isLong&&noLateShort&&rsData.chanDir[idx]===-1&&rsData.chanDir[idx-1]===1&&b.c<m&&b.q>=avgQ20*0.90&&allowMarket&&Math.abs(livePx-b.c)<=atr*0.55){
+            const sl=Math.max(rsData.chanHi[idx],livePx*(1+minStopPct));
+            if(sl>livePx&&(sl-livePx)/livePx>=0.008&&(sl-livePx)/livePx<=maxStopPct){
+              archetype={
+                tier:'S',tag:'吊灯反转顺势追空',execMode:'market',entry:livePx,sl,tp1Mult:1.15,
+                entryReason:`价格受制 EMA200 (${fmtScale(m,livePx)}) 下方且 Chandelier(22,3.0) 吊灯由多翻空，配合 1.15R 平70%保本追踪主跌`,
+                slReason:`突破 Chandelier 吊灯动态止损轨 (${fmtScale(rsData.chanHi[idx],livePx)})`,
+                baseScore:35
+              };
+            }
+          }
+        }
+        /* 战法 ⑤：震荡中继波动轨 (±1σ 进 / ±2σ 止盈 / EMA200 止损 + 前一根 4H POC 同向过滤，专攻震荡行情) */
+        if(!archetype&&adx<28&&rsData.sigma[lastIdx-1]>0){
+          const prevB=closedLtf[lastIdx-1],m=rsData.e200[lastIdx],s=rsData.sigma[lastIdx];
+          const z=(lastB.c-m)/s,pz=(prevB.c-rsData.e200[lastIdx-1])/rsData.sigma[lastIdx-1];
+          const poc=rsData.poc4h[lastIdx];
+          if(!isLong&&noLateShort&&m<rsData.e200[lastIdx-10]&&pz>-1.0&&z<=-1.0&&lastB.c<lastB.o&&(poc==null||livePx<poc)){
+            const sl=m,canMkt=allowMarket&&Math.abs(livePx-lastB.c)<=atr*0.45;
+            const en=canMkt?livePx:Math.max(livePx*1.003,m-s);
+            const sp=(sl-en)/en;
+            if(sp>=0.010&&sp<=0.065&&(canMkt||(en-livePx)<=Math.min(maxLimDistAbs,(sl-en)*0.85))){
+              archetype={
+                tier:'A',tag:'中继震荡波动轨',execMode:canMkt?'market':'limit',entry:en,sl,
+                tp1Fixed:m-2.0*s,tp2Fixed:m-2.8*s,
+                entryReason:`ADX=${adx.toFixed(0)} 震荡市中 EMA200 (${fmtScale(m,en)}) 向下，收线顺势下破 -1σ (${fmtScale(m-s,en)})${poc!=null?' 且压制于 4H POC ('+fmtScale(poc,en)+') 下方':''}，狙击 -2σ 轨道目标`,
+                slReason:`反抽收复 EMA200 中轴 (${fmtScale(m,en)}) 止损`,
+                baseScore:32
+              };
+            }
+          }else if(isLong&&noLateLong&&m>rsData.e200[lastIdx-10]&&pz<1.0&&z>=1.0&&lastB.c>lastB.o&&(poc==null||livePx>poc)){
+            const sl=m,canMkt=allowMarket&&Math.abs(livePx-lastB.c)<=atr*0.45;
+            const en=canMkt?livePx:Math.min(livePx*0.997,m+s);
+            const sp=(en-sl)/en;
+            if(sp>=0.010&&sp<=0.065&&(canMkt||(livePx-en)<=Math.min(maxLimDistAbs,(en-sl)*0.85))){
+              archetype={
+                tier:'A',tag:'中继震荡波动轨',execMode:canMkt?'market':'limit',entry:en,sl,
+                tp1Fixed:m+2.0*s,tp2Fixed:m+2.8*s,
+                entryReason:`ADX=${adx.toFixed(0)} 震荡市中 EMA200 (${fmtScale(m,en)}) 向上，收线顺势上穿 +1σ (${fmtScale(m+s,en)})${poc!=null?' 且站稳 4H POC ('+fmtScale(poc,en)+') 上方':''}，狙击 +2σ 轨道目标`,
+                slReason:`跌破 EMA200 中轴 (${fmtScale(m,en)}) 止损`,
+                baseScore:32
+              };
+            }
+          }
+        }
+      }
+    }
+
     if(!archetype)return null;
 
     const entry=archetype.entry,sl=archetype.sl,execMode=archetype.execMode;
     const stopPct=Math.abs(entry-sl)/entry;
-    if(!(sl>0)||stopPct>maxStopPct||stopPct<minStopPct*0.92)return null;
+    const effMinStop=archetype.tag.includes('吊灯')||archetype.tag.includes('波动轨')?0.008:minStopPct*0.92;
+    if(!(sl>0)||stopPct>maxStopPct||stopPct<effMinStop)return null;
 
     const riskNow=Math.abs(entry-sl);
     if(execMode==='limit'&&Math.abs(entry-livePx)>Math.min(maxLimDistAbs,riskNow*1.15))return null;
@@ -816,7 +911,7 @@
     const wall=oppObs.find(o=>isLong?(o.bottom>entry&&(o.bottom-entry)<riskNow*0.70):(o.top<entry&&(entry-o.top)<riskNow*0.70));
     if(wall&&execMode==='market')return null;
 
-    /* v6 高胜率止盈几何：TP1 锚定 0.85R（区间 [0.82R, 1.35R]）先平 70% 落袋并推止损至保本+成本，余 30% 博 TP2 (2.1R) */
+    /* v6 高胜率止盈几何：常规 0.85R / 吊灯 1.15R / 波动轨 ±2σ，均先平 70% 落袋推保本 */
     const magnets=[];
     const minClearPx=isLong?(livePx+riskNow*0.55):Math.max(entry*0.15,livePx-riskNow*0.55);
     if(isLong){
@@ -835,28 +930,33 @@
       magnets.sort((a,b)=>b.p-a.p);
     }
 
-    const minTp1Dist=riskNow*0.82+entry*costFrac*1.2;
+    const tp1Mult=archetype.tp1Mult||0.85;
+    const minTp1Dist=riskNow*Math.max(0.80,tp1Mult*0.92)+entry*costFrac*1.2;
     const validTp1=m=>{
       const d=Math.abs(m.p-entry);
-      if(d<minTp1Dist||d>riskNow*1.35)return false;
+      if(d<minTp1Dist||d>riskNow*1.45)return false;
       if(execMode==='limit')return isLong?(m.p>=minClearPx):(m.p<=minClearPx);
       return isLong?(m.p>entry):(m.p<entry);
     };
-    const tp1Cand=magnets.find(validTp1);
+    const tp1Cand=archetype.tp1Fixed?null:magnets.find(validTp1);
     let tp1,tp1Src;
-    if(tp1Cand){tp1=tp1Cand.p;tp1Src=tp1Cand.src}
+    if(archetype.tp1Fixed&&(isLong?(archetype.tp1Fixed>entry+riskNow*0.78):(archetype.tp1Fixed<entry-riskNow*0.78))){
+      tp1=archetype.tp1Fixed;tp1Src='波动轨 ±2σ 中继目标';
+    }else if(tp1Cand){tp1=tp1Cand.p;tp1Src=tp1Cand.src}
     else{
-      const baseT=isLong?entry+Math.max(minTp1Dist,riskNow*0.85):Math.max(entry*0.15,entry-Math.max(minTp1Dist,riskNow*0.85));
+      const baseT=isLong?entry+Math.max(minTp1Dist,riskNow*tp1Mult):Math.max(entry*0.15,entry-Math.max(minTp1Dist,riskNow*tp1Mult));
       tp1=execMode==='limit'?(isLong?Math.max(baseT,minClearPx):Math.min(baseT,minClearPx)):baseT;
-      tp1Src='高胜率 0.85R 锁利推保本位';
+      tp1Src=archetype.tp1Mult?`吊灯 ${tp1Mult.toFixed(2)}R 保本锁定位`:'高胜率 0.85R 锁利推保本位';
     }
     const maxTp2Dist=Math.min(riskNow*3.4,entry*(isSwing?0.15:0.10));
-    const tp2Cand=magnets.find(m=>{
+    const tp2Cand=archetype.tp2Fixed?null:magnets.find(m=>{
       const d=Math.abs(m.p-entry);
       return d<=maxTp2Dist&&(isLong?(m.p>tp1+riskNow*0.65):(m.p<tp1-riskNow*0.65));
     });
-    const tp2=tp2Cand?tp2Cand.p:(isLong?Math.max(tp1+riskNow*0.95,entry+riskNow*2.10):Math.max(entry*0.1,Math.min(tp1-riskNow*0.95,entry-riskNow*2.10)));
-    const tp2Src=tp2Cand?tp2Cand.src:'趋势 2.10R 尾仓延伸目标';
+    const tp2=(archetype.tp2Fixed&&(isLong?(archetype.tp2Fixed>tp1+riskNow*0.5):(archetype.tp2Fixed<tp1-riskNow*0.5)))
+      ?archetype.tp2Fixed
+      :(tp2Cand?tp2Cand.p:(isLong?Math.max(tp1+riskNow*0.95,entry+riskNow*2.10):Math.max(entry*0.1,Math.min(tp1-riskNow*0.95,entry-riskNow*2.10))));
+    const tp2Src=archetype.tp2Fixed?'波动轨 ±2.8σ 延伸目标':(tp2Cand?tp2Cand.src:'趋势 2.10R 尾仓延伸目标');
 
     const tp1Pct=Math.abs(tp1-entry)/entry;
     const tp2Pct=Math.abs(tp2-entry)/entry;

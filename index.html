@@ -212,10 +212,10 @@ input[type=number]{text-align:right}
     <div class="dt-live-strip" id="dtLiveStrip"></div>
     <div class="dt-tac-card" id="dtTacBox">
       <div class="row" style="justify-content:space-between;gap:6px">
-        <b style="font-size:12px">实战合约 K 线 <span class="mut" id="dtTacNote">叠加 24h VWAP · 近端 SMC · 强平簇 · 算仓线</span></b>
+        <b style="font-size:12px">实战合约 K 线 <span class="mut" id="dtTacNote">叠加 EMA200±σ 波动轨 · 吊灯云带 · 4H POC · SMC · 算仓线</span></b>
         <div class="row" style="gap:5px">
           <div class="seg" id="dtTacTf"><button type="button" data-tf="15m" class="on">15m</button><button type="button" data-tf="1h">1h</button><button type="button" data-tf="4h">4h</button></div>
-          <div class="seg" id="dtTacLayers"><button type="button" data-ly="smc" class="on">SMC</button><button type="button" data-ly="vwap" class="on">VWAP</button><button type="button" data-ly="rk" class="on">算仓线</button></div>
+          <div class="seg" id="dtTacLayers"><button type="button" data-ly="rs" class="on">波动轨/吊灯</button><button type="button" data-ly="smc" class="on">SMC</button><button type="button" data-ly="vwap" class="on">VWAP</button><button type="button" data-ly="rk" class="on">算仓线</button></div>
         </div>
       </div>
       <div class="dt-tac-wrap"><canvas id="dtTacCanvas"></canvas></div>
@@ -441,8 +441,8 @@ input[type=number]{text-align:right}
 <script src="stock.js?v=20261125-sk2"></script>
 <script src="capview.js?v=20261125-cap12"></script>
 <script src="cg.js?v=20261115-cg24"></script>
-<script src="smc.js?v=20261125-smc4"></script>
-<script src="decision.js?v=20261127-dc6"></script>
+<script src="smc.js?v=20261127-rs6"></script>
+<script src="decision.js?v=20261127-dc6b"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1835,7 +1835,7 @@ $('#idTbl').addEventListener('click',e=>{const a=e.target.closest('a[data-sym]')
 /* ================= 交易向增强模块：直连5m扫描 / 单币作战室 / 实战K线 / 共振战法池 / 异动提示音 ================= */
 S.liveMeta=new Map();
 S.jumpCtx={list:[],label:'单币终端'};
-S.tac={sym:'',tf:'15m',bars:null,loading:false,err:'',layers:{smc:true,vwap:true,rk:true}};
+S.tac={sym:'',tf:'15m',bars:null,pocBars:null,rs:null,loading:false,err:'',layers:{rs:true,smc:true,vwap:true,rk:true}};
 S.res={preset:'squeeze',loading:false,rows:[],ready:false,ts:0};
 S.rtSound=store.get('oif_rtsound',false);
 
@@ -1951,12 +1951,18 @@ function dtLiveStripRender(sym){
 async function dtTacticalLoad(sym,tf){
   const T=S.tac;
   tf=tf||T.tf||'15m';
-  T.sym=sym;T.tf=tf;T.loading=true;T.err='';
+  T.sym=sym;T.tf=tf;T.loading=true;T.err='';T.rs=null;
   dtTacticalDraw();
   try{
-    const ks=await jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(sym)}&interval=${tf}&limit=120`,15000);
+    const reqs=[jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(sym)}&interval=${tf}&limit=320`,15000)];
+    if(tf==='4h')reqs.push(jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(sym)}&interval=1h&limit=320`,15000).catch(()=>null));
+    const [ks,pocKs]=await Promise.all(reqs);
     if(T.sym!==sym||T.tf!==tf)return;
-    T.bars=ks.map(k=>({t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]}));
+    const toBar=k=>({t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5],q:+k[7]||(+k[5]*+k[4])||0});
+    T.bars=ks.map(toBar);
+    T.pocBars=Array.isArray(pocKs)?pocKs.map(toBar):null;
+    T.rs=(typeof SmcCore!=='undefined'&&typeof SmcCore.calcRegimeSwitch==='function')
+      ?SmcCore.calcRegimeSwitch(T.bars,T.pocBars):null;
     T.loading=false;
     if(typeof SmcState!=='undefined'&&SmcState.SMCUI){
       SmcState.smcEnsureData(sym,tf).then(()=>{if(S.dt.sym===sym)dtTacticalDraw()}).catch(()=>{});
@@ -1964,7 +1970,7 @@ async function dtTacticalLoad(sym,tf){
     dtTacticalDraw();
   }catch(e){
     if(T.sym!==sym)return;
-    T.loading=false;T.bars=null;T.err=e.message||'K线加载失败';
+    T.loading=false;T.bars=null;T.rs=null;T.err=e.message||'K线加载失败';
     dtTacticalDraw();
   }
 }
@@ -1972,7 +1978,7 @@ async function dtTacticalLoad(sym,tf){
 function dtTacticalDraw(){
   const cv=$('#dtTacCanvas');if(!cv)return;
   const wrap=cv.parentElement;
-  const W=wrap.clientWidth||340,H=wrap.clientHeight||256;
+  const W=wrap.clientWidth||340,H=Math.max(290,wrap.clientHeight||290);
   const dpr=window.devicePixelRatio||1;
   cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
   const g=cv.getContext('2d');
@@ -1983,22 +1989,46 @@ function dtTacticalDraw(){
     g.fillText(T.loading?'加载实时合约 K 线…':(T.err||'暂无 K 线数据'),W/2,H/2);
     return;
   }
+  const visN=Math.min(bars.length,135),v0=bars.length-visN;
+  const visBars=bars.slice(v0);
   const padL=6,padR=64,padT=10,padB=18;
   const pw=Math.max(40,W-padL-padR),ph=Math.max(40,H-padT-padB);
   let lo=Infinity,hi=-Infinity;
-  bars.forEach(b=>{if(b.l<lo)lo=b.l;if(b.h>hi)hi=b.h});
+  visBars.forEach(b=>{if(b.l<lo)lo=b.l;if(b.h>hi)hi=b.h});
   const last=bars[bars.length-1].c;
   const smcHit=(typeof SmcState!=='undefined')?(SmcState.SMCUI.cache.get(T.sym+'|'+T.tf)||SmcState.SMCUI.cache.get(T.sym+'|15m')):null;
   const smcRes=smcHit?.res||null;
+  const rs=T.rs;
   const wh=typeof whaleGetCoinSummary==='function'?whaleGetCoinSummary(T.sym):null;
   const rk=(typeof SmcState!=='undefined')?SmcState.riskCalc():null;
   const nearLim=last*0.09;
   if(T.layers.rk&&rk&&rk.validSide){
     [rk.en,rk.sl,rk.tp].forEach(p=>{if(p>0&&Math.abs(p-last)<=nearLim){if(p<lo)lo=p;if(p>hi)hi=p}});
   }
+  if(T.layers.rs&&rs){
+    for(let i=v0;i<bars.length;i++){
+      const cStop=rs.chanDir[i]===1?rs.chanLo[i]:rs.chanHi[i];
+      if(cStop>0&&Math.abs(cStop-last)<=nearLim){if(cStop<lo)lo=cStop;if(cStop>hi)hi=cStop}
+      const m=rs.e200[i],poc=rs.poc4h[i];
+      if(m>0&&Math.abs(m-last)<=nearLim){if(m<lo)lo=m;if(m>hi)hi=m}
+      if(poc>0&&Math.abs(poc-last)<=nearLim){if(poc<lo)lo=poc;if(poc>hi)hi=poc}
+    }
+  }
   const pad=(hi-lo)*0.07||last*0.01||1;lo-=pad;hi+=pad;
   const Y=p=>padT+(hi-p)/(hi-lo)*ph;
-  const cw=pw/bars.length;
+  const cw=pw/visBars.length;
+  const drawSeries=(fn,col,lw,dash)=>{
+    g.save();g.strokeStyle=col;g.lineWidth=lw||1.2;if(dash)g.setLineDash(dash);
+    g.beginPath();let started=false;
+    for(let i=v0;i<bars.length;i++){
+      const val=fn(i);
+      if(!(val>0)){started=false;continue}
+      const x=padL+cw*(i-v0+0.5),yy=Math.max(padT-8,Math.min(padT+ph+8,Y(val)));
+      if(!started){g.moveTo(x,yy);started=true}else g.lineTo(x,yy);
+    }
+    g.stroke();g.restore();
+  };
+
   /* 网格 */
   g.font='10px -apple-system,sans-serif';g.textBaseline='middle';
   for(let i=0;i<=4;i++){
@@ -2025,7 +2055,70 @@ function dtTacticalDraw(){
       const yy=Y(l.p);
       g.save();g.setLineDash([4,4]);g.strokeStyle=l.col;g.globalAlpha=.75;
       g.beginPath();g.moveTo(padL,yy);g.lineTo(padL+pw,yy);g.stroke();g.restore();
-      g.fillStyle=l.col;g.fillText(l.lbl,padL+4,yy-6);
+      g.fillStyle=l.col;g.textAlign='left';g.fillText(l.lbl,padL+4,yy-6);
+    });
+  }
+  /* RegimeSwitch 叠加：吊灯变色云带 + EMA200±1σ/2σ 波动轨 + 4H POC 阶梯线 */
+  if(T.layers.rs&&rs){
+    /* 1) 吊灯变色云带（每段连续多/空区间填充半透明云带并勾边） */
+    let segStart=v0;
+    for(let i=v0;i<=bars.length;i++){
+      const dir=i<bars.length?rs.chanDir[i]:0;
+      const prevDir=rs.chanDir[segStart];
+      if(i===bars.length||dir!==prevDir){
+        if(i-segStart>=2){
+          g.save();
+          g.fillStyle=prevDir===1?'rgba(34,211,238,.12)':'rgba(244,63,94,.13)';
+          g.beginPath();
+          for(let k=segStart;k<i;k++){
+            const x=padL+cw*(k-v0+0.5),yk=Math.max(padT,Math.min(padT+ph,Y(bars[k].c)));
+            if(k===segStart)g.moveTo(x,yk);else g.lineTo(x,yk);
+          }
+          for(let k=i-1;k>=segStart;k--){
+            const x=padL+cw*(k-v0+0.5),st=prevDir===1?rs.chanLo[k]:rs.chanHi[k];
+            const yk=Math.max(padT,Math.min(padT+ph,Y(st)));
+            g.lineTo(x,yk);
+          }
+          g.closePath();g.fill();
+          g.strokeStyle=prevDir===1?'rgba(34,211,238,.78)':'rgba(244,63,94,.78)';
+          g.lineWidth=1.2;g.beginPath();
+          for(let k=segStart;k<i;k++){
+            const x=padL+cw*(k-v0+0.5),st=prevDir===1?rs.chanLo[k]:rs.chanHi[k];
+            const yk=Math.max(padT,Math.min(padT+ph,Y(st)));
+            if(k===segStart)g.moveTo(x,yk);else g.lineTo(x,yk);
+          }
+          g.stroke();g.restore();
+        }
+        segStart=i;
+      }
+    }
+    /* 2) EMA200 中轴 & ±1σ / ±2σ 波动轨 */
+    drawSeries(i=>rs.e200[i],'#f472b6',1.7,null);
+    drawSeries(i=>rs.sigma[i]>0?(rs.e200[i]+rs.sigma[i]):0,'rgba(245,158,11,.72)',1.1,[5,3]);
+    drawSeries(i=>rs.sigma[i]>0?(rs.e200[i]-rs.sigma[i]):0,'rgba(245,158,11,.72)',1.1,[5,3]);
+    drawSeries(i=>rs.sigma[i]>0?(rs.e200[i]+2*rs.sigma[i]):0,'rgba(96,165,250,.52)',1.0,[2,3]);
+    drawSeries(i=>rs.sigma[i]>0?(rs.e200[i]-2*rs.sigma[i]):0,'rgba(96,165,250,.52)',1.0,[2,3]);
+    /* 3) 前一根 4H POC 阶梯线 */
+    g.save();g.strokeStyle='#fbbf24';g.lineWidth=1.4;g.setLineDash([4,2]);g.beginPath();
+    let pStarted=false,prevPoc=null;
+    for(let i=v0;i<bars.length;i++){
+      const poc=rs.poc4h[i];
+      if(!(poc>0)){pStarted=false;continue}
+      const x0=padL+cw*(i-v0),x1=x0+cw,yy=Math.max(padT,Math.min(padT+ph,Y(poc)));
+      if(!pStarted){g.moveTo(x0,yy);pStarted=true}
+      else if(poc!==prevPoc){g.lineTo(x0,Y(prevPoc));g.lineTo(x0,yy)}
+      g.lineTo(x1,yy);prevPoc=poc;
+    }
+    g.stroke();g.restore();
+    /* 轨道/POC 右端小标签（仅在可见区） */
+    [['EMA200',rs.mNow,'#f472b6'],
+     ['+1σ',rs.sNow>0?rs.mNow+rs.sNow:0,'#f59e0b'],
+     ['-1σ',rs.sNow>0?rs.mNow-rs.sNow:0,'#f59e0b'],
+     ['4H POC',rs.pocNow,'#fbbf24']
+    ].forEach(([lbl,val,col])=>{
+      if(!(val>0)||val<lo||val>hi)return;
+      const yy=Y(val);
+      g.fillStyle=col;g.textAlign='left';g.fillText(lbl,padL+4,yy-6);
     });
   }
   /* Hyperliquid 最近强平簇磁吸线 */
@@ -2035,32 +2128,36 @@ function dtTacticalDraw(){
       const yy=Y(p);
       g.save();g.setLineDash([2,3]);g.strokeStyle=col;
       g.beginPath();g.moveTo(padL,yy);g.lineTo(padL+pw,yy);g.stroke();g.restore();
-      g.fillStyle=col;g.fillText(lbl,padL+38,yy-6);
+      g.fillStyle=col;g.textAlign='left';g.fillText(lbl,padL+48,yy-6);
     });
   }
   /* 蜡烛图 */
   const bw=Math.max(1.2,Math.min(8,cw*0.68));
-  bars.forEach((b,i)=>{
-    const x=padL+cw*(i+0.5),up=b.c>=b.o;
+  visBars.forEach((b,idx)=>{
+    const i=v0+idx,x=padL+cw*(idx+0.5),up=b.c>=b.o;
     g.strokeStyle=up?'#2ebd85':'#f6465d';g.fillStyle=up?'#2ebd85':'#f6465d';
     g.beginPath();g.moveTo(x,Y(b.h));g.lineTo(x,Y(b.l));g.lineWidth=1;g.stroke();
     const yo=Y(b.o),yc=Y(b.c);
     g.fillRect(x-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)));
+    /* 吊灯反转点标注 */
+    if(T.layers.rs&&rs&&i>v0&&rs.chanDir[i]!==rs.chanDir[i-1]){
+      const fl=rs.chanDir[i]===1;
+      const dy=fl?Y(b.h)-9:Y(b.l)+9;
+      g.fillStyle=fl?'#22d3ee':'#fb7185';
+      g.beginPath();g.arc(x,fl?Y(b.l)+4:Y(b.h)-4,2.8,0,Math.PI*2);g.fill();
+      g.textAlign='center';g.fillText(fl?'多':'空',x,dy);
+    }
   });
   /* 滚动 VWAP 曲线（近 24 根成交量加权均价） */
   if(T.layers.vwap&&bars.length>=10){
     const winN=T.tf==='15m'?96:(T.tf==='1h'?24:12);
-    g.strokeStyle='#4f9cf9';g.lineWidth=1.4;g.beginPath();
-    let started=false;
-    for(let i=4;i<bars.length;i++){
+    drawSeries(i=>{
+      if(i<4)return 0;
       const s0=Math.max(0,i-winN+1);
       let pv=0,vv=0;
       for(let j=s0;j<=i;j++){const typ=(bars[j].h+bars[j].l+bars[j].c)/3;pv+=typ*bars[j].v;vv+=bars[j].v}
-      if(!(vv>0))continue;
-      const vw=pv/vv,x=padL+cw*(i+0.5),yy=Y(vw);
-      if(!started){g.moveTo(x,yy);started=true}else g.lineTo(x,yy);
-    }
-    g.stroke();
+      return vv>0?pv/vv:0;
+    },'#4f9cf9',1.3,null);
   }
   /* 算仓计划线（Entry / SL / TP1 / TP2） */
   if(T.layers.rk&&rk&&rk.validSide&&SmcState.RISK.sym===T.sym){
@@ -2073,11 +2170,32 @@ function dtTacticalDraw(){
       g.fillStyle=col;g.textAlign='right';g.fillText(lbl+' '+fPrice(p),padL+pw-4,yy-6);
     });
   }
+  /* 右上角 RegimeSwitch 实时状态 HUD */
+  if(T.layers.rs&&rs){
+    const hudW=Math.min(pw-12,248),hudH=66,hx=padL+pw-hudW-4,hy=padT+2;
+    g.save();
+    g.fillStyle='rgba(11,15,24,.84)';g.strokeStyle='rgba(148,163,184,.30)';g.lineWidth=1;
+    g.beginPath();
+    if(g.roundRect)g.roundRect(hx,hy,hudW,hudH,6);else g.rect(hx,hy,hudW,hudH);
+    g.fill();g.stroke();
+    const isChop=rs.state==='chop';
+    const stCol=isChop?'#fbbf24':(rs.chanDirNow===1?'#22d3ee':'#fb7185');
+    g.textAlign='left';g.textBaseline='top';
+    g.font='bold 10.5px -apple-system,sans-serif';g.fillStyle=stCol;
+    g.fillText(`震荡趋势切换 · ${isChop?'震荡(靠波动轨)':('趋势(吊灯'+(rs.chanDirNow===1?'多':'空')+')')}`,hx+7,hy+6);
+    g.font='10px -apple-system,sans-serif';g.fillStyle='#cbd5e1';
+    g.fillText(`现价 ${rs.zNow>=0?'+':''}${rs.zNow.toFixed(2)}σ · EMA200 ${fPrice(rs.mNow)} · 量${rs.volRatio.toFixed(2)}x`,hx+7,hy+22);
+    g.fillText(`上4H POC ${rs.pocNow?fPrice(rs.pocNow)+(rs.pocZ!=null?' ('+(rs.pocZ>=0?'+':'')+rs.pocZ.toFixed(2)+'σ)':''):'—'}`,hx+7,hy+36);
+    g.fillStyle=rs.slopeDir<0?'#fca5a5':'#86efac';
+    const stratHint=isChop?(rs.slopeDir<0?'中继震荡：仅做空 (-1σ→-2σ)':'中继震荡：仅做多 (+1σ→+2σ)'):(rs.chanDirNow===1?'吊灯多头：1.15R平70%推保本':'吊灯空头：1.15R平70%推保本');
+    g.fillText(stratHint,hx+7,hy+50);
+    g.restore();
+  }
   /* 时间轴 */
-  g.fillStyle='#5c6579';g.textAlign='left';
+  g.fillStyle='#5c6579';g.textAlign='left';g.textBaseline='middle';
   const fmt=ms=>new Date(ms).toISOString().slice(5,16).replace('T',' ');
-  g.fillText(fmt(bars[0].t),padL,H-6);
-  g.textAlign='right';g.fillText(fmt(bars[bars.length-1].t),padL+pw,H-6);
+  g.fillText(fmt(visBars[0].t),padL,H-6);
+  g.textAlign='right';g.fillText(fmt(visBars[visBars.length-1].t),padL+pw,H-6);
 }
 
 function dtCockpitSync(sym){

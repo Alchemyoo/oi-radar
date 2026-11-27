@@ -121,7 +121,133 @@ const SmcCore=(function(){
       bsl:unsweptBsl.slice(0,3),ssl:unsweptSsl.slice(0,3),
       score:Math.min(100,score),scoreParts:parts,events,barCount:n,lastClose:close,lastBar:last,bars};
   }
-  return {analyze};
+
+  /* RegimeSwitch 双态数学核心：EMA200 ± 1σ/2σ/3σ 波动轨 + 吊灯通道(22,3.0) + 前一根4H成交重心POC */
+  function calcRegimeSwitch(bars,pocBars){
+    const n=Array.isArray(bars)?bars.length:0;
+    if(n<40)return null;
+    const closes=bars.map(b=>b.c);
+    const e200=new Array(n).fill(closes[0]);
+    const k200=2/201;
+    for(let i=1;i<n;i++)e200[i]=closes[i]*k200+e200[i-1]*(1-k200);
+
+    /* 滚动残差标准差 σ（窗口100根） */
+    const sigma=new Array(n).fill(0);
+    for(let i=0;i<n;i++){
+      const s=Math.max(0,i-99),cnt=i-s+1;
+      if(cnt<20)continue;
+      let sum=0;for(let k=s;k<=i;k++)sum+=(closes[k]-e200[k]);
+      const mean=sum/cnt;
+      let vSum=0;for(let k=s;k<=i;k++){const d=(closes[k]-e200[k])-mean;vSum+=d*d}
+      sigma[i]=Math.sqrt(vSum/cnt);
+    }
+
+    /* Wilder ATR(22) 与 吊灯趋势止损带 Chandelier(22, 3.0) */
+    const atr22=new Array(n).fill(0);
+    for(let i=0;i<n;i++){
+      if(i===0){atr22[i]=bars[0].h-bars[0].l;continue}
+      const pc=bars[i-1].c;
+      const tr=Math.max(bars[i].h-bars[i].l,Math.abs(bars[i].h-pc),Math.abs(bars[i].l-pc));
+      atr22[i]=(atr22[i-1]*21+tr)/22;
+    }
+    const chanLo=new Array(n).fill(0),chanHi=new Array(n).fill(0),chanDir=new Array(n).fill(1);
+    for(let i=0;i<n;i++){
+      const s=Math.max(0,i-21);
+      let hh=-1e18,ll=1e18;
+      for(let k=s;k<=i;k++){if(bars[k].c>hh)hh=bars[k].c;if(bars[k].c<ll)ll=bars[k].c}
+      const ls=hh-atr22[i]*3.0,ss=ll+atr22[i]*3.0;
+      if(i===0){chanLo[i]=ls;chanHi[i]=ss;chanDir[i]=1}
+      else{
+        const pls=chanLo[i-1],pss=chanHi[i-1];
+        chanLo[i]=bars[i-1].c>pls?Math.max(ls,pls):ls;
+        chanHi[i]=bars[i-1].c<pss?Math.min(ss,pss):ss;
+        if(bars[i].c>pss)chanDir[i]=1;
+        else if(bars[i].c<pls)chanDir[i]=-1;
+        else chanDir[i]=chanDir[i-1];
+      }
+    }
+
+    /* 14周期 ADX 序列（与 decision.js 对齐） */
+    const adx=new Array(n).fill(20);
+    if(n>=30){
+      let trS=0,pdmS=0,ndmS=0;const dxs=[];
+      for(let i=1;i<n;i++){
+        const up=bars[i].h-bars[i-1].h,dn=bars[i-1].l-bars[i].l;
+        const pdm=(up>dn&&up>0)?up:0,ndm=(dn>up&&dn>0)?dn:0;
+        const pc=bars[i-1].c;
+        const tr=Math.max(bars[i].h-bars[i].l,Math.abs(bars[i].h-pc),Math.abs(bars[i].l-pc));
+        if(i<=14){
+          trS+=tr;pdmS+=pdm;ndmS+=ndm;
+          if(i===14&&trS>0){const pdi=100*pdmS/trS,ndi=100*ndmS/trS;dxs.push([i,100*Math.abs(pdi-ndi)/Math.max(1e-9,pdi+ndi)])}
+        }else{
+          trS=trS-trS/14+tr;pdmS=pdmS-pdmS/14+pdm;ndmS=ndmS-ndmS/14+ndm;
+          const pdi=100*pdmS/Math.max(1e-9,trS),ndi=100*ndmS/Math.max(1e-9,trS);
+          dxs.push([i,100*Math.abs(pdi-ndi)/Math.max(1e-9,pdi+ndi)]);
+        }
+      }
+      if(dxs.length>=14){
+        let cur=0;for(let k=0;k<14;k++)cur+=dxs[k][1];cur/=14;
+        adx[dxs[13][0]]=cur;
+        for(let k=14;k<dxs.length;k++){cur=(cur*13+dxs[k][1])/14;adx[dxs[k][0]]=cur}
+      }
+    }
+
+    /* 前一根已闭合 4H K 线成交分布重心 POC（由子周期棒近似构建 12 分箱分布，零额外网络请求） */
+    const srcPoc=Array.isArray(pocBars)&&pocBars.length?pocBars:bars;
+    const buckets=new Map();
+    for(const b of srcPoc){
+      const b4t=Math.floor(b.t/14400000)*14400000;
+      let arr=buckets.get(b4t);
+      if(!arr){arr=[];buckets.set(b4t,arr)}
+      arr.push(b);
+    }
+    const bucketPoc=new Map();
+    for(const [b4t,subs] of buckets.entries()){
+      let lo=1e18,hi=-1e18;
+      for(const x of subs){if(x.l<lo)lo=x.l;if(x.h>hi)hi=x.h}
+      if(!(hi>lo)){bucketPoc.set(b4t,subs[subs.length-1].c);continue}
+      const bins=new Array(12).fill(0),step=(hi-lo)/12;
+      for(const x of subs){
+        const vol=(x.q>0?x.q:(x.v>0?x.v*x.c:1));
+        const typ=(x.h+x.l+x.c)/3;
+        const pts=[[x.l+(x.h-x.l)*0.25,0.2],[typ,0.6],[x.l+(x.h-x.l)*0.75,0.2]];
+        for(const [px,wt] of pts){
+          const bi=Math.min(11,Math.max(0,Math.floor((px-lo)/step)));
+          bins[bi]+=vol*wt;
+        }
+      }
+      let best=0;for(let bi=1;bi<12;bi++)if(bins[bi]>bins[best])best=bi;
+      bucketPoc.set(b4t,lo+(best+0.5)*step);
+    }
+    const poc4h=bars.map(b=>{
+      const prev4t=Math.floor(b.t/14400000)*14400000-14400000;
+      return bucketPoc.get(prev4t)??null;
+    });
+
+    const last=n-1,cNow=closes[last],mNow=e200[last],sNow=sigma[last];
+    const zNow=sNow>0?(cNow-mNow)/sNow:0;
+    const pocNow=poc4h[last];
+    const pocZ=(pocNow!=null&&sNow>0)?(pocNow-mNow)/sNow:null;
+    let avgV20=0,vNow=bars[last].q||bars[last].v*cNow||1;
+    const vs=Math.max(0,last-20);
+    for(let k=vs;k<last;k++)avgV20+=(bars[k].q||bars[k].v*bars[k].c||0);
+    avgV20=last>vs?avgV20/(last-vs):vNow;
+    const volRatio=avgV20>0?vNow/avgV20:1;
+    const bws=[];for(let k=Math.max(20,last-100);k<=last;k++)if(sigma[k]>0&&closes[k]>0)bws.push(sigma[k]/closes[k]);
+    bws.sort((a,b)=>a-b);
+    const medBw=bws.length?bws[Math.floor(bws.length/2)]:(sNow/Math.max(1e-9,cNow));
+    const bwRatio=medBw>0?(sNow/Math.max(1e-9,cNow))/medBw:1;
+    const slopeDir=e200[last]<e200[Math.max(0,last-10)]?-1:1;
+
+    return {
+      e200,sigma,chanLo,chanHi,chanDir,adx,poc4h,
+      last,cNow,mNow,sNow,zNow,pocNow,pocZ,volRatio,bwRatio,slopeDir,
+      state:adx[last]<28?'chop':'trend',
+      chanDirNow:chanDir[last],
+      chanStopNow:chanDir[last]===1?chanLo[last]:chanHi[last]
+    };
+  }
+  return {analyze,calcRegimeSwitch};
 })();
 
 /* ---------- 详情页面板 + 以损定量风控速算 ---------- */
