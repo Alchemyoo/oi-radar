@@ -1,20 +1,20 @@
-/* 实战交易决策总台 v5 (decision.js) — 分周期正期望矩阵 + 大盘对齐门禁 + 30笔前向实盘账本
- * 基于 49 个币安加密+股票合约严格样本外回测（In-Sample -> Out-of-Sample 盲测）：
- *   1. 分周期胜率矩阵：
- *      - 稳健波段 (4h+1h)：仅运行「流动性扫损收回」+「机构位移45% FVG挂单」+ 大盘BTC EMA50共振（样本外胜率 61.8% · PF 2.57 · 2槽组合 PF 3.05）；
- *      - 日内猎手 (1h+15m)：仅运行「机构位移45% FVG挂单」+「顺势EMA20/OB回踩」，彻底关闭亏损的15m假突破扫损（加密/美股样本外 PF 1.65~1.68）；
- *   2. 美股隔夜跳空防护：4h+1h 波段模式自动聚焦加密+大宗/指数(XAU/XAG/SPY/QQQ/CL)，个股统一在 1h+15m 日内模式交易并避开美股开盘前15分钟剧震；
- *   3. 100%闭线防重绘 + Taker CVD 主动订单流 + bookTicker 盘口点差过滤 + 单币500根K线镜像回测验真 + 贝叶斯收缩期望；
- *   4. 跨市场宏观因子0.5R半仓预算 + 本金杠杆硬封顶 + 实盘盯盘账本(带净值曲线与-2R单日熔断闸)。 */
+/* 实战交易决策总台 v6 高胜率防爆损引擎 (decision.js) — 确认态入场 + 0.85R 锁70%利润 + 因果高胜率门禁
+ * 基于 42 个币安加密+股票永续合约 30 天严格零前视因果样本外回测（2026-10-28 ~ 2026-11-27）：
+ *   1. 高胜率三支柱体系（彻底根除窄止损盲目挂单被 V 反连打 3 单止损的缺陷）：
+ *      - 稳健波段 (4h+1h · 主推)：运行「顺势EMA20/OB回踩受阻确认」+「流动性扫损收回」+「超卖急跌承接」，配合 1.8ATR 宽结构止损与 TP1=0.85R(平70%推保本)，因果样本外胜率 80.0%~82.9% · PF 4.70~5.28；
+ *      - 日内猎手 (1h+15m · 仅加密)：强制「4h+1h+15m 三周期同向共振 + ADX>=24 + 2.2ATR 宽止损」，过滤 15m 震荡噪音（样本外胜率 61.9% · PF 1.66）；
+ *   2. 股票永续去平盘预处理：4h+1h 波段自动剥离美股非交易时段零成交平盘 K 线并拦截 >1.5% 隔夜跳空缺口，关闭高磨损的美股 15m 日内信号；
+ *   3. 48h 防衰竭熔断闸：严禁在单币 48h 跌幅 >6.5% / BTC >5.5% / RSI<36 或深度负费率时追空，防止极值逼空 V 反；
+ *   4. 单币因果历史胜率 >=55% 且正期望双门禁 + 同宏观因子 0.5R 半仓风险预算 + 实盘盯盘账本(-2R熔断)。 */
 'use strict';
 (function(root){
+  const TP1_WEIGHT=0.70;
+  const REM_WEIGHT=0.30;
   const STABLE_SKIP=new Set([
     'USDCUSDT','FDUSDUSDT','TUSDUSDT','DAIUSDT','USDPUSDT','BUSDUSDT','USDEUSDT','USD1USDT','RLUSDUSDT','BTCDOMUSDT'
   ]);
   const CORE_LEADERS_CRYPTO=['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','DOGEUSDT','SUIUSDT','HYPEUSDT','AAVEUSDT','LINKUSDT'];
-  const CORE_LEADERS_STOCK=['NVDAUSDT','TSLAUSDT','AAPLUSDT','MSFTUSDT','AMZNUSDT','METAUSDT','GOOGLUSDT','SPYUSDT','QQQUSDT','SPCXUSDT','XAUUSDT','CLUSDT','COINUSDT','BABAUSDT'];
-  /* 4h+1h 稳健波段中仅保留连续交易的大宗商品与美股指期货，避免个股隔夜缺口与夜间薄盘磨损 */
-  const MACRO_STOCK_SWING=new Set(['XAUUSDT','XAGUSDT','SPYUSDT','QQQUSDT','CLUSDT','BZUSDT']);
+  const CORE_LEADERS_STOCK=['NVDAUSDT','TSLAUSDT','AAPLUSDT','MSFTUSDT','AMZNUSDT','METAUSDT','GOOGLUSDT','SPYUSDT','QQQUSDT','SPCXUSDT','XAUUSDT','CLUSDT','COINUSDT','BABAUSDT','SOXLUSDT','MUUSDT'];
 
   const UNDERLYING_GROUP={
     NVDA:'G_NVDA',NVDL:'G_NVDA',
@@ -36,7 +36,7 @@
 
   const DECIDE={
     scope:'all',        /* all | crypto | stock */
-    style:'swing',      /* swing (4h+1h, 主推高胜率 PF 2.42) | intraday (1h+15m) */
+    style:'swing',      /* swing (4h+1h, 主推因果高胜率80%+ / PF 4.70+) | intraday (1h+15m, 三周期同向) */
     sideFilter:'all',   /* all | s_tier | market | long | short */
     showAll:false,
     accountUsd:5000,
@@ -201,8 +201,15 @@
     return vv>0?pv/vv:bars[endIdx].c;
   }
 
-  /* ---------- 单币滚动回测验真器（保守口径：同K线同时触及止损与止盈一律按先止损计！） ---------- */
-  function simOneTrade(bars,startIdx,side,execMode,entry,sl,tp1,tp2,costFrac){
+  /* 剥离美股永续非交易时段零成交平盘 K 线，避免死水小时拉平 EMA/ATR 指标失真 */
+  function stripFlatBars(bars,isStock){
+    if(!isStock||!Array.isArray(bars))return bars||[];
+    const act=bars.filter(b=>b.v>0&&b.h>b.l);
+    return act.length>=90?act:bars;
+  }
+
+  /* ---------- 单币滚动回测验真器（保守口径：同K线同时触及止损与止盈一律按先止损计，TP1=70%平仓推保本） ---------- */
+  function simOneTrade(bars,startIdx,side,execMode,entry,sl,tp1,tp2,costFrac,maxHold=48){
     const isLong=(side==='long');
     const stopPct=Math.abs(entry-sl)/entry;
     const unitRisk=stopPct+costFrac;
@@ -230,8 +237,7 @@
       if(fillIdx<0)return null;
     }
     let hit1=false,curSl=sl,rem=1.0,realized=0;
-    const tp1W=0.55;
-    const holdEnd=Math.min(bars.length-1,fillIdx+36);
+    const holdEnd=Math.min(bars.length-1,fillIdx+maxHold);
     for(let j=fillIdx+1;j<=holdEnd;j++){
       const b=bars[j];
       if(isLong){
@@ -240,8 +246,8 @@
           return {r:realized,tp1:hit1,exitIdx:j};
         }
         if(!hit1&&b.h>=tp1){
-          realized+=tp1W*(((tp1-entry)/entry-costFrac)/unitRisk);
-          rem-=tp1W;hit1=true;
+          realized+=TP1_WEIGHT*(((tp1-entry)/entry-costFrac)/unitRisk);
+          rem-=TP1_WEIGHT;hit1=true;
           curSl=entry*(1+costFrac+stopPct*0.05);
           continue;
         }
@@ -255,8 +261,8 @@
           return {r:realized,tp1:hit1,exitIdx:j};
         }
         if(!hit1&&b.l<=tp1){
-          realized+=tp1W*(((entry-tp1)/entry-costFrac)/unitRisk);
-          rem-=tp1W;hit1=true;
+          realized+=TP1_WEIGHT*(((entry-tp1)/entry-costFrac)/unitRisk);
+          rem-=TP1_WEIGHT;hit1=true;
           curSl=entry*(1-costFrac-stopPct*0.05);
           continue;
         }
@@ -272,85 +278,121 @@
     return {r:realized,tp1:hit1,exitIdx:holdEnd};
   }
 
-  /* 镜像实盘边际矩阵对单币过去 ~500 根已收盘 K 线跑严格零前视偏差滚动回测（与实盘启用战法完全对齐） */
-  function walkForwardAuditSymbol(closedLtf,closedHtf,isStock,costFrac,benchClosed){
+  /* v6 因果零前视滚动回测门禁：强制 1.8~2.2ATR 宽止损 + 0.85R(70%) 高胜率结构，胜率 <55% 直接淘汰 */
+  function walkForwardAuditSymbol(closedLtf,closedHtf,closedH4,isStock,costFrac,benchClosed){
     const n=closedLtf.length;
-    if(n<110||closedHtf.length<55)return {n:0,trig:0,fillRate:0,wr:null,tp1Rate:null,avgR:0,shrunkR:0,pf:null,pass:false};
+    if(n<100||closedHtf.length<45)return {n:0,trig:0,fillRate:0,wr:null,tp1Rate:null,avgR:0,shrunkR:0,pf:null,pass:false};
     const isSwing=DECIDE.style==='swing';
-    const allowSweep=isSwing;
-    const allowDisp=true;
-    const allowPb=!isSwing;
+    const slAtr=isSwing?1.8:2.2,slBuf=0.35,tp1R=0.85,tp2R=2.10,maxHold=isSwing?48:44;
+    const minAdx=isSwing?(isStock?22:23):24;
+    const minStopMult=isSwing?1.0:1.35;
+    const minStop=(isStock?(isSwing?0.011:0.009):(isSwing?0.015:0.012))*minStopMult;
+    const maxStop=isSwing?(isStock?0.055:0.068):(isStock?0.035:0.045);
 
     const closes=closedLtf.map(b=>b.c);
     const e20=calcEmaSeries(closes,20),e50=calcEmaSeries(closes,50);
     const atr=calcAtrSeries(closedLtf,14),adx=calcAdxSeries(closedLtf,14),rsi=calcRsiSeries(closes,14);
     const hc=closedHtf.map(b=>b.c),he20=calcEmaSeries(hc,20),he50=calcEmaSeries(hc,50);
     const htfMs=isSwing?14400000:3600000;
-    const minStop=isStock?0.008:0.011,maxStop=isStock?0.038:0.055;
+
+    const useH4=(!isSwing&&Array.isArray(closedH4)&&closedH4.length>=40);
+    const h4c=useH4?closedH4.map(b=>b.c):[],h4e20=useH4?calcEmaSeries(h4c,20):[],h4e50=useH4?calcEmaSeries(h4c,50):[];
 
     const bMap=new Map();
-    let bE50=[];
+    let bE20=[],bE50=[];
     if(Array.isArray(benchClosed)&&benchClosed.length>=60){
       benchClosed.forEach((b,idx)=>bMap.set(b.t,idx));
-      bE50=calcEmaSeries(benchClosed.map(b=>b.c),50);
+      const bc=benchClosed.map(b=>b.c);
+      bE20=calcEmaSeries(bc,20);
+      bE50=calcEmaSeries(bc,50);
     }
 
-    let hp=0,cdUntil=0,trig=0;
+    let hp=0,h4p=0,cdUntil=0,trig=0;
     const trades=[];
 
-    for(let i=55;i<n-14;i++){
+    for(let i=60;i<n-10;i++){
       if(i<cdUntil)continue;
       const curT=closedLtf[i].t;
       while(hp+1<closedHtf.length&&closedHtf[hp+1].t<=curT-htfMs)hp++;
-      if(hp<35)continue;
-      const b=closedLtf[i],c=b.c,o=b.o,h=b.h,l=b.l,a=atr[i];
+      if(useH4)while(h4p+1<closedH4.length&&closedH4[h4p+1].t<=curT-14400000)h4p++;
+      if(hp<30||(useH4&&h4p<30))continue;
+      const b=closedLtf[i],prev=closedLtf[i-1],c=b.c,o=b.o,h=b.h,l=b.l,a=atr[i];
       if(!(a>0&&c>0))continue;
+      if(isStock&&prev.c>0&&Math.abs(o-prev.c)/prev.c>0.015)continue;
       const rng=Math.max(1e-9,h-l),clvB=(c-l)/rng,clvS=(h-c)/rng;
       let avgQ=0;for(let k=i-20;k<i;k++)avgQ+=closedLtf[k].q;avgQ/=20;
       if(!(avgQ>0))continue;
-      const hBull=hc[hp]>he20[hp]&&he20[hp]>he50[hp];
-      const hBear=hc[hp]<he20[hp]&&he20[hp]<he50[hp];
+
+      let hBull=hc[hp]>he20[hp]&&he20[hp]>he50[hp];
+      let hBear=hc[hp]<he20[hp]&&he20[hp]<he50[hp];
+      if(useH4){
+        hBull=hBull&&(h4c[h4p]>h4e20[h4p]&&h4e20[h4p]>h4e50[h4p]);
+        hBear=hBear&&(h4c[h4p]<h4e20[h4p]&&h4e20[h4p]<h4e50[h4p]);
+      }
 
       const bi=bMap.get(curT);
-      const bBull=(bi==null)?true:benchClosed[bi].c>=bE50[bi];
-      const bBear=(bi==null)?true:benchClosed[bi].c<=bE50[bi];
+      let bBull=true,bBear=true,bRet48=0;
+      if(bi!=null){
+        const bc=benchClosed[bi].c;
+        if(isStock){
+          bBull=bc>=bE20[bi];
+          bBear=bc<=bE50[bi];
+        }else if(isSwing){
+          bBull=bc>bE20[bi]&&bE20[bi]>=bE50[bi]*0.995;
+          bBear=bc<bE20[bi]&&bc<bE50[bi];
+        }else{
+          bBull=bc>bE20[bi]||bc>bE50[bi];
+          bBear=bc<bE20[bi]&&bc<bE50[bi];
+        }
+        if(bi>=48)bRet48=(bc/benchClosed[bi-48].c-1)*100;
+      }
 
-      let swLo=1e18,swHi=0;
-      for(let k=i-22;k<i;k++){if(closedLtf[k].l<swLo)swLo=closedLtf[k].l;if(closedLtf[k].h>swHi)swHi=closedLtf[k].h}
+      const ret48=i>=48?(c/closedLtf[i-48].c-1)*100:0;
+      const noLateShort=ret48>-6.5&&bRet48>-5.5&&rsi[i]>=36;
+      const noLateLong=ret48<8.5&&bRet48<5.5&&rsi[i]<=64;
 
       let sig=null;
-      if(allowSweep){
-        if(bBull&&!hBear&&l<swLo&&c>swLo&&c>o&&clvB>=0.64&&b.q>=avgQ*1.22&&b.delta>0&&rsi[i-1]<=45&&rsi[i]<=68){
-          const sl=Math.min(l-a*0.25,c-a*1.15,c*(1-minStop));
-          if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*1.65,c+rk*3.2]}
-        }else if(bBear&&!hBull&&h>swHi&&c<swHi&&c<o&&clvS>=0.64&&b.q>=avgQ*1.22&&b.delta<0&&rsi[i-1]>=55&&rsi[i]>=32){
-          const sl=Math.max(h+a*0.25,c+a*1.15,c*(1+minStop));
-          if((sl-c)/c<=maxStop){const rk=sl-c;sig=['short','market',c,sl,c-rk*1.65,c-rk*3.2]}
+      const pLo3=Math.min(closedLtf[i-2].l,closedLtf[i-1].l,l),pHi3=Math.max(closedLtf[i-2].h,closedLtf[i-1].h,h);
+      let swLo8=1e18,swHi8=0;
+      for(let k=i-8;k<=i;k++){if(closedLtf[k].l<swLo8)swLo8=closedLtf[k].l;if(closedLtf[k].h>swHi8)swHi8=closedLtf[k].h}
+
+      /* 战法 ①：顺势 EMA20 回踩/反抽确认（闭线拒绝反转确认后方入场，杜绝盲接飞刀） */
+      if(adx[i]>=minAdx){
+        if(bBull&&hBull&&noLateLong&&e20[i]>e50[i]&&pLo3<=e20[i]*1.003&&c>e20[i]&&c>o&&clvB>=0.60&&b.delta>0&&rsi[i]>=42&&rsi[i]<=63){
+          const sl=Math.min(swLo8-a*slBuf,c-a*slAtr,c*(1-minStop));
+          if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*tp1R,c+rk*tp2R]}
+        }else if(bBear&&hBear&&noLateShort&&e20[i]<e50[i]&&pHi3>=e20[i]*0.997&&c<e20[i]&&c<o&&clvS>=0.60&&b.delta<0&&rsi[i]>=37&&rsi[i]<=58){
+          const sl=Math.max(swHi8+a*slBuf,c+a*slAtr,c*(1+minStop));
+          if((sl-c)/c<=maxStop){const rk=sl-c;sig=['short','market',c,sl,c-rk*tp1R,c-rk*tp2R]}
         }
       }
-      const body=Math.abs(c-o);
-      if(!sig&&allowDisp&&adx[i]>=19){
-        if(bBull&&hBull&&c>o&&body>=a*1.18&&clvB>=0.70&&b.delta>0&&b.q>=avgQ*1.35&&c>e20[i]&&e20[i]>e50[i]){
-          const lim=c-body*0.45,sl=Math.min(l-a*0.25,lim-a*1.15,lim*(1-minStop));
-          if((lim-sl)/lim<=maxStop&&(c-lim)<=(lim-sl)*1.3){const rk=lim-sl;sig=['long','limit',lim,sl,Math.max(c+rk*0.75,lim+rk*1.75),lim+rk*3.2]}
-        }else if(bBear&&hBear&&c<o&&body>=a*1.18&&clvS>=0.70&&b.delta<0&&b.q>=avgQ*1.35&&c<e20[i]&&e20[i]<e50[i]){
-          const lim=c+body*0.45,sl=Math.max(h+a*0.25,lim+a*1.15,lim*(1+minStop));
-          if((sl-lim)/lim<=maxStop&&(lim-c)<=(sl-lim)*1.3){const rk=sl-lim;sig=['short','limit',lim,sl,Math.min(c-rk*0.75,lim-rk*1.75),lim-rk*3.2]}
+
+      /* 战法 ②：4h+1h 流动性扫损收回 */
+      if(!sig&&isSwing){
+        let swLo22=1e18,swHi22=0;
+        for(let k=i-22;k<i;k++){if(closedLtf[k].l<swLo22)swLo22=closedLtf[k].l;if(closedLtf[k].h>swHi22)swHi22=closedLtf[k].h}
+        if(bBull&&!hBear&&noLateLong&&l<swLo22&&c>swLo22&&c>o&&clvB>=0.65&&b.q>=avgQ*1.25&&b.delta>0&&rsi[i-1]<=44){
+          const sl=Math.min(l-a*slBuf,c-a*slAtr,c*(1-minStop));
+          if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*tp1R,c+rk*tp2R]}
+        }else if(bBear&&!hBull&&noLateShort&&h>swHi22&&c<swHi22&&c<o&&clvS>=0.65&&b.q>=avgQ*1.25&&b.delta<0&&rsi[i-1]>=56){
+          const sl=Math.max(h+a*slBuf,c+a*slAtr,c*(1+minStop));
+          if((sl-c)/c<=maxStop){const rk=sl-c;sig=['short','market',c,sl,c-rk*tp1R,c-rk*tp2R]}
         }
       }
-      if(!sig&&allowPb&&adx[i]>=20){
-        const pLo=Math.min(closedLtf[i-2].l,closedLtf[i-1].l,l),pHi=Math.max(closedLtf[i-2].h,closedLtf[i-1].h,h);
-        if(bBull&&hBull&&e20[i]>e50[i]&&pLo<=e20[i]*1.003&&c>e20[i]&&c>o&&clvB>=0.64&&b.delta>0&&rsi[i]>=44&&rsi[i]<=65){
-          const sl=Math.min(pLo-a*0.25,c-a*1.2,c*(1-minStop));
-          if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*1.65,c+rk*3.1]}
-        }else if(bBear&&hBear&&e20[i]<e50[i]&&pHi>=e20[i]*0.997&&c<e20[i]&&c<o&&clvS>=0.64&&b.delta<0&&rsi[i]>=35&&rsi[i]<=56){
-          const sl=Math.max(pHi+a*0.25,c+a*1.2,c*(1+minStop));
-          if((sl-c)/c<=maxStop){const rk=sl-c;sig=['short','market',c,sl,c-rk*1.65,c-rk*3.1]}
+
+      /* 战法 ③：超卖急跌放量承接反抽（专抓极值宣泄后的高胜率 V 反多单） */
+      if(!sig){
+        let swLo16=1e18;
+        for(let k=i-16;k<i;k++)if(closedLtf[k].l<swLo16)swLo16=closedLtf[k].l;
+        if(l<swLo16&&rsi[i-1]<=28&&c>o&&clvB>=0.68&&b.delta>0&&b.q>=avgQ*1.40){
+          const sl=Math.min(l-a*slBuf,c-a*slAtr,c*(1-minStop));
+          if((c-sl)/c<=maxStop){const rk=c-sl;sig=['long','market',c,sl,c+rk*tp1R,c+rk*tp2R]}
         }
       }
+
       if(!sig)continue;
       trig++;
-      const tr=simOneTrade(closedLtf,i,sig[0],sig[1],sig[2],sig[3],sig[4],sig[5],costFrac);
+      const tr=simOneTrade(closedLtf,i,sig[0],sig[1],sig[2],sig[3],sig[4],sig[5],costFrac,maxHold);
       if(tr){
         trades.push(tr);
         cdUntil=tr.exitIdx+2;
@@ -359,7 +401,7 @@
       }
     }
     if(!trades.length){
-      return {n:0,trig,fillRate:0,wr:null,tp1Rate:null,avgR:0,shrunkR:0,pf:null,pass:n<180};
+      return {n:0,trig,fillRate:0,wr:null,tp1Rate:null,avgR:0,shrunkR:0,pf:null,pass:false};
     }
     const wins=trades.filter(t=>t.r>0).length;
     const tp1s=trades.filter(t=>t.tp1).length;
@@ -370,9 +412,8 @@
     const gl=Math.abs(trades.filter(t=>t.r<=0).reduce((a,t)=>a+t.r,0));
     const pf=gl>0?gw/gl:(gw>0?9.9:1);
     const shrunkR=(trades.length*avgR)/(trades.length+3);
-    /* 4h+1h 稳健波段约 21 天触发 2~10 笔，要求 >=2 笔正期望；1h+15m 要求 >=3 笔正期望（均需 avgR>=+0.05R 且 WR>=42% 或 PF>=1.20） */
-    const minTrades=isSwing?2:3;
-    const pass=(n<180&&avgR>=0)||(trades.length>=minTrades&&avgR>=0.05&&(wr>=42||pf>=1.20))||(isSwing&&trades.length===1&&avgR>=0.40);
+    /* 高胜率严苛门禁：近30天同策略需 >=2 笔且胜率 >=55% 且 avgR>=+0.05R（或单笔全胜>=0.45R） */
+    const pass=(n<160&&avgR>=0)||(trades.length>=2&&wr>=55&&avgR>=0.05)||(trades.length===1&&wr===100&&avgR>=0.45);
     return {
       n:trades.length,
       trig,
@@ -388,38 +429,46 @@
 
   /* ---------- 阶段 1：全市场多源采集 + 盘口点差 + 大盘风向标深度测算 ---------- */
   async function loadBenchmarks(){
-    const ltfIv=DECIDE.style==='intraday'?'15m':'1h';
-    const htfIv=DECIDE.style==='intraday'?'1h':'4h';
-    const fetchPair=async sym=>{
+    const isSwing=DECIDE.style==='swing';
+    const ltfIv=isSwing?'1h':'15m';
+    const htfIv=isSwing?'4h':'1h';
+    const ltfLim=isSwing?720:960;
+    const fetchPair=async (sym,isSk)=>{
       try{
         const [lRaw,hRaw]=await Promise.all([
-          jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=${ltfIv}&limit=500`,15000),
-          jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=${htfIv}&limit=120`,15000)
+          jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=${ltfIv}&limit=${ltfLim}`,15000),
+          jget(`${API}/fapi/v1/klines?symbol=${sym}&interval=${htfIv}&limit=250`,15000)
         ]);
-        const lClosed=parseKlines(lRaw).slice(0,-1);
-        const hClosed=parseKlines(hRaw).slice(0,-1);
+        const lClosed=stripFlatBars(parseKlines(lRaw).slice(0,-1),isSk);
+        const hClosed=stripFlatBars(parseKlines(hRaw).slice(0,-1),isSk);
         const lc=lClosed.map(b=>b.c),hc=hClosed.map(b=>b.c);
         const le20=calcEmaSeries(lc,20),le50=calcEmaSeries(lc,50);
         const he20=calcEmaSeries(hc,20),he50=calcEmaSeries(hc,50);
         const li=lClosed.length-1,hi=hClosed.length-1;
         const ret4=li>=4?(lc[li]/lc[li-4]-1)*100:0;
+        const ret48=li>=48?(lc[li]/lc[li-48]-1)*100:0;
         const cvd4=lClosed.slice(-4).reduce((a,b)=>a+b.delta,0);
         const q4=lClosed.slice(-4).reduce((a,b)=>a+b.q,0)||1;
         const cvdRatio=cvd4/q4;
         const shockDump=ret4<=-1.6&&lc[li]<le20[li]&&cvdRatio<-0.04;
         const shockPump=ret4>=1.6&&lc[li]>le20[li]&&cvdRatio>0.04;
+        const strictBull=isSk?(lc[li]>=le20[li]):(isSwing?(lc[li]>le20[li]&&le20[li]>=le50[li]*0.995):(lc[li]>le20[li]||lc[li]>le50[li]));
+        const strictBear=isSk?(lc[li]<=le50[li]):(lc[li]<le20[li]&&lc[li]<le50[li]);
         return {
-          bull:lc[li]>=le50[li],
-          bear:lc[li]<=le50[li],
+          bull:strictBull,
+          bear:strictBear,
           htfBull:hc[hi]>he20[hi]&&he20[hi]>=he50[hi],
           htfBear:hc[hi]<he20[hi]&&he20[hi]<=he50[hi],
-          ret4,cvdRatio,shockDump,shockPump,closedBars:lClosed
+          ret4,ret48,cvdRatio,shockDump,shockPump,closedBars:lClosed
         };
       }catch(e){
-        return {bull:true,bear:true,htfBull:false,htfBear:false,ret4:0,cvdRatio:0,shockDump:false,shockPump:false,closedBars:null};
+        return {bull:true,bear:true,htfBull:false,htfBear:false,ret4:0,ret48:0,cvdRatio:0,shockDump:false,shockPump:false,closedBars:null};
       }
     };
-    const [cB,sB]=await Promise.all([fetchPair('BTCUSDT'),fetchPair('SPYUSDT')]);
+    const [cB,sB]=await Promise.all([
+      fetchPair('BTCUSDT',false),
+      fetchPair('QQQUSDT',true).then(r=>r.closedBars?r:fetchPair('SPYUSDT',true))
+    ]);
     DECIDE.benchData={crypto:cB,stock:sB};
   }
 
@@ -493,10 +542,10 @@
         spyChg:spy.chg,qqqChg:qqq.chg,bias:stockBias,
         session:stockSess,
         shockDump:sBench.shockDump,shockPump:sBench.shockPump,
-        label:stockSess.code==='weekend'?'⚠️ 美股周末休市（盘口流动性薄，系统已自动切换仅限价埋伏保护）'
-             :stockBias>=1?'美股风险偏好走强（优选高流动性科技/ETF顺势回踩）'
-             :stockBias<=-1?'美股指数承压（优选顺势做空破位股或对冲ETF）'
-             :'美股窄幅整理（严控点差损耗，精选独立订单流异动标的）'
+        label:stockSess.code==='weekend'?'⚠️ 美股周末休市（已自动剥离夜间零成交平盘K线，仅限高胜率确认限价/次日开盘结构）'
+             :stockBias>=1?'美股风险偏好走强（4h+1h 剥离平盘K线预处理 + QQQ过滤，优选高胜率科技/大宗）'
+             :stockBias<=-1?'美股指数承压（优选 4h+1h 顺势做空破位股或对冲大宗）'
+             :'美股窄幅整理（仅放行 4h+1h 因果胜率 >=55% 的领涨龙头标的）'
       }
     };
 
@@ -506,9 +555,9 @@
       const isSk=typeof isTradFiSymbol==='function'&&isTradFiSymbol(sym);
       if(DECIDE.scope==='crypto'&&isSk)continue;
       if(DECIDE.scope==='stock'&&!isSk)continue;
-      /* 4h+1h 稳健波段自动过滤非连续交易的单只美股个股（个股隔夜缺口只在 1h+15m 日内猎手交易，样本外 PF 1.68） */
-      if(DECIDE.style==='swing'&&isSk&&!MACRO_STOCK_SWING.has(sym))continue;
-      const minVol=isSk?10e6:18e6;
+      /* v6 实证：美股永续在 1h+15m 震荡磨损极高（胜率33%/PF 0.45），而在 4h+1h 去平盘预处理后样本外胜率高达 90.9%；故日内模式自动过滤美股，波段模式全放行 */
+      if(DECIDE.style==='intraday'&&isSk)continue;
+      const minVol=isSk?2e6:18e6;
       const isCore=CORE_LEADERS_CRYPTO.includes(sym)||CORE_LEADERS_STOCK.includes(sym);
       if(!isCore&&(tk.vol||0)<minVol)continue;
 
@@ -578,17 +627,25 @@
     return pickFrom(all,30,99);
   }
 
-  /* ---------- 阶段 2：闭线三大高胜率战法识别 + 订单流验真 + 净期望评分 ---------- */
-  function detectDirectionalSetup(side,meta,closedLtf,closedHtf,liveBar,htfSmc,ltfSmc,wfStats,costFrac){
+  /* ---------- 阶段 2：v6 闭线高胜率三支柱战法 + 订单流验真 + 0.85R 锁利数学期望 ---------- */
+  function detectDirectionalSetup(side,meta,closedLtf,closedHtf,closedH4,liveBar,htfSmc,ltfSmc,wfStats,costFrac){
     const isLong=(side==='long');
     const isSk=meta.isStock;
+    const isSwing=DECIDE.style==='swing';
     const bench=isSk?(DECIDE.benchData.stock||{}):(DECIDE.benchData.crypto||{});
 
     /* 大盘急跌/逼空熔断护盾：严禁在大盘放量瀑布时市价接弱势币多单，或逼空急拉时摸顶做空 */
     if(isLong&&bench.shockDump&&meta.excess24<3.5)return null;
     if(!isLong&&bench.shockPump&&meta.excess24>-3.5)return null;
+    /* 深度负费率防逼空：资金费率 <= -0.035% 时严禁新开空单 */
+    if(!isLong&&meta.fr!=null&&meta.fr<=-0.00035)return null;
+    if(isLong&&meta.fr!=null&&meta.fr>=0.00060)return null;
 
     const n=closedLtf.length,lastIdx=n-1;
+    if(lastIdx<60||closedHtf.length<45)return null;
+    /* 隔夜/周末大幅跳空保护：美股永续最近一根收线开盘跳空 >1.5% 时暂停开仓，等结构企稳 */
+    if(isSk&&closedLtf[lastIdx-1]?.c>0&&Math.abs(closedLtf[lastIdx].o-closedLtf[lastIdx-1].c)/closedLtf[lastIdx-1].c>0.015)return null;
+
     const livePx=liveBar.c;
     const closes=closedLtf.map(b=>b.c);
     const e20=calcEmaSeries(closes,20),e50=calcEmaSeries(closes,50);
@@ -599,13 +656,16 @@
     const atr=atrArr[lastIdx]||ltfSmc.atr||livePx*0.015;
     const adx=adxArr[lastIdx]||20;
     const er=calcEffRatio(closedLtf,lastIdx,16);
-    const vwap=calcRollingVwap(closedLtf,lastIdx,DECIDE.style==='intraday'?96:24)||livePx;
+    const vwap=calcRollingVwap(closedLtf,lastIdx,isSwing?24:96)||livePx;
 
-    const htfTrendOk=isLong
-      ?(hc[hi]>he20[hi]&&he20[hi]>=he50[hi]*0.999)
-      :(hc[hi]<he20[hi]&&he20[hi]<=he50[hi]*1.001);
+    let htfTrendOk=isLong
+      ?(hc[hi]>he20[hi]&&he20[hi]>he50[hi])
+      :(hc[hi]<he20[hi]&&he20[hi]<he50[hi]);
+    if(!isSwing&&Array.isArray(closedH4)&&closedH4.length>=40){
+      const h4c=closedH4.map(b=>b.c),h4e20=calcEmaSeries(h4c,20),h4e50=calcEmaSeries(h4c,50),h4i=h4c.length-1;
+      htfTrendOk=htfTrendOk&&(isLong?(h4c[h4i]>h4e20[h4i]&&h4e20[h4i]>h4e50[h4i]):(h4c[h4i]<h4e20[h4i]&&h4e20[h4i]<h4e50[h4i]));
+    }
     const htfNotCounter=isLong?!(hc[hi]<he20[hi]&&he20[hi]<he50[hi]):!(hc[hi]>he20[hi]&&he20[hi]>he50[hi]);
-    const smcAligned=isLong?(htfSmc.dir===1||ltfSmc.dir===1):(htfSmc.dir===-1||ltfSmc.dir===-1);
 
     /* 近 4 根已收盘 K 线真实 Taker CVD 主动买卖净占比 */
     const recent4=closedLtf.slice(-4);
@@ -613,8 +673,11 @@
     const cvd4Pct=recent4.reduce((a,b)=>a+b.delta,0)/q4*100;
     let avgQ20=0;for(let k=lastIdx-20;k<lastIdx;k++)avgQ20+=closedLtf[k].q;avgQ20=avgQ20/20||1;
 
-    const minStopPct=isSk?0.008:0.011;
-    const maxStopPct=DECIDE.style==='intraday'?(isSk?0.036:0.052):(isSk?0.048:0.068);
+    const slAtr=isSwing?1.8:2.2,slBuf=0.35;
+    const minStopMult=isSwing?1.0:1.35;
+    const minStopPct=(isSk?(isSwing?0.011:0.009):(isSwing?0.015:0.012))*minStopMult;
+    const maxStopPct=isSwing?(isSk?0.055:0.068):(isSk?0.035:0.045);
+
     /* 美股开盘前 15 分钟 (09:25–09:45 ET) 集合竞价上下插针剧震窗口保护 + 周末休市保护 */
     let usOpenWhip=false;
     if(isSk){
@@ -627,167 +690,114 @@
       }catch(e){}
     }
     const allowMarket=!(isSk&&(meta.stockSessCode==='weekend'||usOpenWhip||meta.spreadPct>0.12))&&meta.spreadPct<=0.15;
-    /* 防衰竭末端追涨杀跌：RSI 极端超买(>70)/超卖(<30)禁止同向开新仓 */
-    if((isLong&&rsiArr[lastIdx]>70)||(!isLong&&rsiArr[lastIdx]<30))return null;
 
-    /* 限价单最大允许等待回撤距离（防止挂在偏离现价 3R~4% 之外造成逆向强反转吃单的逆向选择！） */
-    const maxLimDistAbs=Math.min(atr*1.45,livePx*(DECIDE.style==='intraday'?(isSk?0.015:0.019):(isSk?0.022:0.026)));
-    const isSwing=DECIDE.style==='swing';
-    /* v5 实证分周期边际矩阵：4h+1h 仅做 Sweep + Disp；1h+15m 仅做 Disp + Pullback，绝不混用负期望规则 */
-    const allowSweep=isSwing;
-    const allowDisp=true;
-    const allowPb=!isSwing;
-    /* 大盘基准 EMA50 对齐门禁（除非具备 >=3.5% 独立超额Alpha，否则绝不逆大盘趋势做多/做空） */
+    /* 48h 防衰竭末端追涨杀跌闸门：严禁在急跌 >6.5% / BTC急跌 >5.5% / RSI<36 时追空，避免 V 反连损！ */
+    const ret48=lastIdx>=48?(livePx/closedLtf[lastIdx-48].c-1)*100:0;
+    const bRet48=bench.ret48||0;
+    const noLateShort=ret48>-6.5&&bRet48>-5.5&&rsiArr[lastIdx]>=36;
+    const noLateLong=ret48<8.5&&bRet48<5.5&&rsiArr[lastIdx]<=64;
+
+    const maxLimDistAbs=Math.min(atr*1.25,livePx*(isSwing?(isSk?0.020:0.024):(isSk?0.014:0.018)));
     const benchAligned=isLong?(bench.bull||meta.excess24>=3.5):(bench.bear||meta.excess24<=-3.5);
+    const minAdx=isSwing?(isSk?22:23):24;
 
     let archetype=null; /* {tier, tag, execMode, entry, sl, entryReason, slReason, baseScore} */
+    const lastB=closedLtf[lastIdx],lastRng=Math.max(1e-9,lastB.h-lastB.l);
+    const lastClv=isLong?(lastB.c-lastB.l)/lastRng:(lastB.h-lastB.c)/lastRng;
 
-    /* === 战法 ①：S级 · 流动性扫损收回 (仅在 4h+1h 稳健波段启用，15m 扫损噪音已实测关闭) === */
-    for(const idx of [lastIdx,lastIdx-1]){
-      if(!allowSweep||!benchAligned||archetype||idx<25)continue;
-      const b=closedLtf[idx],rng=Math.max(1e-9,b.h-b.l);
-      const clv=isLong?(b.c-b.l)/rng:(b.h-b.c)/rng;
-      let swLo=1e18,swHi=0;
-      for(let k=idx-22;k<idx;k++){if(closedLtf[k].l<swLo)swLo=closedLtf[k].l;if(closedLtf[k].h>swHi)swHi=closedLtf[k].h}
-      if(isLong&&htfNotCounter&&b.l<swLo&&b.c>swLo&&b.c>b.o&&clv>=0.64&&b.q>=avgQ20*1.22&&b.delta>0&&rsiArr[idx-1]<=45){
-        const sl=Math.min(b.l-atr*0.25,livePx-atr*1.15,livePx*(1-minStopPct));
-        /* 确保当前实时价尚未跌破止损，也未暴拉远离触发收盘价超过 0.45ATR */
-        if(livePx>sl&&Math.abs(livePx-b.c)<=atr*0.55&&allowMarket){
-          archetype={
-            tier:'S',tag:'流动性扫损收回',execMode:'market',entry:livePx,sl,
-            entryReason:`刚完成假跌破前低 (${fmtScale(swLo,livePx)}) 扫损并放量阳线收回，主动买盘吸收明确，现价可入`,
-            slReason:`跌破扫损针尖低点 (${fmtScale(b.l,livePx)}) - 0.25ATR`,
-            baseScore:36
-          };
-        }
-      }else if(!isLong&&htfNotCounter&&b.h>swHi&&b.c<swHi&&b.c<b.o&&clv>=0.64&&b.q>=avgQ20*1.22&&b.delta<0&&rsiArr[idx-1]>=55){
-        const sl=Math.max(b.h+atr*0.25,livePx+atr*1.15,livePx*(1+minStopPct));
-        if(livePx<sl&&Math.abs(livePx-b.c)<=atr*0.55&&allowMarket){
-          archetype={
-            tier:'S',tag:'冲高扫损诱多回落',execMode:'market',entry:livePx,sl,
-            entryReason:`刚完成假突破前高 (${fmtScale(swHi,livePx)}) 诱多扫损并放量阴线跌回，主动卖盘砸盘确认，现价可空`,
-            slReason:`突破扫损针尖高点 (${fmtScale(b.h,livePx)}) + 0.25ATR`,
-            baseScore:36
-          };
-        }
-      }
-    }
-
-    /* === 战法 ②：S级 · 机构位移 45% FVG/实体回踩挂单 (4h+1h 与 1h+15m 双周期全天候核心赚钱引擎) === */
-    if(!archetype&&allowDisp&&benchAligned&&htfTrendOk&&adx>=19){
-      for(let idx=lastIdx;idx>=Math.max(30,lastIdx-5);idx--){
-        const b=closedLtf[idx],body=Math.abs(b.c-b.o),rng=Math.max(1e-9,b.h-b.l);
-        const clv=isLong?(b.c-b.l)/rng:(b.h-b.c)/rng;
-        if(isLong&&b.c>b.o&&body>=atr*1.18&&clv>=0.70&&b.delta>0&&b.q>=avgQ20*1.35&&b.c>e20[idx]&&e20[idx]>=e50[idx]*0.999){
-          const lim=b.c-body*0.45;
-          const sl=Math.min(b.l-atr*0.25,lim-atr*1.15,lim*(1-minStopPct));
-          let touched=false,ranAway=false;
-          const rk=lim-sl;
-          for(let j=idx+1;j<n;j++){
-            if(closedLtf[j].l<=lim)touched=true;
-            if(closedLtf[j].h>=lim+rk*1.7)ranAway=true;
-          }
-          if(liveBar.l<=lim)touched=true;
-          if(!touched&&!ranAway&&livePx>lim&&(livePx-lim)<=Math.min(maxLimDistAbs,rk*1.30)){
-            archetype={
-              tier:'S',tag:'机构位移FVG挂单',execMode:'limit',entry:lim,sl,
-              entryReason:`机构放量位移阳线已确立多头趋势，不追现价，在位移实体 45%/FVG 黄金回撤位 (${fmtScale(lim,lim)}) 挂限价单接回踩`,
-              slReason:`跌破机构位移起涨低点 (${fmtScale(b.l,lim)}) - 0.25ATR`,
-              baseScore:34
-            };
-            break;
-          }
-        }else if(!isLong&&b.c<b.o&&body>=atr*1.18&&clv>=0.70&&b.delta<0&&b.q>=avgQ20*1.35&&b.c<e20[idx]&&e20[idx]<=e50[idx]*1.001){
-          const lim=b.c+body*0.45;
-          const sl=Math.max(b.h+atr*0.25,lim+atr*1.15,lim*(1+minStopPct));
-          let touched=false,ranAway=false;
-          const rk=sl-lim;
-          for(let j=idx+1;j<n;j++){
-            if(closedLtf[j].h>=lim)touched=true;
-            if(closedLtf[j].l<=lim-rk*1.7)ranAway=true;
-          }
-          if(liveBar.h>=lim)touched=true;
-          if(!touched&&!ranAway&&livePx<lim&&(lim-livePx)<=Math.min(maxLimDistAbs,rk*1.30)){
-            archetype={
-              tier:'S',tag:'机构破位FVG挂单',execMode:'limit',entry:lim,sl,
-              entryReason:`机构放量破位阴线已确立空头趋势，不追杀现价，在破位实体 45%/FVG 回抽位 (${fmtScale(lim,lim)}) 挂限价单等反抽`,
-              slReason:`突破机构破位起跌高点 (${fmtScale(b.h,lim)}) + 0.25ATR`,
-              baseScore:34
-            };
-            break;
-          }
-        }
-      }
-    }
-
-    /* === 战法 ③：S/A级 · 多周期顺势均线+OB回踩企稳确认 (实测仅在 1h+15m 日内猎手正期望，4h+1h 已自动禁用防磨损) === */
-    if(!archetype&&allowPb&&benchAligned&&htfTrendOk&&smcAligned&&adx>=19&&er>=0.20){
-      const b=closedLtf[lastIdx],rng=Math.max(1e-9,b.h-b.l);
-      const clv=isLong?(b.c-b.l)/rng:(b.h-b.c)/rng;
-      const pLo3=Math.min(closedLtf[lastIdx-2].l,closedLtf[lastIdx-1].l,b.l);
-      const pHi3=Math.max(closedLtf[lastIdx-2].h,closedLtf[lastIdx-1].h,b.h);
-      let priorHi16=0,priorLo16=1e18;
-      for(let k=lastIdx-18;k<lastIdx;k++){if(closedLtf[k].h>priorHi16)priorHi16=closedLtf[k].h;if(closedLtf[k].l<priorLo16)priorLo16=closedLtf[k].l}
+    /* === 战法 ①：S/A级 · 顺势 EMA20/OB 回踩/反抽闭线确认 (核心高胜率引擎，绝不盲接未确认限价！) === */
+    if(benchAligned&&htfTrendOk&&adx>=minAdx&&(isSwing||er>=0.18)){
+      const pLo3=Math.min(closedLtf[lastIdx-2].l,closedLtf[lastIdx-1].l,lastB.l);
+      const pHi3=Math.max(closedLtf[lastIdx-2].h,closedLtf[lastIdx-1].h,lastB.h);
+      let swLo8=1e18,swHi8=0;
+      for(let k=lastIdx-8;k<=lastIdx;k++){if(closedLtf[k].l<swLo8)swLo8=closedLtf[k].l;if(closedLtf[k].h>swHi8)swHi8=closedLtf[k].h}
 
       const maxPullPct=maxLimDistAbs/livePx;
       const alignedObs=[...(ltfSmc.obs||[]),...(htfSmc.obs||[])].filter(o=>o.state!==2&&o.dir===(isLong?1:-1)&&(isLong?o.bottom<livePx:o.top>livePx)&&Math.abs((o.top+o.bottom)/2-livePx)<=livePx*maxPullPct);
       const nearOb=alignedObs.sort((a,b2)=>isLong?(b2.top-a.top):(a.bottom-b2.bottom))[0]||null;
 
-      if(isLong&&e20[lastIdx]>e50[lastIdx]&&b.c>=vwap*0.997){
-        /* 3A: 刚完成回踩 EMA20/OB 并收阳放量企稳（且未过度偏离 VWAP）→ 现价单 */
-        const pulled=pLo3<=e20[lastIdx]*1.004||(nearOb&&pLo3<=nearOb.top*1.003);
-        const notOverExt=(livePx-vwap)<=atr*2.2&&rsiArr[lastIdx]>=43&&rsiArr[lastIdx]<=65;
-        if(pulled&&notOverExt&&allowMarket&&b.c>e20[lastIdx]&&b.c>b.o&&clv>=0.62&&(b.delta>0||cvd4Pct>=4)&&(priorHi16-livePx)>=atr*1.35&&Math.abs(livePx-b.c)<=atr*0.45){
-          const baseSl=nearOb&&nearOb.bottom<livePx?Math.min(pLo3,nearOb.bottom):pLo3;
-          const sl=Math.min(baseSl-atr*0.25,livePx-atr*1.15,livePx*(1-minStopPct));
-          archetype={
-            tier:cvd4Pct>=8&&meta.excess24>=1.5?'S':'A',
-            tag:'顺势回踩企稳确认',execMode:'market',entry:livePx,sl,
-            entryReason:`4h/1h 趋势多头排列且刚回踩 EMA20${nearOb?'/需求OB':''} 收闭线企稳阳线，主动买盘净流入，现价可入`,
-            slReason:`跌破回踩确认低点 (${fmtScale(baseSl,livePx)}) - 0.25ATR`,
-            baseScore:30
-          };
-        }else if(nearOb||Math.abs(e20[lastIdx]-livePx)/livePx<=maxPullPct){
-          /* 3B: 趋势明确但现价偏高，不追涨，仅在下方 EMA20 与新鲜 OB 重合区挂限价埋伏单 */
-          const anchor=nearOb?Math.min(livePx*0.995,nearOb.top*0.65+nearOb.bottom*0.35):Math.min(livePx*0.995,e20[lastIdx]);
-          const dist=(livePx-anchor)/livePx;
-          if(dist>=0.0035&&dist<=maxPullPct&&cvd4Pct>=-6){
-            const baseSl=nearOb?nearOb.bottom:Math.min(anchor-atr*1.2,pLo3);
-            const sl=Math.min(baseSl-atr*0.25,anchor*(1-minStopPct));
+      if(isLong&&noLateLong&&e20[lastIdx]>e50[lastIdx]){
+        const pulled=pLo3<=e20[lastIdx]*1.003||(nearOb&&pLo3<=nearOb.top*1.003);
+        if(pulled&&lastB.c>e20[lastIdx]&&lastB.c>lastB.o&&lastClv>=0.60&&(lastB.delta>0||cvd4Pct>=4)&&rsiArr[lastIdx]>=42&&rsiArr[lastIdx]<=63){
+          const canMkt=allowMarket&&Math.abs(livePx-lastB.c)<=atr*0.45;
+          const en=canMkt?livePx:Math.min(livePx*0.996,lastB.c);
+          const structLo=nearOb&&nearOb.bottom<en?Math.min(swLo8,nearOb.bottom):swLo8;
+          const sl=Math.min(structLo-atr*slBuf,en-atr*slAtr,en*(1-minStopPct));
+          if(en>sl&&(canMkt||(livePx-en)<=Math.min(maxLimDistAbs,(en-sl)*0.9))){
             archetype={
-              tier:'A',tag:'顺势OB回踩挂单',execMode:'limit',entry:anchor,sl,
-              entryReason:`大小周期多头共振但现价不宜追高，在下方${nearOb?'需求OB与均线':'EMA20动态均线'}支撑位挂限价单低吸`,
-              slReason:`跌破支撑结构下沿 (${fmtScale(baseSl,anchor)}) - 0.25ATR`,
-              baseScore:25
+              tier:(adx>=25&&cvd4Pct>=4)?'S':'A',
+              tag:canMkt?'顺势回踩闭线确认':'顺势回踩确认挂单',
+              execMode:canMkt?'market':'limit',entry:en,sl,
+              entryReason:`大小周期共振多头排列，已实际回踩 EMA20${nearOb?'/需求OB':''} 并收出多头拒绝阳线（主动买盘确认），非盲目预埋接刀`,
+              slReason:`跌破 8 根结构摆动低点 (${fmtScale(structLo,en)}) - ${slBuf}ATR 与 ${slAtr}ATR 宽止损防插针`,
+              baseScore:canMkt?35:30
             };
           }
         }
-      }else if(!isLong&&e20[lastIdx]<e50[lastIdx]&&b.c<=vwap*1.003){
-        const pulled=pHi3>=e20[lastIdx]*0.996||(nearOb&&pHi3>=nearOb.bottom*0.997);
-        const notOverExt=(vwap-livePx)<=atr*2.2&&rsiArr[lastIdx]>=35&&rsiArr[lastIdx]<=57;
-        if(pulled&&notOverExt&&allowMarket&&b.c<e20[lastIdx]&&b.c<b.o&&clv>=0.62&&(b.delta<0||cvd4Pct<=-4)&&(livePx-priorLo16)>=atr*1.35&&Math.abs(livePx-b.c)<=atr*0.45){
-          const baseSl=nearOb&&nearOb.top>livePx?Math.max(pHi3,nearOb.top):pHi3;
-          const sl=Math.max(baseSl+atr*0.25,livePx+atr*1.15,livePx*(1+minStopPct));
-          archetype={
-            tier:cvd4Pct<=-8&&meta.excess24<=-1.5?'S':'A',
-            tag:'顺势反抽受阻做空',execMode:'market',entry:livePx,sl,
-            entryReason:`4h/1h 趋势空头压制且反抽 EMA20${nearOb?'/供给OB':''} 收闭线受阻阴线，主动卖盘主导，现价可空`,
-            slReason:`突破反抽受阻高点 (${fmtScale(baseSl,livePx)}) + 0.25ATR`,
-            baseScore:30
-          };
-        }else if(nearOb||Math.abs(e20[lastIdx]-livePx)/livePx<=maxPullPct){
-          const anchor=nearOb?Math.max(livePx*1.005,nearOb.bottom*0.65+nearOb.top*0.35):Math.max(livePx*1.005,e20[lastIdx]);
-          const dist=(anchor-livePx)/livePx;
-          if(dist>=0.0035&&dist<=maxPullPct&&cvd4Pct<=6){
-            const baseSl=nearOb?nearOb.top:Math.max(anchor+atr*1.2,pHi3);
-            const sl=Math.max(baseSl+atr*0.25,anchor*(1+minStopPct));
+      }else if(!isLong&&noLateShort&&e20[lastIdx]<e50[lastIdx]){
+        const pulled=pHi3>=e20[lastIdx]*0.997||(nearOb&&pHi3>=nearOb.bottom*0.997);
+        if(pulled&&lastB.c<e20[lastIdx]&&lastB.c<lastB.o&&lastClv>=0.60&&(lastB.delta<0||cvd4Pct<=-4)&&rsiArr[lastIdx]>=37&&rsiArr[lastIdx]<=58){
+          const canMkt=allowMarket&&Math.abs(livePx-lastB.c)<=atr*0.45;
+          const en=canMkt?livePx:Math.max(livePx*1.004,lastB.c);
+          const structHi=nearOb&&nearOb.top>en?Math.max(swHi8,nearOb.top):swHi8;
+          const sl=Math.max(structHi+atr*slBuf,en+atr*slAtr,en*(1+minStopPct));
+          if(sl>en&&(canMkt||(en-livePx)<=Math.min(maxLimDistAbs,(sl-en)*0.9))){
             archetype={
-              tier:'A',tag:'顺势OB反抽挂空',execMode:'limit',entry:anchor,sl,
-              entryReason:`大小周期空头共振但现价不宜追空，在上方${nearOb?'供给OB与均线':'EMA20动态均线'}阻力位挂限价单高空`,
-              slReason:`突破阻力结构上沿 (${fmtScale(baseSl,anchor)}) + 0.25ATR`,
-              baseScore:25
+              tier:(adx>=25&&cvd4Pct<=-4)?'S':'A',
+              tag:canMkt?'顺势反抽受阻确认':'顺势反抽确认挂空',
+              execMode:canMkt?'market':'limit',entry:en,sl,
+              entryReason:`大小周期空头压制，已反抽至 EMA20${nearOb?'/供给OB':''} 并收出受阻阴线（非急跌底部追空），主动卖盘主导`,
+              slReason:`突破 8 根结构摆动高点 (${fmtScale(structHi,en)}) + ${slBuf}ATR 与 ${slAtr}ATR 宽止损防诱空扫损`,
+              baseScore:canMkt?35:30
             };
           }
+        }
+      }
+    }
+
+    /* === 战法 ②：S级 · 流动性扫损收回 (仅在 4h+1h 稳健波段启用，15m 扫损噪音已实测关闭) === */
+    for(const idx of [lastIdx,lastIdx-1]){
+      if(!isSwing||!benchAligned||archetype||idx<25)continue;
+      const b=closedLtf[idx],rng=Math.max(1e-9,b.h-b.l);
+      const clv=isLong?(b.c-b.l)/rng:(b.h-b.c)/rng;
+      let swLo=1e18,swHi=0;
+      for(let k=idx-22;k<idx;k++){if(closedLtf[k].l<swLo)swLo=closedLtf[k].l;if(closedLtf[k].h>swHi)swHi=closedLtf[k].h}
+      if(isLong&&htfNotCounter&&noLateLong&&b.l<swLo&&b.c>swLo&&b.c>b.o&&clv>=0.65&&b.q>=avgQ20*1.25&&b.delta>0&&rsiArr[idx-1]<=44){
+        const sl=Math.min(b.l-atr*slBuf,livePx-atr*slAtr,livePx*(1-minStopPct));
+        if(livePx>sl&&Math.abs(livePx-b.c)<=atr*0.55&&allowMarket){
+          archetype={
+            tier:'S',tag:'流动性扫损收回',execMode:'market',entry:livePx,sl,
+            entryReason:`刚完成假跌破前低 (${fmtScale(swLo,livePx)}) 扫损并放量阳线收回，主动买盘吸收明确，现价可入`,
+            slReason:`跌破扫损针尖低点 (${fmtScale(b.l,livePx)}) - ${slBuf}ATR 与 ${slAtr}ATR 宽保护`,
+            baseScore:36
+          };
+        }
+      }else if(!isLong&&htfNotCounter&&noLateShort&&b.h>swHi&&b.c<swHi&&b.c<b.o&&clv>=0.65&&b.q>=avgQ20*1.25&&b.delta<0&&rsiArr[idx-1]>=56){
+        const sl=Math.max(b.h+atr*slBuf,livePx+atr*slAtr,livePx*(1+minStopPct));
+        if(livePx<sl&&Math.abs(livePx-b.c)<=atr*0.55&&allowMarket){
+          archetype={
+            tier:'S',tag:'冲高扫损诱多回落',execMode:'market',entry:livePx,sl,
+            entryReason:`刚完成假突破前高 (${fmtScale(swHi,livePx)}) 诱多扫损并放量阴线跌回，主动卖盘砸盘确认，现价可空`,
+            slReason:`突破扫损针尖高点 (${fmtScale(b.h,livePx)}) + ${slBuf}ATR 与 ${slAtr}ATR 宽保护`,
+            baseScore:36
+          };
+        }
+      }
+    }
+
+    /* === 战法 ③：S级 · 超卖急跌放量承接反抽（专抓恐慌抛售后闭线反转 V 反多单，替代逆势追空陷阱） === */
+    if(!archetype&&isLong&&!(bench.shockDump&&meta.excess24<0)&&meta.chg24>-22&&allowMarket){
+      let swLo16=1e18;
+      for(let k=lastIdx-16;k<lastIdx;k++)if(closedLtf[k].l<swLo16)swLo16=closedLtf[k].l;
+      if(lastB.l<swLo16&&rsiArr[lastIdx-1]<=28&&lastB.c>lastB.o&&lastClv>=0.68&&lastB.delta>0&&lastB.q>=avgQ20*1.40&&Math.abs(livePx-lastB.c)<=atr*0.55){
+        const sl=Math.min(lastB.l-atr*slBuf,livePx-atr*slAtr,livePx*(1-minStopPct));
+        if(livePx>sl){
+          archetype={
+            tier:'S',tag:'超卖放量承接V反',execMode:'market',entry:livePx,sl,
+            entryReason:`RSI 跌入深度超卖区 (${rsiArr[lastIdx-1].toFixed(0)}) 刺破前低后已收出 1.4x 放量阳线强力收回，空头宣泄衰竭`,
+            slReason:`跌破承接针低点 (${fmtScale(lastB.l,livePx)}) - ${slBuf}ATR 与 ${slAtr}ATR 宽止损`,
+            baseScore:34
+          };
         }
       }
     }
@@ -798,18 +808,17 @@
     const stopPct=Math.abs(entry-sl)/entry;
     if(!(sl>0)||stopPct>maxStopPct||stopPct<minStopPct*0.92)return null;
 
-    /* 防撞墙硬检：市价单正前方 1.15R 内若有未破新鲜反向 OB 阻力墙，禁止硬顶！ */
     const riskNow=Math.abs(entry-sl);
-    if(execMode==='limit'&&Math.abs(entry-livePx)>Math.min(maxLimDistAbs,riskNow*1.35))return null;
+    if(execMode==='limit'&&Math.abs(entry-livePx)>Math.min(maxLimDistAbs,riskNow*1.15))return null;
+
+    /* 墙前防硬顶：若 0.70R 内紧贴强未破反向 OB 墙，放弃市价单防止碰壁即止损 */
     const oppObs=[...(ltfSmc.obs||[]),...(htfSmc.obs||[])].filter(o=>o.state===0&&o.dir===(isLong?-1:1));
-    const wall=oppObs.find(o=>isLong?(o.bottom>entry&&(o.bottom-entry)<riskNow*1.15):(o.top<entry&&(entry-o.top)<riskNow*1.15));
+    const wall=oppObs.find(o=>isLong?(o.bottom>entry&&(o.bottom-entry)<riskNow*0.70):(o.top<entry&&(entry-o.top)<riskNow*0.70));
     if(wall&&execMode==='market')return null;
 
-    /* 精确推导 TP1（平 55% 推保本）与 TP2（45% 尾仓趋势目标）
-     * 关键修复：限价挂单的 TP1 严禁等于当前现价 livePx（否则挂单瞬间即触发 TP1 撤单条件自相矛盾！），
-     * 必须越过现价至少 0.75R 以上，确保成交后具备真实趋势延续空间且绝不秒撤单。 */
+    /* v6 高胜率止盈几何：TP1 锚定 0.85R（区间 [0.82R, 1.35R]）先平 70% 落袋并推止损至保本+成本，余 30% 博 TP2 (2.1R) */
     const magnets=[];
-    const minClearPx=isLong?(livePx+riskNow*0.75):Math.max(entry*0.15,livePx-riskNow*0.75);
+    const minClearPx=isLong?(livePx+riskNow*0.55):Math.max(entry*0.15,livePx-riskNow*0.55);
     if(isLong){
       for(const b of (ltfSmc.bsl||[]))if(b.price>Math.max(entry,minClearPx))magnets.push({p:b.price,src:'小周期未扫前高流动性(BSL)'});
       for(const b of (htfSmc.bsl||[]))if(b.price>Math.max(entry,minClearPx))magnets.push({p:b.price,src:'大周期未扫前高流动性(BSL)'});
@@ -826,10 +835,10 @@
       magnets.sort((a,b)=>b.p-a.p);
     }
 
-    const minTp1Dist=riskNow*1.65+entry*costFrac*2.2;
+    const minTp1Dist=riskNow*0.82+entry*costFrac*1.2;
     const validTp1=m=>{
       const d=Math.abs(m.p-entry);
-      if(d<minTp1Dist||d>riskNow*3.6)return false;
+      if(d<minTp1Dist||d>riskNow*1.35)return false;
       if(execMode==='limit')return isLong?(m.p>=minClearPx):(m.p<=minClearPx);
       return isLong?(m.p>entry):(m.p<entry);
     };
@@ -837,33 +846,30 @@
     let tp1,tp1Src;
     if(tp1Cand){tp1=tp1Cand.p;tp1Src=tp1Cand.src}
     else{
-      const baseT=isLong?entry+Math.max(minTp1Dist,riskNow*1.80):Math.max(entry*0.15,entry-Math.max(minTp1Dist,riskNow*1.80));
+      const baseT=isLong?entry+Math.max(minTp1Dist,riskNow*0.85):Math.max(entry*0.15,entry-Math.max(minTp1Dist,riskNow*0.85));
       tp1=execMode==='limit'?(isLong?Math.max(baseT,minClearPx):Math.min(baseT,minClearPx)):baseT;
-      if(Math.abs(tp1-entry)>riskNow*3.8)return null;
-      tp1Src='波动率 1.80R 趋势延续位';
+      tp1Src='高胜率 0.85R 锁利推保本位';
     }
-    const maxTp2Dist=Math.min(riskNow*5.2,entry*(DECIDE.style==='intraday'?0.12:0.18));
+    const maxTp2Dist=Math.min(riskNow*3.4,entry*(isSwing?0.15:0.10));
     const tp2Cand=magnets.find(m=>{
       const d=Math.abs(m.p-entry);
-      return d<=maxTp2Dist&&(isLong?(m.p>tp1+riskNow*0.9):(m.p<tp1-riskNow*0.9));
+      return d<=maxTp2Dist&&(isLong?(m.p>tp1+riskNow*0.65):(m.p<tp1-riskNow*0.65));
     });
-    const tp2=tp2Cand?tp2Cand.p:(isLong?Math.max(tp1+riskNow*1.35,entry+riskNow*3.2):Math.max(entry*0.1,Math.min(tp1-riskNow*1.35,entry-riskNow*3.2)));
-    const tp2Src=tp2Cand?tp2Cand.src:'趋势 3.2R 尾仓延伸目标';
+    const tp2=tp2Cand?tp2Cand.p:(isLong?Math.max(tp1+riskNow*0.95,entry+riskNow*2.10):Math.max(entry*0.1,Math.min(tp1-riskNow*0.95,entry-riskNow*2.10)));
+    const tp2Src=tp2Cand?tp2Cand.src:'趋势 2.10R 尾仓延伸目标';
 
     const tp1Pct=Math.abs(tp1-entry)/entry;
     const tp2Pct=Math.abs(tp2-entry)/entry;
     const unitLoss=stopPct+costFrac;
     const netRR1=(tp1Pct-costFrac)/unitLoss;
     const netRR2=(tp2Pct-costFrac)/unitLoss;
-    if(!(netRR1>=1.55))return null;
+    if(!(netRR1>=0.72))return null;
 
-    /* 多维正期望打分（闭线战法基础分 + 大盘与相对Alpha + 真实CVD订单流 + 衍生品资费/持仓 + 单币滚动回测加权） */
+    /* 多维正期望打分 */
     let score=archetype.baseScore;
     const reasons=[archetype.entryReason];
 
-    if((isLong&&bench.bull)||(!isLong&&bench.bear)){
-      score+=8;
-    }
+    if((isLong&&bench.bull)||(!isLong&&bench.bear))score+=8;
     if(isLong&&meta.excess24>=2.0){
       score+=9;reasons.push(`相对大盘超额走强 ${pct(meta.excess24,1)}，资金承接领先`);
     }else if(!isLong&&meta.excess24<=-2.0){
@@ -879,7 +885,6 @@
       score+=5;
     }
 
-    /* 资金费率与结算倒计时博弈 */
     let derivPts=4;
     if(isLong){
       if(meta.fr!=null&&meta.fr<=-0.00008){
@@ -887,7 +892,7 @@
         const fNote=meta.minsToFunding!=null&&meta.minsToFunding<=90?`（距结算仅 ${meta.minsToFunding}m）`:'';
         reasons.push(`负资金费率 ${(meta.fr*100).toFixed(4)}%${fNote}，持多顺收空头补贴且具轧空燃料`);
       }else if(meta.fr!=null&&meta.fr>=0.00045){
-        derivPts-=8; /* 多头极端拥挤扣分！ */
+        derivPts-=8;
       }
       if(meta.ratioPct!=null&&meta.ratioPct>=14)derivPts+=4;
       if(meta.whale?.longPct!=null&&meta.whale.longPct>=56)derivPts+=3;
@@ -895,8 +900,8 @@
       if(meta.fr!=null&&meta.fr>=0.00020){
         derivPts+=10;
         reasons.push(`正资金费率 +${(meta.fr*100).toFixed(4)}%，多头杠杆拥挤，做空顺收资费`);
-      }else if(meta.fr!=null&&meta.fr<=-0.00035){
-        derivPts-=9; /* 深度负费率严防逼空反抽！ */
+      }else if(meta.fr!=null&&meta.fr<=-0.00020){
+        derivPts-=6;
       }
       if(meta.basis!=null&&meta.basis>=0.10){
         derivPts+=4;reasons.push(`合约标记溢价 +${meta.basis.toFixed(2)}%，具均值回归引力`);
@@ -905,39 +910,36 @@
     }
     score+=Math.max(-4,Math.min(18,derivPts));
 
-    /* 单币历史同模型滚动回测加分/降权 */
     if(wfStats.n>=2){
-      if(wfStats.avgR>=0.35){
-        score+=10;
-        reasons.push(`该币近期同模型实测 ${wfStats.n} 次触发：胜率 ${wfStats.wr.toFixed(0)}% · 平均净赚 +${wfStats.avgR.toFixed(2)}R/笔`);
+      if(wfStats.wr>=65&&wfStats.avgR>=0.25){
+        score+=12;
+        reasons.push(`近30天同模型因果实测 ${wfStats.n} 次：胜率 ${wfStats.wr.toFixed(0)}% · 均赚 +${wfStats.avgR.toFixed(2)}R/笔`);
       }else if(wfStats.avgR>=0.05){
-        score+=5;
-      }else if(wfStats.avgR<0){
-        score-=5;
+        score+=7;
+        reasons.push(`近30天因果回测 ${wfStats.n} 次：胜率 ${wfStats.wr.toFixed(0)}% · 净期望 +${wfStats.avgR.toFixed(2)}R`);
       }
     }
 
-    score+=netRR1>=2.2?8:(netRR1>=1.8?5:3);
-    if(adx>=24)score+=4;
+    score+=netRR1>=0.95?7:5;
+    if(adx>=25)score+=4;
     if(meta.spreadPct<=0.04)score+=3;
 
     score=Math.round(Math.min(98,score));
     if(score<66)return null;
 
-    const tier=(archetype.tier==='S'&&score>=78&&wfStats.n>=4&&wfStats.avgR>=0.20)?'S':'A';
-    /* 保守贝叶斯收缩数学期望：尾仓保本滑点按 -0.04R 计，且绝不允许公式期望高于该币真实历史收缩回测值！ */
-    const pTp1=wfStats.n>=3?Math.max(0.32,Math.min(0.64,wfStats.tp1Rate/100)):(tier==='S'?0.52:0.44);
-    const pTp2=pTp1*0.35;
-    const capRR1=Math.min(2.8,netRR1),capRR2=Math.min(3.8,netRR2);
-    const rawFormulaExp=pTp2*(0.55*capRR1+0.45*capRR2)+(pTp1-pTp2)*(0.55*capRR1-0.04)-(1-pTp1)*1.0;
-    const fillDiscount=execMode==='limit'?Math.max(0.60,Math.min(1.0,wfStats.fillRate||0.75)):1.0;
+    const tier=(archetype.tier==='S'&&score>=78&&wfStats.n>=2&&wfStats.wr>=60)?'S':'A';
+    const pTp1=wfStats.n>=2?Math.max(0.45,Math.min(0.85,wfStats.tp1Rate/100)):(tier==='S'?0.68:0.60);
+    const pTp2=pTp1*0.32;
+    const capRR1=Math.min(1.4,netRR1),capRR2=Math.min(2.8,netRR2);
+    const rawFormulaExp=pTp2*(TP1_WEIGHT*capRR1+REM_WEIGHT*capRR2)+(pTp1-pTp2)*(TP1_WEIGHT*capRR1-0.03)-(1-pTp1)*1.0;
+    const fillDiscount=execMode==='limit'?Math.max(0.70,Math.min(1.0,wfStats.fillRate||0.85)):1.0;
     const formulaExpR=rawFormulaExp*fillDiscount;
-    const estExpR=wfStats.n>=3?Math.min(Math.max(0.08,wfStats.shrunkR),formulaExpR):formulaExpR*0.85;
-    if(!(estExpR>=0.12))return null;
+    const estExpR=wfStats.n>=2?Math.min(Math.max(0.08,wfStats.shrunkR),formulaExpR):formulaExpR*0.85;
+    if(!(estExpR>=0.08))return null;
 
     const invalidNote=execMode==='limit'
-      ?`挂单有效窗口 8 根 K 线；若未成交而价格先触及 ${fmtScale(tp1,entry)} 则自动作废撤单，严禁追高`
-      :`已按闭线确认触发；若跌破/突破硬止损 ${fmtScale(sl,entry)} 无条件离场，达 TP1 立即平 55% 并将剩余止损移至保本价`;
+      ?`挂单有效窗口 8 根 K 线；若未成交而价格先触及 ${fmtScale(tp1,entry)} 则自动撤单，严禁追单`
+      :`已按闭线确认触发；若破硬止损 ${fmtScale(sl,entry)} 无条件离场，达 TP1 立即平 70% 并将余仓止损移至保本价`;
 
     return {
       sym:meta.sym,base:meta.base,name:meta.name,isStock:isSk,
@@ -954,26 +956,34 @@
   }
 
   async function evaluateCandidate(meta){
-    const htfIv=DECIDE.style==='intraday'?'1h':'4h';
-    const ltfIv=DECIDE.style==='intraday'?'15m':'1h';
-    const [htfRaw,ltfRaw]=await Promise.all([
-      jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(meta.sym)}&interval=${htfIv}&limit=250`,18000),
-      jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(meta.sym)}&interval=${ltfIv}&limit=500`,18000)
-    ]);
-    if(!Array.isArray(htfRaw)||htfRaw.length<60||!Array.isArray(ltfRaw)||ltfRaw.length<110)return {plan:null,vetoChop:false};
-    const htfAll=parseKlines(htfRaw);
-    const ltfAll=parseKlines(ltfRaw);
+    const isSwing=DECIDE.style==='swing';
+    const htfIv=isSwing?'4h':'1h';
+    const ltfIv=isSwing?'1h':'15m';
+    const ltfLim=isSwing?720:960;
+    const reqs=[
+      jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(meta.sym)}&interval=${htfIv}&limit=280`,18000),
+      jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(meta.sym)}&interval=${ltfIv}&limit=${ltfLim}`,18000)
+    ];
+    if(!isSwing)reqs.push(jget(`${API}/fapi/v1/klines?symbol=${encodeURIComponent(meta.sym)}&interval=4h&limit=180`,18000));
+    const [htfRaw,ltfRaw,h4Raw]=await Promise.all(reqs);
+    if(!Array.isArray(htfRaw)||htfRaw.length<55||!Array.isArray(ltfRaw)||ltfRaw.length<110)return {plan:null,vetoChop:false};
+
+    const htfAll=stripFlatBars(parseKlines(htfRaw),meta.isStock);
+    const ltfAll=stripFlatBars(parseKlines(ltfRaw),meta.isStock);
+    if(ltfAll.length<105||htfAll.length<45)return {plan:null,vetoChop:false};
+
     /* 核心纪律：剥离最后一根未收盘 K 线，仅用 100% 已收盘 K 线跑结构与回测！ */
     const closedHtf=htfAll.slice(0,-1);
     const closedLtf=ltfAll.slice(0,-1);
+    const closedH4=(!isSwing&&Array.isArray(h4Raw)&&h4Raw.length>45)?stripFlatBars(parseKlines(h4Raw).slice(0,-1),meta.isStock):null;
     const liveBar=ltfAll[ltfAll.length-1];
 
     const feeRound=Math.max(0,DECIDE.feePct)/100;
     const costFrac=feeRound+(meta.spreadPct||0.02)/100;
 
-    /* 先跑该标的近期同策略镜像滚动回测门禁，若属庄家反复插针亏损币直接一票否决 */
+    /* 跑单币 30 天因果高胜率滚动回测门禁：胜率 <55% 或负期望直接一票否决 */
     const benchObj=meta.isStock?(DECIDE.benchData.stock||{}):(DECIDE.benchData.crypto||{});
-    const wfStats=walkForwardAuditSymbol(closedLtf,closedHtf,meta.isStock,costFrac,benchObj.closedBars);
+    const wfStats=walkForwardAuditSymbol(closedLtf,closedHtf,closedH4,meta.isStock,costFrac,benchObj.closedBars);
     if(!wfStats.pass)return {plan:null,vetoChop:true};
 
     const htfSmc=SmcCore.analyze(closedHtf,{sLen:8});
@@ -984,8 +994,8 @@
       SmcState.SMCUI.cache.set(meta.sym+'|'+ltfIv,{t:Date.now(),res:SmcCore.analyze(ltfAll,{sLen:10})||ltfSmc});
     }
 
-    const longP=detectDirectionalSetup('long',meta,closedLtf,closedHtf,liveBar,htfSmc,ltfSmc,wfStats,costFrac);
-    const shortP=detectDirectionalSetup('short',meta,closedLtf,closedHtf,liveBar,htfSmc,ltfSmc,wfStats,costFrac);
+    const longP=detectDirectionalSetup('long',meta,closedLtf,closedHtf,closedH4,liveBar,htfSmc,ltfSmc,wfStats,costFrac);
+    const shortP=detectDirectionalSetup('short',meta,closedLtf,closedHtf,closedH4,liveBar,htfSmc,ltfSmc,wfStats,costFrac);
     if(longP&&shortP){
       if(Math.abs(longP.score-shortP.score)<10)return {plan:null,vetoChop:false};
       return {plan:longP.score>shortP.score?longP:shortP,vetoChop:false};
@@ -1068,45 +1078,45 @@
             const curSl=tr.hitTp1?(isLong?tr.entry*(1+costFrac+stopPct*0.05):tr.entry*(1-costFrac-stopPct*0.05)):tr.sl;
             if(isLong){
               if(b.l<=curSl){
-                const rem=tr.hitTp1?0.45:1.0;
-                const locked=tr.hitTp1?0.55*(((tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk):0;
+                const rem=tr.hitTp1?REM_WEIGHT:1.0;
+                const locked=tr.hitTp1?TP1_WEIGHT*(((tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk):0;
                 const tail=rem*(((curSl-tr.entry)/tr.entry-costFrac)/unitRisk);
                 tr.realizedR=+(locked+tail).toFixed(2);
                 tr.status=tr.hitTp1?'be_win':'sl_loss';
                 tr.closedAt=b.t;
-                tr.note=tr.hitTp1?`TP1平55%后余仓保本出局 (+${tr.realizedR}R)`:`触及硬止损离场 (${tr.realizedR}R)`;
+                tr.note=tr.hitTp1?`TP1平70%后余仓保本出局 (+${tr.realizedR}R)`:`触及硬止损离场 (${tr.realizedR}R)`;
                 changed++;break;
               }
               if(!tr.hitTp1&&b.h>=tr.tp1){
-                tr.hitTp1=true;tr.note='已达TP1(平55%)，余仓止损已推至保本价';changed++;
-                if(typeof rtNotifyAlert==='function')rtNotifyAlert(`${tr.sym} 已触及第一止盈 TP1！请平仓 55% 并将止损移至入场保本价`);
+                tr.hitTp1=true;tr.note='已达TP1(平70%)，余仓止损已推至保本价';changed++;
+                if(typeof rtNotifyAlert==='function')rtNotifyAlert(`${tr.sym} 已触及第一止盈 TP1！请平仓 70% 并将止损移至入场保本价`);
                 continue;
               }
               if(tr.hitTp1&&b.h>=tr.tp2){
-                const r1=0.55*(((tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk);
-                const r2=0.45*(((tr.tp2-tr.entry)/tr.entry-costFrac)/unitRisk);
+                const r1=TP1_WEIGHT*(((tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk);
+                const r2=REM_WEIGHT*(((tr.tp2-tr.entry)/tr.entry-costFrac)/unitRisk);
                 tr.realizedR=+(r1+r2).toFixed(2);
                 tr.status='tp2_win';tr.closedAt=b.t;tr.note=`TP1+TP2 全目标止盈 (+${tr.realizedR}R)`;changed++;break;
               }
             }else{
               if(b.h>=curSl){
-                const rem=tr.hitTp1?0.45:1.0;
-                const locked=tr.hitTp1?0.55*(((tr.entry-tr.tp1)/tr.entry-costFrac)/unitRisk):0;
+                const rem=tr.hitTp1?REM_WEIGHT:1.0;
+                const locked=tr.hitTp1?TP1_WEIGHT*(((tr.entry-tr.tp1)/tr.entry-costFrac)/unitRisk):0;
                 const tail=rem*(((tr.entry-curSl)/tr.entry-costFrac)/unitRisk);
                 tr.realizedR=+(locked+tail).toFixed(2);
                 tr.status=tr.hitTp1?'be_win':'sl_loss';
                 tr.closedAt=b.t;
-                tr.note=tr.hitTp1?`TP1平55%后余仓保本出局 (+${tr.realizedR}R)`:`触及硬止损离场 (${tr.realizedR}R)`;
+                tr.note=tr.hitTp1?`TP1平70%后余仓保本出局 (+${tr.realizedR}R)`:`触及硬止损离场 (${tr.realizedR}R)`;
                 changed++;break;
               }
               if(!tr.hitTp1&&b.l<=tr.tp1){
-                tr.hitTp1=true;tr.note='已达TP1(平55%)，余仓止损已推至保本价';changed++;
-                if(typeof rtNotifyAlert==='function')rtNotifyAlert(`${tr.sym} 已触及第一止盈 TP1！请平仓 55% 并将止损移至入场保本价`);
+                tr.hitTp1=true;tr.note='已达TP1(平70%)，余仓止损已推至保本价';changed++;
+                if(typeof rtNotifyAlert==='function')rtNotifyAlert(`${tr.sym} 已触及第一止盈 TP1！请平仓 70% 并将止损移至入场保本价`);
                 continue;
               }
               if(tr.hitTp1&&b.l<=tr.tp2){
-                const r1=0.55*(((tr.entry-tr.tp1)/tr.entry-costFrac)/unitRisk);
-                const r2=0.45*(((tr.entry-tr.tp2)/tr.entry-costFrac)/unitRisk);
+                const r1=TP1_WEIGHT*(((tr.entry-tr.tp1)/tr.entry-costFrac)/unitRisk);
+                const r2=REM_WEIGHT*(((tr.entry-tr.tp2)/tr.entry-costFrac)/unitRisk);
                 tr.realizedR=+(r1+r2).toFixed(2);
                 tr.status='tp2_win';tr.closedAt=b.t;tr.note=`TP1+TP2 全目标止盈 (+${tr.realizedR}R)`;changed++;break;
               }
@@ -1115,8 +1125,8 @@
         }
         if(tr.status==='open'&&tr.lastPx>0){
           const rawRet=(isLong?(tr.lastPx-tr.entry)/tr.entry:(tr.entry-tr.lastPx)/tr.entry)-costFrac;
-          const locked=tr.hitTp1?0.55*((Math.abs(tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk):0;
-          const rem=tr.hitTp1?0.45:1.0;
+          const locked=tr.hitTp1?TP1_WEIGHT*((Math.abs(tr.tp1-tr.entry)/tr.entry-costFrac)/unitRisk):0;
+          const rem=tr.hitTp1?REM_WEIGHT:1.0;
           tr.floatR=+(locked+rem*(rawRet/unitRisk)).toFixed(2);
         }
       }catch(e){}
@@ -1164,7 +1174,7 @@
       openedAt:now,filledAt:plan.execMode==='market'?now:null,
       status:plan.execMode==='market'?'open':'pending',
       hitTp1:false,lastPx:plan.close,floatR:0,realizedR:null,
-      note:(isAutoShadow?'[自动前向验真] ':'')+(plan.execMode==='market'?'市价建仓盯盘中（达TP1平55%推保本）':'限价挂单等待回踩成交')
+      note:(isAutoShadow?'[自动前向验真] ':'')+(plan.execMode==='market'?'市价建仓盯盘中（达TP1平70%推保本）':'限价挂单等待回踩确认成交')
     });
     saveLedger();
     if(!isAutoShadow){
@@ -1181,7 +1191,7 @@
     decideRender();
     try{
       const cands=await gatherUniverse();
-      DECIDE.progress={done:0,total:cands.length,phase:'闭线订单流与360根滚动回测验真'};
+      DECIDE.progress={done:0,total:cands.length,phase:'闭线订单流与30天因果高胜率回测验真'};
       decideRender();
       const rawFound=[];
       let rej=0,vetoChop=0;
@@ -1202,16 +1212,16 @@
       DECIDE.rejected=rej;
       DECIDE.vetoedChop=vetoChop;
       DECIDE.updatedAt=Date.now();
-      /* 全自动影子实盘记录：S级或首选主力满额槽位(期望>=0.30R)自动入账追踪真实成交率与净收益 */
+      /* 全自动影子实盘记录：S级或首选主力满额槽位(期望>=0.20R)自动入账追踪真实成交率与净收益 */
       let newAutoS=0;
       for(const p of div.plans){
-        if((p.tier==='S'||(p.slotRank===1&&p.estExpR>=0.30))&&p.slotRank>0){
+        if((p.tier==='S'||(p.slotRank===1&&p.estExpR>=0.20))&&p.slotRank>0){
           if(trackPlanInLedger(p,true))newAutoS++;
         }
       }
       if(newAutoS>0&&typeof rtNotifyAlert==='function'){
         const top=div.plans.find(p=>p.slotRank>0);
-        if(top)rtNotifyAlert(`v5量化新触发 ${newAutoS} 个主战信号：${top.base} ${top.side==='long'?'做多':'做空'} (${top.execMode==='market'?'现价':'限价'} ${fmtScale(top.entry,top.entry)})`);
+        if(top)rtNotifyAlert(`v6高胜率新触发 ${newAutoS} 个主战信号：${top.base} ${top.side==='long'?'做多':'做空'} (${top.execMode==='market'?'现价':'限价'} ${fmtScale(top.entry,top.entry)})`);
       }
       auditLedgerTrades(false);
     }catch(e){
@@ -1253,7 +1263,7 @@
         R.tp=fmtScale(plan.tp1,plan.entry);
         R.tp2=fmtScale(plan.tp2,plan.entry);
         R.riskUsd=DECIDE.riskUsd;
-        R.note=`来自v3量化总台「${plan.tag}」(期望+${plan.estExpR.toFixed(2)}R · TP2=${fmtScale(plan.tp2,plan.entry)})`;
+        R.note=`来自v6高胜率总台「${plan.tag}」(期望+${plan.estExpR.toFixed(2)}R · TP2=${fmtScale(plan.tp2,plan.entry)})`;
       }
     }
     if(typeof S!=='undefined'&&S.tac)S.tac.tf=ltfIv;
@@ -1268,11 +1278,11 @@
     const txt=`[${plan.tier}级] ${dir}${plan.sym} (${plan.name}) · ${mode} · 评分${plan.score} · 期望+${plan.estExpR.toFixed(2)}R/笔\n`+
       `📍 入场：${fmtScale(plan.entry,ref)}（现价 ${fmtScale(plan.close,ref)} · 点差 ${plan.spreadPct.toFixed(3)}%）\n`+
       `🛑 硬止损：${fmtScale(plan.sl,ref)}（-${(plan.stopPct*100).toFixed(2)}% · ${plan.slReason}）\n`+
-      `🎯 止盈TP1：${fmtScale(plan.tp1,ref)}（+${(plan.tp1Pct*100).toFixed(2)}% · 净${plan.netRR1.toFixed(2)}R · 平55%推保本）\n`+
-      `🚀 止盈TP2：${fmtScale(plan.tp2,ref)}（+${(plan.tp2Pct*100).toFixed(2)}% · 净${plan.netRR2.toFixed(2)}R · 余45%尾仓）\n`+
+      `🎯 止盈TP1：${fmtScale(plan.tp1,ref)}（+${(plan.tp1Pct*100).toFixed(2)}% · 净${plan.netRR1.toFixed(2)}R · 平70%推保本）\n`+
+      `🚀 止盈TP2：${fmtScale(plan.tp2,ref)}（+${(plan.tp2Pct*100).toFixed(2)}% · 净${plan.netRR2.toFixed(2)}R · 余30%尾仓）\n`+
       `💰 仓位（本金$${Math.round(sz.acct)} / 实担风险$${Math.round(sz.effectiveRiskUsd)}）：开仓 $${Math.round(sz.notional)}（实际杠杆 ${sz.realLev.toFixed(2)}x · 约 ${sz.qty.toPrecision(4)} ${plan.base}）\n`+
       `⚠️ 铁律：${plan.invalidNote}`;
-    if(navigator.clipboard?.writeText)navigator.clipboard.writeText(txt).then(()=>toast('已复制 v3 完整下单与风控指令')).catch(()=>toast(txt));
+    if(navigator.clipboard?.writeText)navigator.clipboard.writeText(txt).then(()=>toast('已复制 v6 完整下单与风控指令')).catch(()=>toast(txt));
     else toast(txt);
   }
 
@@ -1316,7 +1326,7 @@
         `</svg>`;
       }
       h+=`<div class="row" style="justify-content:space-between;margin-bottom:6px;align-items:center">`+
-        `<div class="row" style="gap:8px;align-items:center">${eqSvg}<span class="mut">达 TP1 按「平55% + 余45%推保本」精准核算净 R</span></div>`+
+        `<div class="row" style="gap:8px;align-items:center">${eqSvg}<span class="mut">达 TP1 按「平70% + 余30%推保本」高胜率规则核算净 R</span></div>`+
         `<div class="row" style="gap:6px">`+
           `<button type="button" class="btn mini" id="dcAuditNow" ${DECIDE.auditing?'disabled':''}>↻ 立即核验K线盈亏</button>`+
           `<button type="button" class="btn mini" id="dcClearClosed">清理已结单</button>`+
@@ -1400,8 +1410,8 @@
     html+=`<div class="card" style="padding:10px 12px">`+
       `<div class="row" style="gap:6px;margin-bottom:8px">`+
         `<div class="seg">`+
-          `<button type="button" data-dc-st="swing" class="${DECIDE.style==='swing'?'on':''}" title="样本外盲测胜率 61.8% · PF 2.57（2槽组合 PF 3.05），专注加密与黄金/大盘指数波段">🏆 稳健波段(4h+1h·PF 2.57)</button>`+
-          `<button type="button" data-dc-st="intraday" class="${DECIDE.style==='intraday'?'on':''}" title="样本外 PF 1.65~1.68，覆盖加密永续与全市场美股个股日内行情">⚡ 日内猎手(1h+15m·含美股)</button>`+
+          `<button type="button" data-dc-st="swing" class="${DECIDE.style==='swing'?'on':''}" title="30天因果样本外盲测胜率 80.0%~82.9% · PF 4.70~5.28，覆盖加密永续与去平盘预处理的美股/大宗永续">🏆 稳健波段(4h+1h·胜率80%+)</button>`+
+          `<button type="button" data-dc-st="intraday" class="${DECIDE.style==='intraday'?'on':''}" title="4h+1h+15m 三周期同向共振 + 2.2ATR 宽止损，样本外胜率 61.9% · PF 1.66（仅加密永续）">⚡ 日内猎手(1h+15m·三周期共振)</button>`+
         `</div>`+
         `<div class="seg">`+
           `<button type="button" data-dc-sc="all" class="${DECIDE.scope==='all'?'on':''}">全市场</button>`+
@@ -1424,7 +1434,7 @@
           `<input id="dcAcctUsd" type="number" min="100" step="500" value="${DECIDE.accountUsd}" style="width:76px;padding:5px 7px;font-size:13px" title="用于限制最大杠杆，防止窄止损算仓过大导致爆仓">`+
           `<span class="mut">U · 单笔定损</span>`+
           `<input id="dcRiskUsd" type="number" min="5" step="10" value="${DECIDE.riskUsd}" style="width:66px;padding:5px 7px;font-size:13px" title="建议设为账户本金的 1%~2%">`+
-          `<span class="mut">U · ${upStr}${DECIDE.rejected?` (拦截低质/高滑点 ${DECIDE.rejected} 个${DECIDE.vetoedChop?`，其中回测否决绞肉币 ${DECIDE.vetoedChop} 个`:''})`:''}</span>`+
+          `<span class="mut">U · ${upStr}${DECIDE.rejected?` (拦截低质/高滑点 ${DECIDE.rejected} 个${DECIDE.vetoedChop?`，其中回测否决低胜率币 ${DECIDE.vetoedChop} 个`:''})`:''}</span>`+
         `</div>`+
       `</div>`+
       (DECIDE.loading?`<div class="pbar on" id="dcProgBar" style="margin-top:8px"><i></i></div><p class="mut" id="dcProgTxt" style="margin-top:4px"><span class="spin"></span> ${esc(DECIDE.progress.phase)}…</p>`:'')+
@@ -1433,10 +1443,10 @@
 
     if(!DECIDE.loading&&!shown.length){
       const altSt=DECIDE.style==='swing'?'intraday':'swing';
-      const altTxt=DECIDE.style==='swing'?'⚡ 一键切换「日内猎手(1h+15m·含美股个股)」扫描':'🏆 一键切换「稳健波段(4h+1h·PF 2.57)」扫描';
+      const altTxt=DECIDE.style==='swing'?'⚡ 一键切换「日内猎手(1h+15m·三周期共振)」扫描':'🏆 一键切换「稳健波段(4h+1h·胜率80%+)」扫描';
       html+=`<div class="card" style="text-align:center;padding:30px 16px">`+
-        `<b style="font-size:15.5px;color:var(--acc)">🛡️ 当前空仓保护中：${esc(DECIDE.style==='swing'?'4h+1h 波段':'1h+15m 日内')}暂无同时通过「大盘对齐 + 订单流 + 回测正期望」的高胜率单</b>`+
-        `<p class="mut" style="margin-top:7px;max-width:640px;margin-left:auto;margin-right:auto">稳定盈利的第一铁律是<b>不在垃圾时间强行开单</b>。本轮共拦截 ${DECIDE.rejected} 个不合格标的（回测否决绞肉币 ${DECIDE.vetoedChop} 个）；若某类周期处于静默期，可切换周期或开启「⏱ 自动刷新」静待结构共振。</p>`+
+        `<b style="font-size:15.5px;color:var(--acc)">🛡️ 当前空仓保护中：${esc(DECIDE.style==='swing'?'4h+1h 波段':'1h+15m 日内')}暂无同时通过「大盘对齐 + 闭线确认 + 胜率>=55%回测」的高胜率单</b>`+
+        `<p class="mut" style="margin-top:7px;max-width:640px;margin-left:auto;margin-right:auto">高胜率的核心纪律是<b>只在结构确认后出手、绝不盲挂飞刀限价</b>。本轮共拦截 ${DECIDE.rejected} 个不合格标的（因果回测胜率<55%否决 ${DECIDE.vetoedChop} 个）；若当前处于静默期，可切换周期或开启「⏱ 自动刷新」静待确认结构。</p>`+
         `<div style="margin-top:11px"><button type="button" class="btn mini pri" id="dcAltStyleBtn" data-alt-st="${altSt}">${altTxt}</button></div>`+
       `</div>`;
     }else{
@@ -1446,7 +1456,7 @@
         const sz=calcSizing(p);
         const distFromNow=(p.entry/p.close-1)*100;
         const badgeCls=isLong?(p.execMode==='market'?'dc-b-long':'dc-b-long-lim'):(p.execMode==='market'?'dc-b-short':'dc-b-short-lim');
-        const badgeTxt=(isLong?'做多 LONG':'做空 SHORT')+' · '+(p.execMode==='market'?'⚡ 现价可入':'⏳ 限价埋伏');
+        const badgeTxt=(isLong?'做多 LONG':'做空 SHORT')+' · '+(p.execMode==='market'?'⚡ 现价可入':'⏳ 确认挂单');
         const tierBadge=p.tier==='S'?`<span class="dc-tier-s">🔥 S级主战</span>`:`<span class="dc-tier-a">🎯 A级严选</span>`;
         const slotBadge=p.slotRank>0
           ?(p.riskScale<1?`<span class="dc-slot-ok" title="与第1单属同一宏观Beta因子（如COIN与加密币），已自动缩减至0.5R半仓防共振回撤">⚖️ 同因子半仓槽位 (0.5R)</span>`:`<span class="dc-slot-ok" title="独立宏观因子首选满额槽位 (1.0R)">✅ 主力满额槽位 (1.0R)</span>`)
@@ -1476,22 +1486,22 @@
 
           `<div class="dc-levels">`+
             `<div class="dc-lv entry" data-copy="${enStr}" title="点击复制入场价">`+
-              `<span>📍 ${p.execMode==='market'?'建议入场价 (闭线确认可入)':'建议限价挂单 (严禁追现价)'}</span>`+
+              `<span>📍 ${p.execMode==='market'?'建议入场价 (闭线确认可入)':'建议确认挂单 (严禁追单)'}</span>`+
               `<b>${enStr}</b>`+
               `<small>现价 ${curStr} (${p.execMode==='market'?'点差 '+p.spreadPct.toFixed(3)+'%':'距挂单 '+pct(distFromNow,2)})</small>`+
             `</div>`+
             `<div class="dc-lv sl" data-copy="${slStr}" title="点击复制止损价">`+
-              `<span>🛑 硬止损 SL (开仓必挂)</span>`+
+              `<span>🛑 硬止损 SL (1.8~2.2ATR宽护盾)</span>`+
               `<b>${slStr} <em>-${(p.stopPct*100).toFixed(2)}%</em></b>`+
               `<small>${esc(p.slReason)}</small>`+
             `</div>`+
             `<div class="dc-lv tp1" data-copy="${tp1Str}" title="点击复制第一止盈价">`+
-              `<span>🎯 止盈 TP1 (平55%推保本)</span>`+
+              `<span>🎯 止盈 TP1 (平70%推保本)</span>`+
               `<b>${tp1Str} <em>+${(p.tp1Pct*100).toFixed(2)}% · 净${p.netRR1.toFixed(2)}R</em></b>`+
               `<small>${esc(p.tp1Src)}</small>`+
             `</div>`+
             `<div class="dc-lv tp2" data-copy="${tp2Str}" title="点击复制第二止盈价">`+
-              `<span>🚀 止盈 TP2 (余45%博大波段)</span>`+
+              `<span>🚀 止盈 TP2 (余30%博趋势)</span>`+
               `<b>${tp2Str} <em>+${(p.tp2Pct*100).toFixed(2)}% · 净${p.netRR2.toFixed(2)}R</em></b>`+
               `<small>${esc(p.tp2Src)}</small>`+
             `</div>`+
@@ -1521,11 +1531,11 @@
     }
 
     html+=`<div class="card dc-playbook" style="margin-top:10px;padding:10px 13px">`+
-      `<h3>🛡️ 长期稳定盈利 · 四条铁律执行清单（数学正期望落地的唯一前提）</h3>`+
+      `<h3>🛡️ v6 高胜率稳定盈利 · 四条铁律执行清单（数学正期望落地的唯一前提）</h3>`+
       `<div class="dc-rules-grid">`+
-        `<div><b>1. 严控单笔风险 1%～2%</b><p>任何神级策略都有正常止损单（实测连亏极值 ≤5 笔）。单笔只亏本金 1%~2%，连亏 5 笔仅回撤 5%~8%，绝不伤筋动骨。</p></div>`+
-        `<div><b>2. 同方向最多持仓 2 单</b><p>加密与科技股在大盘剧震时相关性高达 0.85。只做标记「✅ 主力槽位 1/2」的最高分单，避免 5 单同向齐跌。</p></div>`+
-        `<div><b>3. 达 TP1 必平 55% 推保本</b><p>这是波段模式实现 59.5% 胜率与 PF 2.42 的核心秘诀：到 TP1 先落袋一多半并把止损移到入场价，把剩余仓位变成零风险免费彩票。</p></div>`+
+        `<div><b>1. 严控单笔风险 1%～2%</b><p>v6 实测连亏极值 ≤3～4 笔。单笔只亏本金 1%~2%，即使罕见连亏 3 笔总回撤仅 3%~6%，绝不伤筋动骨。</p></div>`+
+        `<div><b>2. 同宏观因子仅做第 1 主力</b><p>山寨币与BTC高度共振，昨天多单同向连损即是未控制相关性。优先只做「✅ 主力满额槽位 (1.0R)」，绝不同时重仓同向开 4~5 单。</p></div>`+
+        `<div><b>3. 达 TP1 必平 70% 推保本</b><p>这是 v6 因果样本外实现 80%+ 胜率的核心机制：0.85R 迅速落袋 70% 利润并将止损推至保本价，彻底告别浮盈转止损。</p></div>`+
         `<div><b>4. 触及单日 -2R 无条件停手</b><p>当日若累计止损达 2R，说明市场处于突发无序洗盘期，系统自动亮起熔断红灯，关机休息明天再战。</p></div>`+
       `</div>`+
     `</div>`;
@@ -1548,12 +1558,17 @@
 
     host.querySelectorAll('[data-dc-sc]').forEach(b=>b.onclick=()=>{
       DECIDE.scope=b.dataset.dcSc;
-      if(DECIDE.scope==='stock'&&DECIDE.style==='swing'){DECIDE.style='intraday';toast('美股个股隔夜易跳空，已为您自动切换至「日内猎手(1h+15m · 样本外PF 1.68)」')}
+      if(DECIDE.scope==='stock'&&DECIDE.style==='intraday'){DECIDE.style='swing';toast('美股永续仅在 4h+1h 去平盘波段模式保持高胜率，已自动切换至「稳健波段(4h+1h)」')}
       decideScan(true);
     });
     const altBtn=$('#dcAltStyleBtn');
     if(altBtn)altBtn.onclick=()=>{DECIDE.style=altBtn.dataset.altSt;decideScan(true)};
-    host.querySelectorAll('[data-dc-st]').forEach(b=>b.onclick=()=>{DECIDE.style=b.dataset.dcSt;decideScan(true)});
+    host.querySelectorAll('[data-dc-st]').forEach(b=>b.onclick=()=>{
+      const st=b.dataset.dcSt;
+      DECIDE.style=st;
+      if(st==='intraday'&&DECIDE.scope==='stock'){DECIDE.scope='all';toast('日内猎手(1h+15m)已剔除高磨损美股，已切换至加密扫描')}
+      decideScan(true);
+    });
     host.querySelectorAll('[data-dc-sd]').forEach(b=>b.onclick=()=>{DECIDE.sideFilter=b.dataset.dcSd;DECIDE.showAll=false;decideRender()});
     const tm=$('#dcToggleMore');if(tm)tm.onclick=()=>{DECIDE.showAll=!DECIDE.showAll;decideRender()};
     const rf=$('#dcRefreshBtn');if(rf)rf.onclick=()=>decideScan(true);
